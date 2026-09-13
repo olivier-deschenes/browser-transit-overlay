@@ -1,0 +1,33 @@
+name: Bug report / Signalement de bogue
+description: Report a map or extension problem in English or French.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For security vulnerabilities, use the private contact in SECURITY.md.
+        Remove account details, messages, private landmarks, and identifying listing details from screenshots or logs.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Extension version, Chrome version, and operating system.
+    validations:
+      required: true
+  - type: dropdown
+    id: site
+    attributes:
+      label: Affected site
+      options:
+        - Facebook Marketplace
+        - Centris search map
+        - Centris listing / Local Logic map
+        - Extension settings
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps, expected result, and actual result
+      description: Include whether reloading the page or extension changes the result.
+    validations:
+      required: true

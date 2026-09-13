@@ -1,0 +1,329 @@
+#stm-metro-overlay {
+  height: 1px;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 1px;
+}
+
+#stm-metro-attribution {
+  background: rgb(255 255 255 / 88%);
+  border-radius: 3px;
+  bottom: 6px;
+  color: #3a3a3a;
+  font: 11px/1.4 Arial, sans-serif;
+  left: 6px;
+  padding: 2px 5px;
+  position: absolute;
+  z-index: 800;
+}
+
+#stm-metro-attribution a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#stm-metro-attribution a:hover {
+  text-decoration: underline;
+}
+
+/* Google keeps its own credit line along the bottom of the map. */
+#stm-metro-attribution[data-stm-site="centris"] {
+  bottom: 28px;
+}
+
+/*
+ * The map beside a Centris listing is a small one with something in every
+ * corner: the category panel down the left, the directions button top right,
+ * the zoom buttons bottom right and MapLibre's own credit along the bottom.
+ * The band between the panel and the button is what is left, and it is where
+ * both of these go rather than on top of the widget's own controls. The credit
+ * takes both its edges as fractions of the map, so that a narrower one keeps
+ * it on the map, wrapping the line rather than running it off the side.
+ */
+#stm-metro-attribution[data-stm-site="locallogic"] {
+  bottom: auto;
+  left: 40%;
+  max-width: calc(35% - 8px);
+  top: 8px;
+}
+
+#stm-map-tools[data-stm-site="locallogic"] {
+  top: 62px;
+}
+
+#stm-map-tools {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: 12px/1.3 Arial, sans-serif;
+  max-width: calc(100% - 88px);
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 801;
+}
+
+/* Centris hangs a control rail down the right-hand edge of its map, and the
+   column steps clear of it rather than sitting on top of it. */
+#stm-map-tools[data-stm-site="centris"] {
+  right: 52px;
+}
+
+#stm-network-status {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #b9b9b9;
+  border-radius: 4px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+  color: #202124;
+  display: flex;
+  gap: 8px;
+  max-width: 100%;
+  padding: 6px 8px;
+}
+
+#stm-network-status[hidden] {
+  display: none;
+}
+
+#stm-network-status span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#stm-network-status button {
+  background: none;
+  border: 0;
+  color: #0866ff;
+  cursor: pointer;
+  flex: none;
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+  white-space: nowrap;
+}
+
+/*
+ * The gear is the way back to the settings from the page the extension is
+ * actually being used on. It is the last thing in the column so that opening
+ * the points panel does not push it around.
+ */
+#stm-settings-shortcut {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #b9b9b9;
+  border-radius: 4px;
+  color: #202124;
+  cursor: pointer;
+  display: flex;
+  font: 14px/1 Arial, sans-serif;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 28px;
+}
+
+#stm-custom-points {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+#stm-custom-points button,
+#stm-custom-points input {
+  box-sizing: border-box;
+  font: inherit;
+}
+
+#stm-custom-points > button,
+#stm-custom-points button[type="submit"] {
+  background: #ffffff;
+  border: 1px solid #b9b9b9;
+  border-radius: 4px;
+  color: #202124;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+
+.stm-custom-points-panel {
+  background: #ffffff;
+  border: 1px solid #b9b9b9;
+  border-radius: 4px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+  margin-top: 4px;
+  /*
+   * The map on a listing page is a popup a third the height of the one on a
+   * category page, and it clips whatever overflows it. The content script
+   * publishes the height it actually got so the panel can cap itself against
+   * the map rather than the viewport.
+   */
+  max-height: min(320px, calc(var(--stm-map-height, 100vh) - 96px));
+  max-width: 100%;
+  overflow-y: auto;
+  padding: 8px;
+  width: 210px;
+}
+
+.stm-custom-points-panel[hidden] {
+  display: none;
+}
+
+.stm-custom-points-panel form {
+  display: grid;
+  gap: 6px;
+}
+
+.stm-custom-points-panel input {
+  border: 1px solid #b9b9b9;
+  border-radius: 3px;
+  min-width: 0;
+  padding: 6px;
+  width: 100%;
+}
+
+/*
+ * The panel sits inside the site's own page, and both of them reset
+ * paragraphs and override [hidden]. Both are restated here so the hint keeps
+ * its own spacing and the error actually disappears when it is cleared.
+ */
+.stm-custom-point-hint,
+.stm-custom-point-error {
+  font-size: 11px;
+  line-height: 1.35;
+  margin: 0;
+  /* "google.com/maps/place/…" has no break opportunity of its own, and
+     without this it widens the panel until it scrolls sideways. */
+  overflow-wrap: break-word;
+}
+
+.stm-custom-point-hint {
+  color: #5f6368;
+}
+
+.stm-custom-point-hint span {
+  display: block;
+}
+
+.stm-custom-point-hint-warning {
+  margin-top: 3px;
+}
+
+.stm-custom-point-error {
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.stm-custom-point-error[hidden] {
+  display: none;
+}
+
+.stm-custom-points-panel input[aria-invalid="true"] {
+  border-color: #b3261e;
+}
+
+.stm-custom-point-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.stm-custom-point-actions input[type="color"] {
+  height: 29px;
+  padding: 2px;
+  width: 38px;
+}
+
+.stm-custom-point-list {
+  margin-top: 8px;
+}
+
+.stm-custom-point-row {
+  align-items: center;
+  border-top: 1px solid #eeeeee;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+.stm-custom-point-row span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stm-custom-point-row span::before {
+  background: var(--point-color);
+  border-radius: 50%;
+  content: "";
+  display: inline-block;
+  height: 8px;
+  margin-right: 5px;
+  width: 8px;
+}
+
+#stm-custom-points .stm-custom-point-row button {
+  background: none;
+  border: 0;
+  color: #b3261e;
+  cursor: pointer;
+  padding: 0;
+}
+
+/*
+ * Marketplace's location strip is a flat raster with no pane of its own,
+ * so the overlay is positioned over it from the outside. It has to stay out of
+ * the way of the click that opens the popup map underneath it.
+ */
+.stm-static-overlay {
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+/*
+ * Detecting the map through a no-op animation instead of a document-wide
+ * MutationObserver. Marketplace rewrites its feed on every scroll, and making
+ * the browser build a record for each of those rewrites was slowing the whole
+ * page down. outline-color is safe to animate: outline-style defaults to none,
+ * so nothing is ever painted.
+ */
+@keyframes stm-map-detect {
+  from {
+    outline-color: transparent;
+  }
+
+  to {
+    outline-color: transparent;
+  }
+}
+
+/*
+ * Keyed off the two attributes the content script puts on the root so that
+ * turning the extension off — or turning this one site off — stops the
+ * detection outright: the rule matches nothing, and the browser never runs the
+ * animation in the first place.
+ *
+ * Marketplace draws with Leaflet, a Centris search with the Google Maps API and
+ * a Centris listing with MapLibre, so each one is waited for by the element its
+ * own library builds first. Both Google's .gm-style and MapLibre's
+ * .maplibregl-map are there when the map initialises, well before anything is
+ * painted into them.
+ */
+html[data-stm-enabled][data-stm-site="facebook"] .leaflet-container,
+html[data-stm-enabled][data-stm-site="facebook"] .leaflet-overlay-pane,
+html[data-stm-enabled][data-stm-site="centris"] .gm-style,
+html[data-stm-enabled][data-stm-site="locallogic"] .maplibregl-map {
+  animation-duration: 1ms;
+  animation-name: stm-map-detect;
+}

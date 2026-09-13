@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fb-marketplace-metro-map",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "routes": [
+    {
+      "pattern": "metro.odeschenes.dev",
+      "custom_domain": true,
+    },
+  ],
+}

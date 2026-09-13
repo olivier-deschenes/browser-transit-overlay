@@ -1,0 +1,446 @@
+:root {
+  --stm-accent: #0866ff;
+  --stm-background: #f5f6f7;
+  --stm-border: #dcdfe3;
+  --stm-danger: #b3261e;
+  --stm-muted: #5f6368;
+  --stm-surface: #ffffff;
+  --stm-text: #1c1e21;
+  --stm-track: #cfd3d8;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --stm-accent: #4b93ff;
+    --stm-background: #18191a;
+    --stm-border: #3a3b3d;
+    --stm-danger: #ff8a80;
+    --stm-muted: #9fa4ab;
+    --stm-surface: #242526;
+    --stm-text: #e4e6eb;
+    --stm-track: #4a4b4d;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--stm-background);
+  color: var(--stm-text);
+  font: 14px/1.45 system-ui, Arial, sans-serif;
+  margin: 0;
+  padding: 32px 20px 48px;
+}
+
+main {
+  margin: 0 auto;
+  max-width: 620px;
+}
+
+header {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+header img {
+  border-radius: 8px;
+  flex: none;
+}
+
+h1 {
+  font-size: 18px;
+  line-height: 1.3;
+  margin: 0;
+}
+
+header p {
+  color: var(--stm-muted);
+  margin: 2px 0 0;
+}
+
+section {
+  background: var(--stm-surface);
+  border: 1px solid var(--stm-border);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  padding: 4px 16px;
+}
+
+h2 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 16px 0 4px;
+  text-transform: uppercase;
+}
+
+.stm-section-header {
+  align-items: baseline;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.stm-bulk {
+  display: flex;
+  flex: none;
+  gap: 12px;
+}
+
+.stm-bulk button {
+  background: none;
+  border: 0;
+  color: var(--stm-accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 0;
+}
+
+.stm-bulk button:hover {
+  text-decoration: underline;
+}
+
+.stm-row {
+  align-items: center;
+  border-top: 1px solid var(--stm-border);
+  cursor: pointer;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.stm-row:first-of-type {
+  border-top: 0;
+}
+
+/*
+ * The master switch is the only row in its card, so it carries the emphasis
+ * that the section heading gives the others.
+ */
+.stm-row-master .stm-row-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.stm-row-child {
+  padding-left: 22px;
+  position: relative;
+}
+
+.stm-row-child::before {
+  border-bottom: 1px solid var(--stm-border);
+  border-left: 1px solid var(--stm-border);
+  border-bottom-left-radius: 4px;
+  content: "";
+  height: 12px;
+  left: 4px;
+  position: absolute;
+  top: 12px;
+  width: 10px;
+}
+
+.stm-row-held {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.stm-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stm-row-title {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.stm-row-hint {
+  color: var(--stm-muted);
+  font-size: 12px;
+}
+
+.stm-swatch {
+  background: var(--stm-swatch);
+  border-radius: 3px;
+  flex: none;
+  height: 12px;
+  width: 12px;
+}
+
+/*
+ * A checkbox drawn as a switch: appearance:none leaves the input itself as
+ * the box, and the knob is its ::after. Nothing else is in the tab order, so
+ * the focus ring lands where the keyboard actually is.
+ */
+.stm-switch {
+  appearance: none;
+  background: var(--stm-track);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  flex: none;
+  height: 22px;
+  margin: 0;
+  position: relative;
+  transition: background 120ms ease-in-out;
+  width: 38px;
+}
+
+.stm-switch::after {
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 30%);
+  content: "";
+  height: 18px;
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  transition: translate 120ms ease-in-out;
+  width: 18px;
+}
+
+.stm-switch:checked {
+  background: var(--stm-accent);
+}
+
+.stm-switch:checked::after {
+  translate: 16px 0;
+}
+
+.stm-switch:disabled {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stm-switch,
+  .stm-switch::after {
+    transition: none;
+  }
+}
+
+/* Points de repère -------------------------------------------------------- */
+
+.stm-point-row {
+  align-items: center;
+  border-top: 1px solid var(--stm-border);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.stm-point-row:first-child {
+  border-top: 0;
+}
+
+.stm-point-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stm-point-name {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.stm-point-name span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stm-point-unnamed {
+  color: var(--stm-muted);
+  font-style: italic;
+}
+
+.stm-point-coordinates {
+  color: var(--stm-muted);
+  font-size: 12px;
+  /* Lined-up digits make two points easy to tell apart at a glance. */
+  font-variant-numeric: tabular-nums;
+}
+
+.stm-point-actions {
+  display: flex;
+  flex: none;
+  gap: 12px;
+}
+
+.stm-point-actions button {
+  background: none;
+  border: 0;
+  color: var(--stm-accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 0;
+}
+
+.stm-point-actions button:hover {
+  text-decoration: underline;
+}
+
+.stm-point-actions .stm-point-remove {
+  color: var(--stm-danger);
+}
+
+.stm-point-empty {
+  color: var(--stm-muted);
+  font-size: 13px;
+  margin: 14px 0;
+}
+
+.stm-point-add-heading {
+  border-top: 1px solid var(--stm-border);
+  font-weight: 600;
+  margin: 0;
+  padding-top: 14px;
+}
+
+.stm-point-form {
+  display: grid;
+  gap: 8px;
+  padding: 10px 0 16px;
+}
+
+/*
+ * An edit opens in place of its row, so it carries the border the row would
+ * have had and stays inside the list it belongs to.
+ */
+.stm-point-list .stm-point-form {
+  border-top: 1px solid var(--stm-border);
+  padding: 12px 0;
+}
+
+.stm-point-list .stm-point-form:first-child {
+  border-top: 0;
+}
+
+.stm-point-form input[type="text"] {
+  background: var(--stm-background);
+  border: 1px solid var(--stm-border);
+  border-radius: 6px;
+  color: inherit;
+  font: inherit;
+  padding: 8px 10px;
+  width: 100%;
+}
+
+.stm-point-form input[aria-invalid="true"] {
+  border-color: var(--stm-danger);
+}
+
+.stm-point-hint,
+.stm-point-error {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0;
+  /* "google.com/maps/place/…" has no break opportunity of its own. */
+  overflow-wrap: break-word;
+}
+
+.stm-point-hint {
+  color: var(--stm-muted);
+}
+
+.stm-point-hint span {
+  display: block;
+}
+
+.stm-point-error {
+  color: var(--stm-danger);
+  font-weight: 600;
+}
+
+.stm-point-error[hidden] {
+  display: none;
+}
+
+.stm-point-form-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.stm-point-form-actions input[type="color"] {
+  background: none;
+  border: 1px solid var(--stm-border);
+  border-radius: 6px;
+  cursor: pointer;
+  height: 34px;
+  margin-right: auto;
+  padding: 2px;
+  width: 44px;
+}
+
+.stm-point-submit {
+  background: var(--stm-accent);
+  border: 0;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.stm-point-cancel {
+  background: none;
+  border: 0;
+  color: var(--stm-muted);
+  cursor: pointer;
+  font: inherit;
+  padding: 8px 4px;
+}
+
+/*
+ * Turning the extension off leaves every switch below it readable and still
+ * editable — the settings survive the master switch — but nothing under it
+ * is doing anything right now, and the page should say so.
+ */
+.stm-off #stm-sections {
+  opacity: 0.55;
+}
+
+footer {
+  margin-top: 24px;
+  text-align: center;
+}
+
+#stm-reset {
+  background: var(--stm-surface);
+  border: 1px solid var(--stm-border);
+  border-radius: 6px;
+  color: var(--stm-danger);
+  cursor: pointer;
+  font: inherit;
+  padding: 7px 14px;
+}
+
+.stm-note,
+.stm-credits {
+  color: var(--stm-muted);
+  font-size: 12px;
+  margin: 12px auto 0;
+  max-width: 440px;
+}
+
+.stm-credits a {
+  color: inherit;
+}

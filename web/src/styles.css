@@ -1,0 +1,95 @@
+@import 'tailwindcss';
+
+:root {
+  color: #111;
+  background: #fff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 64px 24px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+main {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+a {
+  color: #111;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.big-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.big-link:hover {
+  background: #fff;
+  color: #111;
+}
+
+.plugin-icon {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 24px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 24px;
+  font-size: 2rem;
+  line-height: 1.25;
+}
+
+h2 {
+  margin: 32px 0 8px;
+  font-size: 1rem;
+}
+
+p {
+  margin-bottom: 20px;
+}
+
+hr {
+  margin: 40px 0 24px;
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 40px 20px;
+  }
+}

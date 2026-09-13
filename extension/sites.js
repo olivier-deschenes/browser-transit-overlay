@@ -180,17 +180,24 @@ const STM_SITE_ADAPTERS = [
       };
     },
 
+    // Marketplace names the city in its category path, so the way to send
+    // someone to the network they are looking at is to rewrite that one
+    // segment. Which segment to write is the city's to say; all this knows is
+    // where in the path it goes.
     shortcut: {
-      label: "Voir Montréal",
+      label: (city) => `Voir ${city.name}`,
       // The shortcut rewrites a category path, so on a single listing there is
-      // nothing for it to rewrite and the listing is simply where it is.
-      applies: () => STM_FACEBOOK_RENTAL_ROUTE.test(location.pathname),
-      run() {
+      // nothing for it to rewrite and the listing is simply where it is. A
+      // city Marketplace has no slug for has nowhere to be sent either.
+      applies: (city) =>
+        Boolean(city.marketplaceSlug) &&
+        STM_FACEBOOK_RENTAL_ROUTE.test(location.pathname),
+      run(city) {
         const url = new URL(location.href);
 
         url.pathname = url.pathname.replace(
           STM_FACEBOOK_RENTAL_ROUTE,
-          "/marketplace/montreal/$1"
+          `/marketplace/${city.marketplaceSlug}/$1`
         );
         location.assign(url.href);
       }

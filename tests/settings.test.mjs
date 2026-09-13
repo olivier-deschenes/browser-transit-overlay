@@ -4,8 +4,14 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const context = vm.createContext({});
-vm.runInContext(readFileSync(new URL('../extension/settings.js', import.meta.url), 'utf8'), context);
-const settings = vm.runInContext('({ stmCoordinatesFromLocation, stmMergeSettings, stmFormatCoordinates, stmLocationErrorMessage })', context);
+// The defaults are derived from the registry at load, so it has to be there
+// first — the same order the manifest, the options page and the worker use.
+for (const name of ['networks.js', 'settings.js']) {
+  vm.runInContext(readFileSync(new URL(`../extension/${name}`, import.meta.url), 'utf8'), context);
+}
+const settings = vm.runInContext('({ stmCoordinatesFromLocation, stmIsLineEnabled, stmMergeSettings, stmFormatCoordinates, stmLocationErrorMessage, STM_LINES })', context);
+const [line] = settings.STM_LINES;
+const [cityId, systemId] = line.id.split(':');
 const plain = (value) => value === undefined ? undefined : JSON.parse(JSON.stringify(value));
 
 test('coordinates are stored longitude first and preserve precision when editing', () => {
@@ -37,14 +43,38 @@ test('short-link errors explain how to obtain full coordinates', () => {
 });
 
 test('saved preferences survive new defaults without sharing mutable state', () => {
-  const stored = { stations: false, lines: { '1': false }, sites: { centris: false } };
+  const other = settings.STM_LINES.find(({ id }) => id !== line.id).id;
+  const stored = { stations: false, lines: { [line.id]: false }, sites: { centris: false } };
   const merged = settings.stmMergeSettings(stored);
   assert.equal(merged.stations, false);
-  assert.equal(merged.lines['1'], false);
-  assert.equal(merged.lines['2'], true);
+  assert.equal(merged.lines[line.id], false);
+  assert.equal(merged.lines[other], true);
   assert.equal(merged.sites.centris, false);
   assert.equal(merged.sites.facebook, true);
-  merged.lines['2'] = false;
-  assert.equal(settings.stmMergeSettings().lines['2'], true);
-  assert.deepEqual(stored, { stations: false, lines: { '1': false }, sites: { centris: false } });
+  // A city or system absent from storage is one this build has added, and it
+  // ships switched on rather than needing a migration to turn it on.
+  assert.equal(merged.cities[cityId], true);
+  assert.equal(merged.systems[`${cityId}:${systemId}`], true);
+  merged.lines[other] = false;
+  assert.equal(settings.stmMergeSettings().lines[other], true);
+  assert.deepEqual(stored, { stations: false, lines: { [line.id]: false }, sites: { centris: false } });
+});
+
+// A line is drawn where its city, its system and the line itself all say so,
+// which is what lets one operator be switched off without writing to any of
+// the lines underneath it.
+test('the three levels of switch multiply rather than overlap', () => {
+  const merged = settings.stmMergeSettings();
+  assert.equal(settings.stmIsLineEnabled(merged, line.id), true);
+
+  for (const off of [{ lines: { [line.id]: false } }, { systems: { [`${cityId}:${systemId}`]: false } }, { cities: { [cityId]: false } }]) {
+    assert.equal(settings.stmIsLineEnabled(settings.stmMergeSettings(off), line.id), false, JSON.stringify(off));
+  }
+
+  // Switching a system off leaves every other system's lines alone.
+  const elsewhere = settings.STM_LINES.find(({ systemId: id }) => id !== line.systemId);
+  if (elsewhere) {
+    const partial = settings.stmMergeSettings({ systems: { [line.systemId]: false } });
+    assert.equal(settings.stmIsLineEnabled(partial, elsewhere.id), true);
+  }
 });

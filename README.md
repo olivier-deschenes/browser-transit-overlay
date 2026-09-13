@@ -7,7 +7,7 @@ A Chrome extension that overlays Montréal's métro and REM lines and stations o
 ## Features
 
 - Transit overlays on supported search maps, listing maps, and Marketplace map previews.
-- Individual switches for sites, transit lines, stations, labels, and map controls.
+- Individual switches for sites, transit operators and their lines, stations, labels, and map controls.
 - Custom landmarks from coordinates or full Google Maps links, with editable names and colours.
 - A toolbar switch to enable or disable the overlay without losing your settings.
 
@@ -55,9 +55,9 @@ For website build and deployment details, see [web/README.md](web/README.md). To
 
 | Path | Purpose |
 | --- | --- |
-| `extension/` | Manifest V3 extension, settings, site adapters, and bundled network |
+| `extension/` | Manifest V3 extension, network registry, settings, site adapters, and bundled geometry |
 | `web/` | TanStack Start / React / Tailwind support and privacy website |
-| `data/` | STM source files and network generation script |
+| `data/` | STM source files and the per-city network generators |
 | `rem_data/` | REM GTFS source subset and original licence |
 | `scripts/` | Reproducible extension packaging |
 | `tests/` | Extension behaviour and resource checks |
@@ -69,4 +69,4 @@ Bug reports and contributions are welcome in English or French. See [CONTRIBUTIN
 
 ## Licence and attribution
 
-Original code and documentation are under the [MIT licence](LICENSE). STM and REM data, including the derived `extension/metro-data.json`, retain their **CC BY 4.0** terms. Third-party branding and map imagery are not covered by the code licence. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for sources and modifications.
+Original code and documentation are under the [MIT licence](LICENSE). STM and REM data, including the derived geometry in `extension/networks/`, retain their **CC BY 4.0** terms. Third-party branding and map imagery are not covered by the code licence. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for sources and modifications.

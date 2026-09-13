@@ -17,13 +17,30 @@ RUNTIME_FILES = (
     "icons/icon-48.png",
     "icons/icon-128.png",
     "manifest.json",
-    "metro-data.json",
+    "networks.js",
     "options.css",
     "options.html",
     "options.js",
     "settings.js",
     "sites.js",
 )
+
+
+def network_files(root):
+    """The geometry files, found rather than listed.
+
+    Which cities ship is the registry's decision and the build writes one file
+    per city, so listing them here as well would be a third place to keep in
+    step. Only JSON directly under networks/ is taken, so nothing else that
+    lands in the folder can ride along with it.
+    """
+    names = sorted(
+        f"networks/{path.name}"
+        for path in (root / "extension/networks").glob("*.json")
+    )
+    if not names:
+        raise ValueError("No network geometry to package")
+    return names
 
 
 def package_extension(root=ROOT, output_directory=None):
@@ -35,7 +52,8 @@ def package_extension(root=ROOT, output_directory=None):
         raise ValueError("Expected a numeric Chrome extension version")
 
     sources = {
-        name: root / "extension" / name for name in RUNTIME_FILES
+        name: root / "extension" / name
+        for name in (*RUNTIME_FILES, *network_files(root))
     } | {
         "LICENSE": root / "LICENSE",
         "LICENSE-DATA.txt": root / "rem_data/__Licence.txt",

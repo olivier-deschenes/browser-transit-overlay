@@ -1,4 +1,4 @@
-importScripts("settings.js");
+importScripts("networks.js", "settings.js");
 
 async function readEnabled() {
   const stored = await chrome.storage.local.get(STM_ENABLED_KEY);

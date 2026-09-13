@@ -9,24 +9,6 @@ const STM_SETTINGS_KEY = "settings";
 const STM_CUSTOM_POINTS_KEY = "customPoints";
 const STM_OPEN_OPTIONS_MESSAGE = "stm-open-options";
 
-// The REM arrives as several GTFS routes that share one colour and, once the
-// build has de-duplicated their common trunk, one another's geometry: the
-// track S3 runs on downtown is stored under S1. They therefore switch as one
-// line, since taking S1 away on its own would pull that track out from under
-// S3 and leave a branch floating off the end of nothing.
-const STM_LINES = [
-  { color: "#00A16B", detail: "Ligne 1", id: "1", name: "Ligne verte" },
-  { color: "#F58220", detail: "Ligne 2", id: "2", name: "Ligne orange" },
-  { color: "#FFD520", detail: "Ligne 4", id: "4", name: "Ligne jaune" },
-  { color: "#0075C9", detail: "Ligne 5", id: "5", name: "Ligne bleue" },
-  {
-    color: "#73A400",
-    detail: "Réseau express métropolitain",
-    id: "REM",
-    name: "REM"
-  }
-];
-
 // The sites the overlay knows how to draw on. The adapter that actually does
 // the drawing lives in sites.js, which the settings page has no use for; what
 // it needs is the name to put beside a switch.
@@ -43,30 +25,53 @@ const STM_SITES = [
   }
 ];
 
+// The three levels of networks.js each keep a map of their own, keyed by the
+// same ids the registry hands out. A line draws when all three are on, so a
+// system is one switch over every line it owns without any of those lines
+// having to be written to.
 const STM_DEFAULT_SETTINGS = {
+  cities: Object.fromEntries(STM_CITIES.map(({ id }) => [id, true])),
+  cityShortcut: true,
   interactiveMaps: true,
   lines: Object.fromEntries(STM_LINES.map(({ id }) => [id, true])),
   listingPreview: true,
-  montrealShortcut: true,
   networkStatus: true,
   points: true,
   pointsTool: true,
   settingsShortcut: true,
   sites: Object.fromEntries(STM_SITES.map(({ id }) => [id, true])),
   stationLabels: true,
-  stations: true
+  stations: true,
+  systems: Object.fromEntries(STM_SYSTEMS.map(({ id }) => [id, true]))
 };
 
 // Stored settings are merged over the defaults rather than read as they come,
 // so a build that adds a switch needs no migration: whatever is missing from
-// storage simply keeps shipping its default.
+// storage simply keeps shipping its default. A city added to the registry
+// therefore ships switched on while being absent from storage entirely.
 function stmMergeSettings(stored) {
   return {
     ...STM_DEFAULT_SETTINGS,
     ...stored,
+    cities: { ...STM_DEFAULT_SETTINGS.cities, ...stored?.cities },
     lines: { ...STM_DEFAULT_SETTINGS.lines, ...stored?.lines },
-    sites: { ...STM_DEFAULT_SETTINGS.sites, ...stored?.sites }
+    sites: { ...STM_DEFAULT_SETTINGS.sites, ...stored?.sites },
+    systems: { ...STM_DEFAULT_SETTINGS.systems, ...stored?.systems }
   };
+}
+
+// The switches multiply: a line is drawn only where its city, its system and
+// the line itself are all on, the same way a site's switch multiplies with
+// the kind of map it is being asked for. Reading the two parent keys back out
+// of the line id is what saves a lookup here.
+function stmIsLineEnabled(settings, lineId) {
+  const [cityId, systemId] = lineId.split(":");
+
+  return (
+    settings.cities[cityId] !== false &&
+    settings.systems[`${cityId}:${systemId}`] !== false &&
+    settings.lines[lineId] !== false
+  );
 }
 
 // A point can be added from the panel on the map or from the settings page.

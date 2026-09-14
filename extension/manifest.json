@@ -37,6 +37,7 @@
         "content.css"
       ],
       "js": [
+        "networks.js",
         "settings.js",
         "sites.js",
         "content.js"
@@ -52,6 +53,7 @@
         "content.css"
       ],
       "js": [
+        "networks.js",
         "settings.js",
         "sites.js",
         "content.js"
@@ -73,7 +75,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "metro-data.json"
+        "networks/*.json"
       ],
       "matches": [
         "https://www.facebook.com/*",

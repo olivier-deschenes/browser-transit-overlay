@@ -1,3 +1,4 @@
+import fnmatch
 import importlib.util
 import json
 from pathlib import Path
@@ -34,7 +35,9 @@ class PackageTests(unittest.TestCase):
                         self.assertIn(asset, names)
                 for resource in manifest["web_accessible_resources"]:
                     for asset in resource["resources"]:
-                        self.assertIn(asset, names)
+                        # A resource may be a pattern: the geometry files are
+                        # named for the cities that ship, not written out.
+                        self.assertTrue(fnmatch.filter(names, asset), asset)
                 for icon in manifest["icons"].values():
                     self.assertIn(icon, names)
 

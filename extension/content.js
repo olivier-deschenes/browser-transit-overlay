@@ -9,7 +9,6 @@
   const ANCHOR_ATTRIBUTE = "data-stm-anchor";
   const CAMERA_ATTRIBUTE = "data-stm-camera";
   const MAP_DETECT_ANIMATION = "stm-map-detect";
-  const METRO_DATA_FILE = "metro-data.json";
   const STATION_CULL_MARGIN = 140;
   const LABEL_MIN_ZOOM = 13;
   // Panning slides tiles and the overlay pane together, so the projection
@@ -17,8 +16,14 @@
   // noise. Anything under a hundredth of a pixel is that noise, not a move.
   const ORIGIN_EPSILON = 0.01;
   const TRANSITION_TIMEOUT = 2000;
-  const NETWORK_ORIGIN_COORDINATES = [-73.65, 45.5];
   const NETWORK_ZOOM = 16;
+  // The coordinate bridge.js is asked to project, which deliberately belongs
+  // to no city. A projection is a scale and a translate, so one projected
+  // point and the zoom it was taken at spell the whole of it out, and which
+  // point that is does not matter. Keeping it fixed is what lets the city be
+  // read off where the map turns out to be looking, instead of the city
+  // having to be known before the map can be asked anything.
+  const ANCHOR_COORDINATES = [0, 0];
   // Whichever site this page belongs to. The script is injected by host
   // match, so nothing claiming the page can only mean a host was added to the
   // manifest without an adapter in sites.js to go with it.
@@ -73,10 +78,17 @@
   let renderedScale;
   let customPointsDirty = true;
   let linePaths = [];
-  let metroData;
-  let metroDataRequest;
+  let networkData;
+  let networkDataRequest;
   let networkGeometry;
   let networkOrigin;
+  let anchorPoint;
+  // One metro area at a time. A housing map never usefully shows two of them
+  // at once, every coordinate the renderer writes is measured from this city's
+  // own origin, and the geometry it draws is this city's file. Which one it is
+  // is decided by where the map turns out to be looking; until something says
+  // otherwise, it is the first one in the registry.
+  let activeCity = stmCityById(STM_DEFAULT_CITY_ID);
   let stationMarkers = [];
   let stationLabelGroup;
   let stationLabelsVisible;
@@ -136,7 +148,7 @@
 
     if (showNetworkButton) {
       showNetworkButton.hidden =
-        state !== "outside" || !site.shortcut.applies();
+        state !== "outside" || !site.shortcut.applies(activeCity);
     }
 
     networkStatusText.textContent =
@@ -154,11 +166,13 @@
 
     // Only Marketplace has somewhere to jump to: its category path names the
     // city, so it can be rewritten. A Centris search is an opaque payload.
-    if (settings.montrealShortcut && site.shortcut) {
+    if (settings.cityShortcut && site.shortcut) {
       showNetworkButton = document.createElement("button");
       showNetworkButton.type = "button";
-      showNetworkButton.textContent = site.shortcut.label;
-      showNetworkButton.addEventListener("click", () => site.shortcut.run());
+      showNetworkButton.textContent = site.shortcut.label(activeCity);
+      showNetworkButton.addEventListener("click", () =>
+        site.shortcut.run(activeCity)
+      );
       networkStatus.append(showNetworkButton);
     }
 
@@ -486,48 +500,46 @@
     refreshCustomPoints();
   }
 
-  function buildAttribution() {
+  function creditLink(href, label) {
+    const link = document.createElement("a");
+    link.href = href;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = label;
+
+    return link;
+  }
+
+  function buildAttribution(credits) {
     attribution = document.createElement("div");
     attribution.id = "stm-metro-attribution";
     attribution.dataset.stmSite = site.id;
-    attribution.title =
-      "Données de la STM et du REM adaptées pour cette extension non officielle.";
+    attribution.title = `Données ${new Intl.ListFormat("fr").format(
+      credits.map(({ attribution: { label } }) => label)
+    )}, adaptées pour cette extension non officielle.`;
 
-    const stmCredit = document.createElement("a");
-    stmCredit.href = "https://www.stm.info/en/about/developers/terms-use";
-    stmCredit.target = "_blank";
-    stmCredit.rel = "noreferrer";
-    stmCredit.textContent = "STM";
+    const parts = ["Données : "];
 
-    const remCredit = document.createElement("a");
-    remCredit.href = "https://rem.info/fr";
-    remCredit.target = "_blank";
-    remCredit.rel = "noreferrer";
-    remCredit.textContent = "REM";
+    for (const { attribution: credit } of credits) {
+      if (parts.length > 1) parts.push(" · ");
+      parts.push(creditLink(credit.terms, credit.label));
+    }
 
-    const licenseCredit = document.createElement("a");
-    licenseCredit.href = "https://creativecommons.org/licenses/by/4.0/";
-    licenseCredit.target = "_blank";
-    licenseCredit.rel = "noreferrer";
-    licenseCredit.textContent = "CC BY 4.0";
-
-    attribution.append(
-      "Données : ",
-      stmCredit,
-      " · ",
-      remCredit,
+    parts.push(
       " · adaptées (",
-      licenseCredit,
+      creditLink(STM_DATA_LICENSE.url, STM_DATA_LICENSE.label),
       ")"
     );
+
+    attribution.append(...parts);
     map.append(attribution);
   }
 
   function buildOverlayTools(geometry) {
-    // Crediting the STM and the REM for a map drawing neither of them would
-    // be an odd thing to do, and the licence asks for the credit to travel
-    // with the data, not with the extension.
-    if (geometry.paths.length || geometry.stations.length) buildAttribution();
+    // Crediting an operator for a map drawing none of its lines would be an
+    // odd thing to do, and the licence asks for the credit to travel with the
+    // data rather than with the extension.
+    if (geometry.credits.length) buildAttribution(geometry.credits);
 
     buildMapTools();
 
@@ -657,7 +669,7 @@
   // many screen pixels one of its units is worth, and the zoom that reading is
   // at. A projection that is missing is a map that cannot be drawn on yet; one
   // that is not level is a map that cannot be drawn on at all.
-  function tileProjection(frameRect) {
+  function tileProjection(frameRect, mapRect) {
     const tile = tileDetails();
 
     if (!tile) return undefined;
@@ -669,8 +681,21 @@
     const tileScale = tile.rect.width / tile.size;
     const scale = tileScale * 2 ** (tile.z - NETWORK_ZOOM);
     const origin = getNetworkOrigin();
+    // The tile's name says which cell of which zoom it is, and its box says
+    // what fraction of that cell the middle of the map has landed on. Together
+    // they put the viewport's centre on the grid without reference to any
+    // city, which is what makes it something a city can be picked from.
+    const acrossX =
+      (mapRect.left + mapRect.width / 2 - tile.rect.left) / tile.rect.width;
+    const acrossY =
+      (mapRect.top + mapRect.height / 2 - tile.rect.top) / tile.rect.height;
 
     return {
+      center: coordinatesAt(
+        (tile.x + acrossX) * STM_TILE_SIZE,
+        (tile.y + acrossY) * STM_TILE_SIZE,
+        tile.z
+      ),
       level: true,
       originX:
         tile.rect.left -
@@ -688,9 +713,11 @@
   }
 
   // The same three things, but stated by the map itself through bridge.js
-  // instead of worked out from a tile: where the anchor — the network origin,
-  // which is what the overlay's coordinates are already relative to — was
-  // projected to on the canvas, and at what zoom.
+  // instead of worked out from a tile: where the anchor was projected to on
+  // the canvas, and at what zoom. The anchor belongs to no city, so where the
+  // network's own origin lands has to be stepped across to from it: the two
+  // are a known distance apart in network units, and the scale turns that
+  // distance into pixels.
   function cameraProjection(frameRect) {
     const value = document.documentElement.getAttribute(CAMERA_ATTRIBUTE);
 
@@ -705,11 +732,23 @@
 
     if (rect.width <= 0 || rect.height <= 0) return undefined;
 
+    const scale = 2 ** (zoom - NETWORK_ZOOM);
+    const anchor = getAnchorPoint();
+    const origin = getNetworkOrigin();
+
     return {
+      // Walking the same step the other way: the anchor sits at (x, y) on the
+      // canvas and its world position is known outright, so the middle of the
+      // canvas is one subtraction short of being a coordinate again.
+      center: coordinatesAt(
+        anchor[0] * scale + rect.width / 2 - x,
+        anchor[1] * scale + rect.height / 2 - y,
+        zoom
+      ),
       level: level === 1,
-      originX: rect.left - frameRect.left + x,
-      originY: rect.top - frameRect.top + y,
-      scale: 2 ** (zoom - NETWORK_ZOOM),
+      originX: rect.left - frameRect.left + x + (origin[0] - anchor[0]) * scale,
+      originY: rect.top - frameRect.top + y + (origin[1] - anchor[1]) * scale,
+      scale,
       zoom
     };
   }
@@ -725,11 +764,52 @@
     ];
   }
 
+  // worldPoint() read backwards. Both kinds of map say where they are looking
+  // in pixels on a grid rather than in degrees, and a city is chosen in
+  // degrees.
+  function coordinatesAt(x, y, zoom) {
+    const scale = STM_TILE_SIZE * 2 ** zoom;
+
+    return [
+      (x / scale) * 360 - 180,
+      (Math.atan(Math.sinh(Math.PI * (1 - (2 * y) / scale))) * 180) / Math.PI
+    ];
+  }
+
   function getNetworkOrigin() {
-    return (networkOrigin ??= worldPoint(
-      NETWORK_ORIGIN_COORDINATES,
-      NETWORK_ZOOM
-    ));
+    return (networkOrigin ??= worldPoint(activeCity.origin, NETWORK_ZOOM));
+  }
+
+  function getAnchorPoint() {
+    return (anchorPoint ??= worldPoint(ANCHOR_COORDINATES, NETWORK_ZOOM));
+  }
+
+  // Everything that was measured from the city just left behind: its origin,
+  // the drawing made against that origin, and the file the drawing came from.
+  function resetNetwork() {
+    networkData = undefined;
+    networkDataRequest = undefined;
+    networkGeometry = undefined;
+    networkOrigin = undefined;
+    detach();
+    detachStrip();
+    scheduleSync();
+  }
+
+  // A map is only ever asked where it is looking, never which city it is in,
+  // so a viewport out over the Atlantic names no city at all and whatever
+  // network is already up stays up. A swap is a teardown: one city's drawing
+  // cannot be reused as another's, because every coordinate in it is relative
+  // to an origin that has just changed.
+  function considerCity(coordinates) {
+    const next = stmCityAt(coordinates);
+
+    if (!next || next === activeCity) return false;
+
+    activeCity = next;
+    resetNetwork();
+
+    return true;
   }
 
   function localPoint(coordinates) {
@@ -739,27 +819,55 @@
     return [worldX - origin[0], worldY - origin[1]];
   }
 
-  function loadMetroData() {
-    metroDataRequest ??= fetch(chrome.runtime.getURL(METRO_DATA_FILE))
+  // A geometry file is named for its city and says nothing else about it, so
+  // the ids inside it are relative: "stm:1" rather than "montreal:stm:1".
+  // Qualifying them once, on the way in, is what lets everything past here
+  // deal in registry ids and nothing else.
+  function qualifyNetwork(city, data) {
+    return {
+      lines: data.lines.map((line) => ({
+        ...line,
+        id: `${city.id}:${line.id}`
+      })),
+      stations: data.stations.map((station) => ({
+        ...station,
+        lines: station.lines.map((id) => `${city.id}:${id}`)
+      }))
+    };
+  }
+
+  function loadNetworkData() {
+    const city = activeCity;
+
+    networkDataRequest ??= fetch(chrome.runtime.getURL(city.data))
       .then((response) => response.json())
       .then((data) => {
-        metroData = data;
+        // The city can be swapped while this is in flight, and an answer about
+        // the one just left behind is no answer about the one now drawn.
+        if (city !== activeCity) return;
+
+        networkData = qualifyNetwork(city, data);
         scheduleSync();
       })
       .catch(() => {
         // Let a later sync retry instead of leaving the overlay waiting on a
         // request that already failed.
-        metroDataRequest = undefined;
+        if (city === activeCity) networkDataRequest = undefined;
       });
 
-    return metroDataRequest;
+    return networkDataRequest;
   }
 
-  // The REM ships as several GTFS routes (S1, S3) that share one colour and,
-  // once the build has de-duplicated their common trunk, one another's
-  // geometry, so all of them answer to the single REM switch.
-  function isLineEnabled(id) {
-    return settings.lines[id.startsWith("S") ? "REM" : id] !== false;
+  // The registry entry for a line that is going to be drawn, or nothing: a
+  // line is drawn when the registry knows it and all three of its switches say
+  // so. Data naming a line the registry has never heard of has no name, no
+  // colour and no switch — the tests rule that out, and until one of them is
+  // failing an overlay that goes up without that line beats one that does not
+  // go up at all.
+  function drawnLine(id) {
+    const line = stmLineById(id);
+
+    return line && stmIsLineEnabled(settings, id) ? line : undefined;
   }
 
   function getNetworkGeometry() {
@@ -770,9 +878,17 @@
     getNetworkOrigin();
 
     const paths = [];
+    // Which operators are actually on screen. The licence asks for the credit
+    // to travel with the data rather than with the extension, so a map drawn
+    // with every REM line switched off must not go on crediting the REM.
+    const drawn = new Set();
 
-    for (const line of metroData.lines) {
-      if (!isLineEnabled(line.id)) continue;
+    for (const line of networkData.lines) {
+      const declared = drawnLine(line.id);
+
+      if (!declared) continue;
+
+      drawn.add(declared.systemId);
 
       for (const coordinates of line.paths) {
         const points = coordinates.map(localPoint);
@@ -792,7 +908,7 @@
 
         paths.push({
           bounds,
-          color: line.color,
+          color: declared.color,
           path: points
             .map(
               ([x, y], index) =>
@@ -803,16 +919,27 @@
       }
     }
 
+    const stations = settings.stations
+      ? networkData.stations.filter(({ lines }) => lines.some(drawnLine))
+      : [];
+
+    for (const station of stations) {
+      for (const id of station.lines) {
+        const declared = drawnLine(id);
+
+        if (declared) drawn.add(declared.systemId);
+      }
+    }
+
     networkGeometry = {
+      // In the registry's order rather than the data's, so the credit line
+      // reads the same way from one build to the next.
+      credits: STM_SYSTEMS.filter(({ id }) => drawn.has(id)),
       paths,
-      stations: settings.stations
-        ? metroData.stations
-            .filter((station) => station.lines.some(isLineEnabled))
-            .map((station) => ({
-              name: station.name,
-              point: localPoint(station.coordinates)
-            }))
-        : []
+      stations: stations.map((station) => ({
+        name: station.name,
+        point: localPoint(station.coordinates)
+      }))
     };
 
     return networkGeometry;
@@ -910,7 +1037,7 @@
 
     // Same as on the map: the credit rides with the lines, and a strip
     // showing only the user's own points has nothing to credit.
-    if (geometry.paths.length) {
+    if (geometry.credits.length) {
       stripCredit = createSvgElement("text", {
         "font-family": "Arial, sans-serif",
         "font-size": "8",
@@ -919,7 +1046,9 @@
         "stroke-width": "2",
         x: "4"
       });
-      stripCredit.textContent = "STM · REM";
+      stripCredit.textContent = geometry.credits
+        .map(({ attribution: { label } }) => label)
+        .join(" · ");
       stripOverlay.append(stripCredit);
     }
 
@@ -1027,18 +1156,30 @@
   }
 
   function syncStrip() {
+    const next = document.querySelector(site.stripSelector);
+    const details = next && site.stripDetails(next);
+
+    if (!details) {
+      detachStrip();
+      return;
+    }
+
+    // The strip names the listing's own coordinates outright, which is the
+    // only thing on a listing page saying where in the world it is until the
+    // map behind it is opened. Asked before the geometry below is looked at,
+    // because a listing in one city is exactly how the network of another
+    // ends up being the wrong one to have built.
+    //
+    // It answers only while there is no map: on a page with both, the two
+    // describe the same place, and letting either one answer is how they
+    // would end up swapping the city back and forth if they ever disagreed.
+    if (!map && considerCity(details.center)) return;
+
     const geometry = getNetworkGeometry();
 
     // The sidebar re-renders often enough that watching it is worth doing
     // only for an overlay that has something in it.
     if (!geometry.paths.length && !(settings.points && customPoints.length)) {
-      detachStrip();
-      return;
-    }
-
-    const next = document.querySelector(site.stripSelector);
-
-    if (!next || !site.stripDetails(next)) {
       detachStrip();
       return;
     }
@@ -1098,7 +1239,8 @@
     const mapRect = map.getBoundingClientRect();
     const projection = site.camera
       ? cameraProjection(paneRect)
-      : tileProjection(paneRect);
+      : tileProjection(paneRect, mapRect);
+
     // A map that has been turned or tilted has no projection this overlay can
     // follow, so the network comes off it rather than being drawn at an angle
     // the map is not at. It comes back by itself: the bridge keeps reporting,
@@ -1118,6 +1260,14 @@
       if (activeTransitions.size) renderRequest = requestAnimationFrame(render);
       return;
     }
+
+    // Which metro area this map is over, asked on every frame because panning
+    // is how a map arrives in another one, and only ever off a level
+    // projection: the centre is recovered by stepping out from the anchor
+    // along the world's own axes, and on a map that has been turned those are
+    // not the screen's. A swap tears the overlay down and builds it again
+    // around the new city's origin, so there is nothing left here to draw into.
+    if (considerCity(projection.center)) return;
 
     const {
       originX,
@@ -1517,7 +1667,7 @@
 
     // The strip has no Leaflet DOM to hang off, so it comes and goes on its
     // own rather than with the interactive map the listing hides behind it.
-    if (!wantsStrip || !metroData) detachStrip();
+    if (!wantsStrip || !networkData) detachStrip();
     else syncStrip();
 
     if (!nextMap) {
@@ -1532,7 +1682,7 @@
       // matters here, because a listing page carries a feed of its own.
       if (
         (wantsMap || wantsStrip) &&
-        (!metroData ||
+        (!networkData ||
           (wantsMap && site.huntsForMap && site.isCategoryPage()) ||
           (wantsStrip && !strip))
       ) {
@@ -1541,16 +1691,16 @@
         disconnectPageObserver();
       }
 
-      if ((wantsMap || wantsStrip) && !metroData) loadMetroData();
+      if ((wantsMap || wantsStrip) && !networkData) loadNetworkData();
 
       return;
     }
 
-    if (!metroData) {
+    if (!networkData) {
       // A failed data load leaves nothing else to retrigger it, so stay
       // connected until the network data is actually in hand.
       connectPageObserver();
-      loadMetroData();
+      loadNetworkData();
       return;
     }
 
@@ -1634,11 +1784,13 @@
     // The anchor is the whole of what the page world is ever asked for, and
     // asking is all it takes: bridge.js does nothing at all until the
     // coordinates it should project are sitting here, and lets go of the map
-    // again the moment they are taken away.
+    // again the moment they are taken away. It is the same coordinate on every
+    // page and never changes, which is what keeps the city out of it: a map
+    // has to be projected before it can say which city it is showing.
     if (!site.camera) return;
 
     if (wanted) {
-      root.setAttribute(ANCHOR_ATTRIBUTE, NETWORK_ORIGIN_COORDINATES.join(" "));
+      root.setAttribute(ANCHOR_ATTRIBUTE, ANCHOR_COORDINATES.join(" "));
     } else {
       root.removeAttribute(ANCHOR_ATTRIBUTE);
     }

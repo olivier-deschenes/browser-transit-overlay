@@ -172,9 +172,16 @@
       Math.abs(map.getPitch()) < LEVEL_EPSILON &&
       isFlat();
 
+    // The zoom is written out far past what a reading of it is worth on its
+    // own. The other side does not only scale the network by it: the anchor it
+    // asks about is a fixed coordinate belonging to no city, so it also steps
+    // from there to wherever the city it is drawing keeps its own origin, and
+    // that step is millions of pixels long at these zooms. Rounding the zoom
+    // to six places would land the whole network a pixel or so off the streets
+    // it is supposed to sit on, and several pixels off when zoomed in.
     root.setAttribute(
       CAMERA_ATTRIBUTE,
-      `${point.x.toFixed(2)} ${point.y.toFixed(2)} ${zoom.toFixed(6)} ${
+      `${point.x.toFixed(2)} ${point.y.toFixed(2)} ${zoom.toFixed(10)} ${
         level ? 1 : 0
       }`
     );

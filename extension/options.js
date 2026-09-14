@@ -48,9 +48,9 @@
           label: "Avis « Réseau hors champ »"
         },
         {
-          hint: "Raccourci vers les logements de Montréal. Marketplace seulement.",
-          key: "montrealShortcut",
-          label: "Bouton « Voir Montréal »",
+          hint: "Raccourci vers les logements de la ville du réseau affiché. Marketplace seulement.",
+          key: "cityShortcut",
+          label: "Bouton « Voir la ville »",
           parent: "networkStatus"
         },
         {
@@ -63,8 +63,10 @@
     }
   ];
 
-  const inputs = new Map();
-  const rows = [];
+  // Every switch on the page, by the settings key it writes, and each one
+  // holding on to the switch it hangs under. That chain is what a held row is
+  // read off: a line answers to its system and its city as well as to itself.
+  const rows = new Map();
   const sectionsHost = document.querySelector("#stm-sections");
   const masterSection = document.querySelector("#stm-master-section");
 
@@ -81,13 +83,43 @@
     return chrome.storage.local.set({ [STM_SETTINGS_KEY]: settings });
   }
 
+  // A key is either a setting of its own or a name inside one of the maps the
+  // settings keep — "stations", or "lines.montreal:stm:1". Only the first dot
+  // separates the two; a line id carries colons, never dots.
+  function settingGroup(key) {
+    const dot = key.indexOf(".");
+
+    return dot === -1 ? undefined : [key.slice(0, dot), key.slice(dot + 1)];
+  }
+
+  function readSetting(key) {
+    const group = settingGroup(key);
+
+    return group ? settings[group[0]][group[1]] : settings[key];
+  }
+
+  function writeSetting(key, value) {
+    const group = settingGroup(key);
+
+    if (group) settings[group[0]][group[1]] = value;
+    else settings[key] = value;
+  }
+
   function savePoints(next) {
     return chrome.storage.local.set({ [STM_CUSTOM_POINTS_KEY]: next });
   }
 
-  function createRow({ hint, label, swatch }) {
+  function createRow({ depth, hint, label, swatch }) {
     const row = document.createElement("label");
     row.className = "stm-row";
+
+    // How far in the row sits, rather than which level it is: the indent and
+    // the elbow drawn in the gutter are both worked out from the number, so a
+    // third level needs no third class in the stylesheet.
+    if (depth) {
+      row.classList.add("stm-row-nested");
+      row.style.setProperty("--stm-depth", depth);
+    }
 
     const input = document.createElement("input");
     input.type = "checkbox";
@@ -138,64 +170,62 @@
     masterSection.append(row);
   }
 
-  function buildSection({ rows: definitions, title }) {
+  function addRow(section, definition) {
+    const parent = definition.parent ? rows.get(definition.parent) : undefined;
+    const depth = parent ? parent.depth + 1 : 0;
+    const { input, row } = createRow({ ...definition, depth });
+
+    input.addEventListener("change", async () => {
+      writeSetting(definition.key, input.checked);
+      await saveSettings();
+      syncInputs();
+    });
+
+    rows.set(definition.key, { depth, input, key: definition.key, parent, row });
+    section.append(row);
+  }
+
+  function createSection(title, actions) {
     const section = document.createElement("section");
     const heading = document.createElement("h2");
     heading.textContent = title;
-    section.append(heading);
 
-    for (const definition of definitions) {
-      const { input, row } = createRow(definition);
-
-      if (definition.parent) row.classList.add("stm-row-child");
-
-      input.addEventListener("change", async () => {
-        settings[definition.key] = input.checked;
-        await saveSettings();
-        syncInputs();
-      });
-
-      inputs.set(definition.key, input);
-      rows.push({ ...definition, input, row });
-      section.append(row);
+    if (actions) {
+      const header = document.createElement("div");
+      header.className = "stm-section-header";
+      header.append(heading, actions);
+      section.append(header);
+    } else {
+      section.append(heading);
     }
 
     sectionsHost.append(section);
+
+    return section;
+  }
+
+  function buildSection({ rows: definitions, title }) {
+    const section = createSection(title);
+
+    for (const definition of definitions) addRow(section, definition);
   }
 
   // The sites are their own section rather than rows in "Où afficher le
   // réseau": that one is about which kind of map, this one is about which
   // site, and the two switches multiply rather than overlap.
   function buildSitesSection() {
-    const section = document.createElement("section");
-
-    const heading = document.createElement("h2");
-    heading.textContent = "Sites";
-    section.append(heading);
+    const section = createSection("Sites");
 
     for (const { detail, id, name } of STM_SITES) {
-      const { input, row } = createRow({ hint: detail, label: name });
-
-      input.addEventListener("change", async () => {
-        settings.sites[id] = input.checked;
-        await saveSettings();
-        syncInputs();
-      });
-
-      inputs.set(`sites.${id}`, input);
-      rows.push({ input, key: `sites.${id}`, row });
-      section.append(row);
+      addRow(section, { hint: detail, key: `sites.${id}`, label: name });
     }
-
-    sectionsHost.append(section);
   }
 
+  // The registry's three levels, drawn as three depths of switch. A level
+  // with nothing to choose between is left out rather than given a row that
+  // could only repeat what the row under it already says: one city is the
+  // whole catalogue, and a lone operator in a city is all of that city.
   function buildLinesSection() {
-    const section = document.createElement("section");
-
-    const heading = document.createElement("h2");
-    heading.textContent = "Lignes";
-
     const actions = document.createElement("div");
     actions.className = "stm-bulk";
 
@@ -208,36 +238,92 @@
       button.textContent = label;
       button.addEventListener("click", async () => {
         for (const { id } of STM_LINES) settings.lines[id] = value;
+
+        // Switching everything back on has to reach the rows above the lines
+        // too, or a system left off would go on hiding lines that now say
+        // they are on. Switching everything off needs only the lines: holding
+        // their parents off as well would leave a section of dimmed rows with
+        // nothing in it left to click.
+        if (value) {
+          for (const { id } of STM_CITIES) settings.cities[id] = true;
+          for (const { id } of STM_SYSTEMS) settings.systems[id] = true;
+        }
+
         await saveSettings();
         syncInputs();
       });
       actions.append(button);
     }
 
-    const header = document.createElement("div");
-    header.className = "stm-section-header";
-    header.append(heading, actions);
-    section.append(header);
+    const section = createSection("Lignes", actions);
 
-    for (const { color, detail, id, name } of STM_LINES) {
-      const { input, row } = createRow({
-        hint: detail,
-        label: name,
-        swatch: color
-      });
+    for (const city of STM_CITIES) {
+      const cityKey = `cities.${city.id}`;
+      const hasCityRow = STM_CITIES.length > 1;
 
-      input.addEventListener("change", async () => {
-        settings.lines[id] = input.checked;
-        await saveSettings();
-        syncInputs();
-      });
+      if (hasCityRow) addRow(section, { key: cityKey, label: city.name });
 
-      inputs.set(`lines.${id}`, input);
-      rows.push({ input, key: `lines.${id}`, row });
-      section.append(row);
+      const underCity = hasCityRow ? cityKey : undefined;
+
+      for (const system of city.systems) {
+        const systemKey = `systems.${city.id}:${system.id}`;
+        const hasSystemRow = city.systems.length > 1;
+
+        if (hasSystemRow) {
+          addRow(section, {
+            key: systemKey,
+            label: system.name,
+            parent: underCity
+          });
+        }
+
+        const underSystem = hasSystemRow ? systemKey : underCity;
+
+        for (const line of system.lines) {
+          addRow(section, {
+            hint: line.detail,
+            key: `lines.${city.id}:${system.id}:${line.id}`,
+            label: line.name,
+            parent: underSystem,
+            swatch: line.color
+          });
+        }
+      }
+    }
+  }
+
+  // The licence asks for the credit to travel with the data, and this page
+  // lists the whole catalogue rather than whatever one map happens to show.
+  function buildCredits() {
+    const host = document.querySelector("#stm-credits");
+    const parts = ["Données : "];
+    // By who is being credited rather than by operator, since one operator
+    // running into two cities is still one name to thank.
+    const credited = new Set();
+
+    for (const { attribution } of STM_SYSTEMS) {
+      if (credited.has(attribution.label)) continue;
+
+      credited.add(attribution.label);
+
+      if (parts.length > 1) parts.push(" · ");
+
+      const credit = document.createElement("a");
+      credit.href = attribution.terms;
+      credit.target = "_blank";
+      credit.rel = "noreferrer";
+      credit.textContent = attribution.label;
+      parts.push(credit);
     }
 
-    sectionsHost.append(section);
+    const license = document.createElement("a");
+    license.href = STM_DATA_LICENSE.url;
+    license.target = "_blank";
+    license.rel = "noreferrer";
+    license.textContent = STM_DATA_LICENSE.label;
+
+    parts.push(" · adaptées (", license, ")");
+    host.append(...parts);
   }
 
   function createLocationHint() {
@@ -474,28 +560,22 @@
     renderPoints();
   }
 
-  // A line switched off takes its stations with it, so the two sections have
-  // to be read together rather than one at a time.
   function syncInputs() {
     masterInput.checked = enabled;
     document.body.classList.toggle("stm-off", !enabled);
 
-    for (const { id } of STM_LINES) {
-      inputs.get(`lines.${id}`).checked = settings.lines[id] !== false;
-    }
+    for (const { input, key, parent, row } of rows.values()) {
+      input.checked = readSetting(key) !== false;
 
-    for (const { id } of STM_SITES) {
-      inputs.get(`sites.${id}`).checked = settings.sites[id] !== false;
-    }
+      // A switch drives something that only exists inside whatever it hangs
+      // under, so it is held rather than left to look as though it still does
+      // something. Any switch above it being off is enough: a line answers to
+      // its system and its city as well as to itself.
+      let held = false;
 
-    for (const { input, key, parent, row } of rows) {
-      if (key.startsWith("lines.") || key.startsWith("sites.")) continue;
-
-      input.checked = settings[key] !== false;
-
-      // A child switch drives something that only exists inside its parent,
-      // so it is held rather than left to look like it still does something.
-      const held = Boolean(parent) && settings[parent] === false;
+      for (let above = parent; above && !held; above = above.parent) {
+        held = readSetting(above.key) === false;
+      }
 
       input.disabled = held;
       row.classList.toggle("stm-row-held", held);
@@ -523,6 +603,7 @@
 
   buildLinesSection();
   buildPointsSection();
+  buildCredits();
 
   document.querySelector("#stm-reset").addEventListener("click", async () => {
     if (!confirm("Rétablir tous les réglages par défaut ?")) return;

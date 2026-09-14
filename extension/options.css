@@ -129,18 +129,23 @@ h2 {
   font-weight: 600;
 }
 
-.stm-row-child {
-  padding-left: 22px;
+/*
+ * A row that hangs under another is indented by how deep it sits, and the
+ * elbow is drawn in the gutter that indent has just opened. Depth is a number
+ * rather than a class, so a third level of switch needs no third rule here.
+ */
+.stm-row-nested {
+  padding-left: calc(var(--stm-depth) * 22px);
   position: relative;
 }
 
-.stm-row-child::before {
+.stm-row-nested::before {
   border-bottom: 1px solid var(--stm-border);
   border-left: 1px solid var(--stm-border);
   border-bottom-left-radius: 4px;
   content: "";
   height: 12px;
-  left: 4px;
+  left: calc((var(--stm-depth) - 1) * 22px + 4px);
   position: absolute;
   top: 12px;
   width: 10px;

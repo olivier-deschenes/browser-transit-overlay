@@ -26,7 +26,7 @@ npm run build
 npm audit
 ```
 
-`npm run format` in `web/` applies the project's formatting and lint fixes. Commit dependency lockfile changes with package changes. See [data/README.md](data/README.md) when updating network geometry, and regenerate `extension/metro-data.json` with its source changes.
+`npm run format` in `web/` applies the project's formatting and lint fixes. Commit dependency lockfile changes with package changes. See [data/README.md](data/README.md) when updating network geometry, and regenerate `extension/networks/` with its source changes.
 
 ## Project conventions
 

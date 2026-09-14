@@ -5,9 +5,10 @@ import vm from 'node:vm';
 
 const source = readFileSync(new URL('../extension/sites.js', import.meta.url), 'utf8');
 function page(hostname, pathname = '/', ancestorOrigins = []) {
-  const context = vm.createContext({ URL, location: { hostname, pathname, ancestorOrigins } });
+  const location = { hostname, pathname, ancestorOrigins, href: `https://${hostname}${pathname}`, assign(value) { location.assigned = value; } };
+  const context = vm.createContext({ URL, location });
   vm.runInContext(source, context);
-  return vm.runInContext('({ site: stmSiteForPage(), parseLeaflet: stmParseLeafletTile, parseGoogle: stmParseGoogleTile })', context);
+  return { location, ...vm.runInContext('({ site: stmSiteForPage(), parseLeaflet: stmParseLeafletTile, parseGoogle: stmParseGoogleTile })', context) };
 }
 
 test('site matching respects hostname boundaries', () => {
@@ -34,6 +35,22 @@ test('Marketplace recognises rental searches and listings', () => {
 test('Centris recognises French and English listing routes', () => {
   assert.equal(page('www.centris.ca', '/fr/condo~a-vendre~montreal-ile').site.isCategoryPage(), true);
   assert.equal(page('www.centris.ca', '/en/condos~for-sale~montreal/12345678').site.isItemPage(), true);
+});
+
+// The adapter knows where in a Marketplace path the city goes; which city to
+// write there is the registry's to say, and the button's label follows it.
+test('the Marketplace shortcut is written from the city it is given', () => {
+  const city = { name: 'Montréal', marketplaceSlug: 'montreal' };
+  const search = page('www.facebook.com', '/marketplace/109459475742/propertyrentals/');
+  assert.equal(search.site.shortcut.label(city), 'Voir Montréal');
+  assert.equal(search.site.shortcut.applies(city), true);
+  search.site.shortcut.run(city);
+  assert.equal(search.location.assigned, 'https://www.facebook.com/marketplace/montreal/propertyrentals/');
+
+  // A city Marketplace has no name for has nowhere to be sent, and a single
+  // listing has no category path to rewrite.
+  assert.equal(search.site.shortcut.applies({ name: 'Ailleurs' }), false);
+  assert.equal(page('www.facebook.com', '/marketplace/item/123456/').site.shortcut.applies(city), false);
 });
 
 test('tile parsers obtain the zoom, position, and native tile size', () => {

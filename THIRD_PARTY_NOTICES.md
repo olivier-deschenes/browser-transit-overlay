@@ -21,9 +21,9 @@ Source repository: [fb-marketplace-metro-map](https://github.com/olivier-deschen
 
 ## Adaptations and redistribution
 
-`data/scripts/build_metro_data.py` selects métro routes, converts the STM coordinate reference system to WGS 84, combines station records, removes duplicate track segments, simplifies lines with a two-metre tolerance, rounds coordinates, and combines the result with REM geometry in `extension/metro-data.json`.
+`data/scripts/build_networks.py`, with the city generators under `data/scripts/cities/`, selects métro routes, converts the STM coordinate reference system to WGS 84, combines station records, removes duplicate track segments, simplifies lines with a two-metre tolerance, rounds coordinates, and writes the result with REM geometry to `extension/networks/montreal.json`.
 
-Attribution: **Contains modified STM and Réseau express métropolitain data, licensed under CC BY 4.0.** The JSON includes its source and licence links, and the extension displays attribution on its maps and settings page. Keep these notices when redistributing the data. Packaged extensions also include the CC BY 4.0 text as `LICENSE-DATA.txt`.
+Attribution: **Contains modified STM and Réseau express métropolitain data, licensed under CC BY 4.0.** Each geometry file carries this notice, `extension/networks.js` holds the source and licence links, and the extension displays attribution on its maps and settings page. Keep these notices when redistributing the data. Packaged extensions also include the CC BY 4.0 text as `LICENSE-DATA.txt`.
 
 These are bundled snapshots; their original download dates were not recorded. They do not guarantee current service, routing, or station availability. Neither transit provider endorses this project.
 

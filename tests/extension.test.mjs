@@ -7,6 +7,17 @@ const root = new URL('../extension/', import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), 'utf8');
 const manifest = JSON.parse(read('manifest.json'));
 
+// A web-accessible resource may be a pattern rather than a path: which cities
+// ship is the registry's to decide, so the manifest names the folder instead
+// of listing them.
+function resourceExists(resource) {
+  if (!resource.includes('*')) return existsSync(new URL(resource, root));
+  const slash = resource.lastIndexOf('/');
+  const directory = new URL(resource.slice(0, slash + 1), root);
+  const name = new RegExp(`^${resource.slice(slash + 1).replaceAll('.', '\\.').replaceAll('*', '.*')}$`);
+  return existsSync(directory) && readdirSync(directory).some((entry) => name.test(entry));
+}
+
 test('manifest keeps permissions scoped to supported sites', () => {
   assert.equal(manifest.manifest_version, 3);
   assert.deepEqual(manifest.permissions, ['storage']);
@@ -29,7 +40,18 @@ test('all manifest resources and options assets exist', () => {
   for (const match of read('options.html').matchAll(/(?:src|href)="([^"#]+)"/g)) {
     if (!match[1].startsWith('https://')) resources.push(match[1]);
   }
-  for (const path of resources) assert.ok(existsSync(new URL(path, root)), path);
+  for (const path of resources) assert.ok(resourceExists(path), path);
+});
+
+// The registry is what the settings are derived from, synchronously and at
+// load, so every place that reads a setting has to have run it first.
+test('the registry is loaded ahead of everything that reads it', () => {
+  assert.match(read('background.js'), /^importScripts\("networks\.js", "settings\.js"\);/);
+  assert.ok(read('options.html').indexOf('networks.js') < read('options.html').indexOf('settings.js'));
+  for (const script of manifest.content_scripts) {
+    if (!script.js.includes('settings.js')) continue;
+    assert.ok(script.js.indexOf('networks.js') < script.js.indexOf('settings.js'), script.js.join(' '));
+  }
 });
 
 test('every extension script parses as a classic browser script', () => {
@@ -38,31 +60,14 @@ test('every extension script parses as a classic browser script', () => {
   }
 });
 
-test('bundled geometry retains attribution and valid stations and paths', () => {
-  const data = JSON.parse(read('metro-data.json'));
-  assert.equal(data.license.terms, 'https://creativecommons.org/licenses/by/4.0/');
-  assert.match(data.license.notice, /STM/);
-  assert.match(data.license.notice, /métropolitain/);
-  const lineIds = new Set(data.lines.map(({ id }) => id));
-  for (const id of ['1', '2', '4', '5']) assert.ok(lineIds.has(id));
-  assert.ok(data.stations.length > 0);
-  function checkCoordinates(point) {
-    assert.equal(point.length, 2);
-    const [longitude, latitude] = point;
-    assert.ok(Number.isFinite(longitude) && Math.abs(longitude) <= 180);
-    assert.ok(Number.isFinite(latitude) && Math.abs(latitude) <= 90);
-  }
-  for (const line of data.lines) {
-    assert.match(line.color, /^#[0-9a-f]{6}$/i);
-    assert.ok(line.paths.length > 0);
-    for (const path of line.paths) {
-      assert.ok(path.length >= 2);
-      path.forEach(checkCoordinates);
-    }
-  }
-  for (const station of data.stations) {
-    assert.ok(station.name.trim());
-    checkCoordinates(station.coordinates);
-    for (const line of station.lines) assert.ok(line === 'REM' || lineIds.has(line));
+// The licence asks for the notice to travel with the data, so it rides in the
+// geometry file rather than only in the extension around it. Everything else
+// about these files — which lines are in them, where they sit, who to credit —
+// is checked against the registry in networks.test.mjs.
+test('bundled geometry keeps the notice the licence asks for', () => {
+  for (const name of readdirSync(new URL('networks/', root))) {
+    const data = JSON.parse(read(`networks/${name}`));
+    assert.match(data.notice, /STM/, name);
+    assert.match(data.notice, /métropolitain/, name);
   }
 });

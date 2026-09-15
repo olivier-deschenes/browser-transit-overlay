@@ -51,17 +51,45 @@ The ZIP is written to `dist/metro-marketplace-<version>.zip`, with `manifest.jso
 
 For website build and deployment details, see [web/README.md](web/README.md). To regenerate the bundled transit network, see [data/README.md](data/README.md). Both local development and CI work without Cloudflare credentials.
 
+## How transit networks fit together
+
+Networks are organised by city. Every line has a three-part id, such as `montreal:stm:1` (city, operator, line), and that id is shared from the data sources to the saved switches.
+
+```text
+data/stm_sig/, rem_data/            source shapefiles and GTFS
+        │
+data/scripts/cities/<city>.py       maps feed routes to public line ids
+        │  data/scripts/build_networks.py  (uses transit_geometry.py)
+        ▼
+extension/networks/<city>.json      geometry only: ids, paths, stations, notice
+        ▲
+        │  fetched by content.js for the city the map is showing
+extension/networks.js               registry: names, colours, bounds, attribution
+        │
+        ├─ settings.js / options.js  a switch for each city, operator, and line
+        └─ content.js + sites.js     draws lines on Marketplace, Centris, and Local Logic maps
+```
+
+- **[`data/scripts/cities/`](data/scripts/cities/)** is the only place where GTFS route ids or shapefile route ids appear. [`montreal.py`](data/scripts/cities/montreal.py) combines the STM métro and the REM into one city.
+- **[`data/scripts/build_networks.py`](data/scripts/build_networks.py)** writes one file per city in [`CITIES`](data/scripts/cities/__init__.py) to [`extension/networks/`](extension/networks/). Shared simplification, deduplication, and rounding live in [`transit_geometry.py`](data/scripts/transit_geometry.py).
+- **[`extension/networks.js`](extension/networks.js)** declares each city's operators, lines, colours, map bounds, and data file. Geometry files never repeat this information.
+- **[`extension/settings.js`](extension/settings.js)** gets its defaults from the registry, so a new city, operator, or line is switched on without a settings migration. [`options.js`](extension/options.js) builds the settings page from the same registry.
+- **[`extension/content.js`](extension/content.js)** chooses the city whose bounds contain the viewport, loads its geometry, and draws it through the site adapter selected in [`sites.js`](extension/sites.js).
+- **[`tests/networks.test.mjs`](tests/networks.test.mjs)** checks that the registry and generated geometry list the same lines, and that each city's bounds contain everything it draws.
+
+To add a city, follow [Add a city](data/README.md#add-a-city). The data licences for each network are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ## Repository layout
 
 | Path | Purpose |
 | --- | --- |
-| `extension/` | Manifest V3 extension, network registry, settings, site adapters, and bundled geometry |
-| `web/` | TanStack Start / React / Tailwind support and privacy website |
-| `data/` | STM source files and the per-city network generators |
-| `rem_data/` | REM GTFS source subset and original licence |
-| `scripts/` | Reproducible extension packaging |
-| `tests/` | Extension behaviour and resource checks |
-| `docs/` | Screenshot and release instructions |
+| [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [settings](extension/settings.js), [site adapters](extension/sites.js), and [bundled geometry](extension/networks/) |
+| [`web/`](web/) | TanStack Start / React / Tailwind support and privacy website ([guide](web/README.md)) |
+| [`data/`](data/) | STM source files and the [per-city network generators](data/scripts/cities/) ([guide](data/README.md)) |
+| [`rem_data/`](rem_data/) | REM GTFS source subset and original licence |
+| [`scripts/`](scripts/) | Reproducible [extension packaging](scripts/package_extension.py) |
+| [`tests/`](tests/) | Extension behaviour, [network registry](tests/networks.test.mjs), and resource checks |
+| [`docs/`](docs/) | Screenshot and [release instructions](docs/RELEASING.md) |
 
 ## Contributing and releases
 

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Métro STM et REM pour Marketplace et Centris",
-  "version": "0.4.0",
-  "description": "Affiche les lignes et stations du métro de Montréal et du REM sur les cartes de logements de Facebook Marketplace et de Centris.",
+  "name": "Transport en commun pour Marketplace et Centris",
+  "version": "0.5.0",
+  "description": "Affiche le métro de Montréal, le REM et la TTC de Toronto sur les cartes de logements de Facebook Marketplace et de Centris.",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",

@@ -13,12 +13,12 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Métro STM et REM pour Marketplace',
+        title: 'Transport en commun pour Marketplace et Centris',
       },
       {
         name: 'description',
         content:
-          'Une extension Chrome qui affiche le métro de Montréal et le REM sur les cartes de logements de Facebook Marketplace.',
+          'Une extension Chrome qui affiche le métro de Montréal, le REM et le réseau de la TTC sur les cartes de logements de Facebook Marketplace.',
       },
     ],
     links: [

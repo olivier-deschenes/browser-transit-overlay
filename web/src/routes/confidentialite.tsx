@@ -5,8 +5,7 @@ export const Route = createFileRoute('/confidentialite')({
   head: () => ({
     meta: [
       {
-        title:
-          'Politique de confidentialité — Métro sur Marketplace et Centris',
+        title: 'Politique de confidentialité — Transport en commun',
       },
     ],
   }),
@@ -20,7 +19,7 @@ function Privacy() {
       </p>
       <h1>Politique de confidentialité</h1>
       <p>
-        L’extension Métro STM et REM pour Marketplace et Centris affiche le
+        L’extension Transport en commun pour Marketplace et Centris affiche le
         réseau de transport sur les cartes de logements et permet d’y ajouter
         vos points de repère. Elle enregistre vos réglages et vos points
         localement dans votre navigateur.

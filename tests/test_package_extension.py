@@ -24,7 +24,7 @@ class PackageTests(unittest.TestCase):
                 self.assertIsNone(archive.testzip())
                 names = set(archive.namelist())
                 manifest = json.loads(archive.read("manifest.json"))
-                self.assertEqual(output.name, f"metro-marketplace-{manifest['version']}.zip")
+                self.assertEqual(output.name, f"browser-transit-overlay-{manifest['version']}.zip")
                 self.assertIn("LICENSE", names)
                 self.assertIn("LICENSE-DATA.txt", names)
                 self.assertIn("THIRD_PARTY_NOTICES.md", names)

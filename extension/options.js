@@ -48,9 +48,9 @@
           label: "Avis « Réseau hors champ »"
         },
         {
-          hint: "Raccourci vers les logements de la ville du réseau affiché. Marketplace seulement.",
+          hint: "Raccourcis vers les logements de chaque ville prise en charge. Marketplace seulement.",
           key: "cityShortcut",
-          label: "Bouton « Voir la ville »",
+          label: "Boutons « Voir les villes »",
           parent: "networkStatus"
         },
         {
@@ -296,10 +296,20 @@
   // lists the whole catalogue rather than whatever one map happens to show.
   function buildCredits() {
     const host = document.querySelector("#stm-credits");
-    const parts = ["Données : "];
+    const parts = ["Données adaptées : "];
     // By who is being credited rather than by operator, since one operator
     // running into two cities is still one name to thank.
     const credited = new Set();
+
+    const creditLink = (href, label) => {
+      const link = document.createElement("a");
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.textContent = label;
+
+      return link;
+    };
 
     for (const { attribution } of STM_SYSTEMS) {
       if (credited.has(attribution.label)) continue;
@@ -308,21 +318,16 @@
 
       if (parts.length > 1) parts.push(" · ");
 
-      const credit = document.createElement("a");
-      credit.href = attribution.terms;
-      credit.target = "_blank";
-      credit.rel = "noreferrer";
-      credit.textContent = attribution.label;
-      parts.push(credit);
+      // The licence rides with the operator it covers: this page lists the
+      // whole catalogue, and the catalogue spans more than one set of terms.
+      parts.push(
+        creditLink(attribution.terms, attribution.label),
+        " (",
+        creditLink(attribution.license.url, attribution.license.label),
+        ")"
+      );
     }
 
-    const license = document.createElement("a");
-    license.href = STM_DATA_LICENSE.url;
-    license.target = "_blank";
-    license.rel = "noreferrer";
-    license.textContent = STM_DATA_LICENSE.label;
-
-    parts.push(" · adaptées (", license, ")");
     host.append(...parts);
   }
 

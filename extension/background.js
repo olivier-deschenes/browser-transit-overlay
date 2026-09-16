@@ -12,8 +12,8 @@ async function paintAction(enabled) {
     chrome.action.setBadgeBackgroundColor({ color: "#6b7280" }),
     chrome.action.setTitle({
       title: enabled
-        ? "Métro STM et REM — activé (cliquer pour désactiver)"
-        : "Métro STM et REM — désactivé (cliquer pour activer)"
+        ? "Transport en commun — activé (cliquer pour désactiver)"
+        : "Transport en commun — désactivé (cliquer pour activer)"
     })
   ]);
 }

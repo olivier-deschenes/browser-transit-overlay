@@ -4,7 +4,7 @@
 
 1. Update `extension/manifest.json` when publishing a new extension version.
 2. Run the automated and live-site checks in [CONTRIBUTING.md](../CONTRIBUTING.md).
-3. Run `python scripts/package_extension.py`. It packages only the approved runtime files, MIT licence, and transit-data notices into `dist/metro-marketplace-<version>.zip`.
+3. Run `python scripts/package_extension.py`. It packages only the approved runtime files, MIT licence, and transit-data notices into `dist/browser-transit-overlay-<version>.zip`.
 4. Extract that archive into a temporary directory and load it unpacked in Chrome for a final check. Verify the settings page, icons, transit data, and attribution.
 5. Use the generated archive for the Chrome Web Store or a GitHub release. Do not commit build ZIPs to source control.
 

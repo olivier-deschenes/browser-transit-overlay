@@ -5,7 +5,7 @@ export const Route = createFileRoute('/assistance')({
   head: () => ({
     meta: [
       {
-        title: 'Assistance — Métro sur Marketplace et Centris',
+        title: 'Assistance — Transport en commun',
       },
     ],
   }),

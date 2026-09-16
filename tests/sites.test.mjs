@@ -38,11 +38,13 @@ test('Centris recognises French and English listing routes', () => {
 });
 
 // The adapter knows where in a Marketplace path the city goes; which city to
-// write there is the registry's to say, and the button's label follows it.
+// write there is the registry's to say. The label names the row the buttons
+// sit in rather than any one city, because every city that applies() accepts
+// gets a button carrying its own name.
 test('the Marketplace shortcut is written from the city it is given', () => {
   const city = { name: 'Montréal', marketplaceSlug: 'montreal' };
   const search = page('www.facebook.com', '/marketplace/109459475742/propertyrentals/');
-  assert.equal(search.site.shortcut.label(city), 'Voir Montréal');
+  assert.equal(search.site.shortcut.label, 'Voir les logements à');
   assert.equal(search.site.shortcut.applies(city), true);
   search.site.shortcut.run(city);
   assert.equal(search.location.assigned, 'https://www.facebook.com/marketplace/montreal/propertyrentals/');

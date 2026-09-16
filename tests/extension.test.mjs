@@ -61,13 +61,16 @@ test('every extension script parses as a classic browser script', () => {
 });
 
 // The licence asks for the notice to travel with the data, so it rides in the
-// geometry file rather than only in the extension around it. Everything else
-// about these files — which lines are in them, where they sit, who to credit —
+// geometry file rather than only in the extension around it. What the notice
+// has to say is the publisher's to dictate and the city module's to write
+// down, and no two publishers word it alike; what every one of them has to
+// admit to is the adaptation these files have all been through. Everything
+// else about them — which lines are in them, where they sit, who to credit —
 // is checked against the registry in networks.test.mjs.
 test('bundled geometry keeps the notice the licence asks for', () => {
   for (const name of readdirSync(new URL('networks/', root))) {
-    const data = JSON.parse(read(`networks/${name}`));
-    assert.match(data.notice, /STM/, name);
-    assert.match(data.notice, /métropolitain/, name);
+    const { notice } = JSON.parse(read(`networks/${name}`));
+    assert.ok(notice.trim().length > 20, name);
+    assert.match(notice, /modifi/i, name);
   }
 });

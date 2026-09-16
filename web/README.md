@@ -1,6 +1,6 @@
 # Support and privacy website
 
-The French-language website for the Métro STM et REM extension uses TanStack Start, TanStack Router, React, and Tailwind CSS. It serves `/`, `/assistance`, and `/confidentialite` and prerenders the pages for deployment to Cloudflare Workers.
+The French-language website for the Transport en commun extension uses TanStack Start, TanStack Router, React, and Tailwind CSS. It serves `/`, `/assistance`, and `/confidentialite` and prerenders the pages for deployment to Cloudflare Workers.
 
 ## Local development
 

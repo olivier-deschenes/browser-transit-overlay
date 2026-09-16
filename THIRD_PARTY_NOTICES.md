@@ -2,7 +2,7 @@
 
 The root MIT licence covers this project's original code and documentation. It does not replace the licences of third-party data, dependencies, branding, or imagery.
 
-Source repository: [fb-marketplace-metro-map](https://github.com/olivier-deschenes/fb-marketplace-metro-map). File paths below refer to that repository; release ZIPs include the data licence as `LICENSE-DATA.txt`.
+Source repository: [browser-transit-overlay](https://github.com/olivier-deschenes/browser-transit-overlay). File paths below refer to that repository; release ZIPs include the data licence as `LICENSE-DATA.txt`.
 
 ## STM transit data
 
@@ -19,16 +19,29 @@ Source repository: [fb-marketplace-metro-map](https://github.com/olivier-deschen
 - Publisher: [Réseau express métropolitain](https://rem.info/).
 - The supplied licence text is preserved in [`rem_data/__Licence.txt`](rem_data/__Licence.txt): Creative Commons Attribution 4.0 International.
 
+## TTC transit data
+
+`data/ttc_gtfs/` contains the route, trip, shape, stop, and stop time files used from the **Toronto Transit Commission (TTC)** GTFS dataset, published by the City of Toronto.
+
+- Source: [Merged GTFS — TTC Routes and Schedules](https://open.toronto.ca/dataset/merged-gtfs-ttc-routes-and-schedules/) on the City of Toronto Open Data Portal, also linked in `data/ttc_gtfs/terms.txt`.
+- Licence: [Open Government Licence – Toronto](https://www.toronto.ca/city-government/data-research-maps/open-data/open-data-licence/), which the portal applies to the data it publishes.
+- That licence asks for one attribution statement in particular, and `extension/networks/toronto.json` carries it word for word.
+
 ## Adaptations and redistribution
 
-`data/scripts/build_networks.py`, with the city generators under `data/scripts/cities/`, selects métro routes, converts the STM coordinate reference system to WGS 84, combines station records, removes duplicate track segments, simplifies lines with a two-metre tolerance, rounds coordinates, and writes the result with REM geometry to `extension/networks/montreal.json`.
+`data/scripts/build_networks.py`, with the city generators under `data/scripts/cities/`, selects rapid transit routes, converts the STM coordinate reference system to WGS 84, combines station records, removes duplicate track segments, simplifies lines with a two-metre tolerance, rounds coordinates, and writes one file per city to `extension/networks/`.
 
-Attribution: **Contains modified STM and Réseau express métropolitain data, licensed under CC BY 4.0.** Each geometry file carries this notice, `extension/networks.js` holds the source and licence links, and the extension displays attribution on its maps and settings page. Keep these notices when redistributing the data. Packaged extensions also include the CC BY 4.0 text as `LICENSE-DATA.txt`.
+Attribution, one line per city, and the line each city's geometry file carries:
 
-These are bundled snapshots; their original download dates were not recorded. They do not guarantee current service, routing, or station availability. Neither transit provider endorses this project.
+- `montreal.json`: **Contains modified STM and Réseau express métropolitain data, licensed under CC BY 4.0.**
+- `toronto.json`: **Contains information licensed under the Open Government Licence – Toronto, modified.**
+
+`extension/networks.js` holds the source and licence links for each operator, and the extension displays that attribution on its maps and settings page. Keep these notices when redistributing the data. Packaged extensions also include the CC BY 4.0 text as `LICENSE-DATA.txt`; the Open Government Licence – Toronto is linked rather than bundled, which is what it asks for.
+
+These are bundled snapshots. The Montréal inputs' original download dates were not recorded; the Toronto feed was downloaded on 15 September 2026. They do not guarantee current service, routing, or station availability. No transit provider endorses this project.
 
 ## Dependencies and images
 
 JavaScript and Python dependencies retain their own licences, available in their distributions. The extension itself has no third-party runtime library dependencies.
 
-Screenshots illustrate the extension on third-party websites. The underlying map imagery, website interface, and third-party marks remain subject to their owners' rights and terms; the MIT licence does not grant rights to those elements. Facebook, Centris, Local Logic, STM, and REM names identify supported services or data sources and do not imply affiliation or endorsement.
+Screenshots illustrate the extension on third-party websites. The underlying map imagery, website interface, and third-party marks remain subject to their owners' rights and terms; the MIT licence does not grant rights to those elements. Facebook, Centris, Local Logic, STM, REM, and TTC names identify supported services or data sources and do not imply affiliation or endorsement.

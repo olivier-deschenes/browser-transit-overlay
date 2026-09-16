@@ -1,0 +1,6 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+1,1,1,Yonge-University Line,,1,,D5C82B,000000
+2,1,2,Bloor-Danforth Line,,1,,008000,FFFFFF
+4,1,4,Sheppard Line,,1,,B300B3,FFFFFF
+5,1,5,Eglinton Line,,0,,FF8000,FFFFFF
+6,1,6,Finch West Line,,0,,808080,FFFFFF

@@ -45,7 +45,7 @@
   let mapTools;
   let networkStatus;
   let networkStatusText;
-  let showNetworkButton;
+  let cityShortcuts;
   let networkState;
   let customPanel;
   let customPointGroup;
@@ -146,34 +146,69 @@
 
     networkStatus.hidden = false;
 
-    if (showNetworkButton) {
-      showNetworkButton.hidden =
-        state !== "outside" || !site.shortcut.applies(activeCity);
+    if (cityShortcuts) {
+      if (state === "outside") renderCityShortcuts();
+      else cityShortcuts.hidden = true;
     }
 
     networkStatusText.textContent =
       state === "loading" ? "Chargement du réseau…" : "Réseau hors champ";
   }
 
+  // Every city that can be reached from this page, a button apiece, rather
+  // than only the one the overlay happens to be holding: a map that has
+  // wandered off the network is exactly where someone needs to be told what
+  // else there is. The row is rebuilt each time the notice is shown rather
+  // than once with the panel it sits in, because both of the things that
+  // decide its contents — the route applies() reads and the city switches —
+  // change under a map that is never rebuilt.
+  function renderCityShortcuts() {
+    const cities = STM_CITIES.filter(
+      (city) =>
+        settings.cities[city.id] !== false && site.shortcut.applies(city)
+    );
+
+    cityShortcuts.replaceChildren();
+    cityShortcuts.hidden = cities.length === 0;
+
+    if (cityShortcuts.hidden) return;
+
+    const lead = document.createElement("span");
+    lead.className = "stm-shortcut-lead";
+    lead.textContent = site.shortcut.label;
+    cityShortcuts.append(lead);
+
+    for (const city of cities) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = city.name;
+      button.addEventListener("click", () => site.shortcut.run(city));
+      cityShortcuts.append(button);
+    }
+  }
+
   function buildNetworkStatus() {
     networkStatus = document.createElement("div");
     networkStatus.id = "stm-network-status";
-    networkStatus.setAttribute("role", "status");
-    networkStatus.setAttribute("aria-live", "polite");
 
+    // The message is the part that changes on its own, so it is the part that
+    // announces itself. The buttons under it are controls, and they are
+    // rebuilt every time the notice is shown: inside the live region that
+    // rebuild would be read out as news each time the map wandered off.
     networkStatusText = document.createElement("span");
+    networkStatusText.setAttribute("role", "status");
+    networkStatusText.setAttribute("aria-live", "polite");
     networkStatus.append(networkStatusText);
 
     // Only Marketplace has somewhere to jump to: its category path names the
     // city, so it can be rewritten. A Centris search is an opaque payload.
     if (settings.cityShortcut && site.shortcut) {
-      showNetworkButton = document.createElement("button");
-      showNetworkButton.type = "button";
-      showNetworkButton.textContent = site.shortcut.label(activeCity);
-      showNetworkButton.addEventListener("click", () =>
-        site.shortcut.run(activeCity)
-      );
-      networkStatus.append(showNetworkButton);
+      cityShortcuts = document.createElement("div");
+      cityShortcuts.id = "stm-network-cities";
+      cityShortcuts.hidden = true;
+      cityShortcuts.setAttribute("role", "group");
+      cityShortcuts.setAttribute("aria-label", site.shortcut.label);
+      networkStatus.append(cityShortcuts);
     }
 
     mapTools.append(networkStatus);
@@ -518,18 +553,20 @@
       credits.map(({ attribution: { label } }) => label)
     )}, adaptées pour cette extension non officielle.`;
 
-    const parts = ["Données : "];
+    // Each operator beside the licence its own data came out under, rather
+    // than one licence at the end standing in for all of them: two operators
+    // on one map need not be publishing on the same terms.
+    const parts = ["Données adaptées : "];
 
     for (const { attribution: credit } of credits) {
       if (parts.length > 1) parts.push(" · ");
-      parts.push(creditLink(credit.terms, credit.label));
+      parts.push(
+        creditLink(credit.terms, credit.label),
+        " (",
+        creditLink(credit.license.url, credit.license.label),
+        ")"
+      );
     }
-
-    parts.push(
-      " · adaptées (",
-      creditLink(STM_DATA_LICENSE.url, STM_DATA_LICENSE.label),
-      ")"
-    );
 
     attribution.append(...parts);
     map.append(attribution);
@@ -1489,7 +1526,7 @@
     mapTools = undefined;
     networkStatus = undefined;
     networkStatusText = undefined;
-    showNetworkButton = undefined;
+    cityShortcuts = undefined;
     networkState = undefined;
     customPanel = undefined;
     customPointGroup = undefined;

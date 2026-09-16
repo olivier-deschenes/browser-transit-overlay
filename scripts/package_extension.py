@@ -67,7 +67,7 @@ def package_extension(root=ROOT, output_directory=None):
             raise ValueError(f"Release file outside repository: {source}")
 
     output_directory.mkdir(parents=True, exist_ok=True)
-    output = output_directory / f"metro-marketplace-{version}.zip"
+    output = output_directory / f"browser-transit-overlay-{version}.zip"
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
         for name, source in sorted(sources.items()):
             info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))

@@ -1,0 +1,2 @@
+https://open.toronto.ca/dataset/merged-gtfs-ttc-routes-and-schedules/
+https://www.toronto.ca/city-government/data-research-maps/open-data/open-data-licence/

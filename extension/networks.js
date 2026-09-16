@@ -24,13 +24,20 @@
 // from it synchronously, at load, in a service worker that reads it through
 // importScripts. Geometry is fetched; identity cannot be.
 
-// The licence the bundled data is published under, named beside the credit
-// because that is what the licence asks the credit to say. It is one constant
-// rather than one per operator only for as long as every bundled network is on
-// these terms; an operator arriving on other terms would carry its own.
-const STM_DATA_LICENSE = {
+// The licences the bundled data is published under, named beside the credit
+// because that is what each of these licences asks the credit to say. One
+// operator's terms are not another's: Montréal's two publish on CC BY 4.0,
+// while the TTC's feed comes through the City of Toronto's open data portal
+// and carries the licence that portal puts on everything it hands out. Which
+// one covers a network is therefore the operator's to say, below.
+const STM_CC_BY_4 = {
   label: "CC BY 4.0",
   url: "https://creativecommons.org/licenses/by/4.0/"
+};
+
+const STM_OGL_TORONTO = {
+  label: "Open Government Licence – Toronto",
+  url: "https://www.toronto.ca/city-government/data-research-maps/open-data/open-data-licence/"
 };
 
 const STM_CITIES = [
@@ -64,6 +71,7 @@ const STM_CITIES = [
         name: "Métro de Montréal",
         attribution: {
           label: "STM",
+          license: STM_CC_BY_4,
           terms: "https://www.stm.info/en/about/developers/terms-use"
         },
         lines: [
@@ -81,7 +89,11 @@ const STM_CITIES = [
       {
         id: "rem",
         name: "REM",
-        attribution: { label: "REM", terms: "https://rem.info/fr" },
+        attribution: {
+          label: "REM",
+          license: STM_CC_BY_4,
+          terms: "https://rem.info/fr"
+        },
         // One line rather than three. The REM arrives as several GTFS routes
         // that share a trunk, and the build collapses them, so there is
         // nothing left out here to explain: taking one away on its own would
@@ -92,6 +104,74 @@ const STM_CITIES = [
             detail: "Réseau express métropolitain",
             id: "a",
             name: "REM"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "toronto",
+    name: "Toronto",
+
+    origin: [-79.4, 43.7],
+
+    // The lines stop well short of this box on every side, which is the
+    // point: a search that has wandered out past Mississauga or Markham is
+    // still a search this network answers.
+    bounds: [
+      [-79.95, 43.4],
+      [-78.95, 44.1]
+    ],
+
+    data: "networks/toronto.json",
+
+    marketplaceSlug: "toronto",
+
+    // One operator, so the settings page hangs these lines straight off
+    // Toronto rather than giving them a row of their own to sit under.
+    systems: [
+      {
+        id: "ttc",
+        name: "Métro et train léger de Toronto",
+        attribution: {
+          label: "TTC",
+          license: STM_OGL_TORONTO,
+          terms:
+            "https://open.toronto.ca/dataset/merged-gtfs-ttc-routes-and-schedules/"
+        },
+        // Colours as the feed declares them, the same way the REM's came
+        // from its own. The gap where 3 should be is the Scarborough RT,
+        // which stopped running in 2023 and is no longer in the feed.
+        lines: [
+          {
+            color: "#D5C82B",
+            detail: "Métro",
+            id: "1",
+            name: "Ligne 1 Yonge-University"
+          },
+          {
+            color: "#008000",
+            detail: "Métro",
+            id: "2",
+            name: "Ligne 2 Bloor-Danforth"
+          },
+          {
+            color: "#B300B3",
+            detail: "Métro",
+            id: "4",
+            name: "Ligne 4 Sheppard"
+          },
+          {
+            color: "#FF8000",
+            detail: "Train léger",
+            id: "5",
+            name: "Ligne 5 Eglinton"
+          },
+          {
+            color: "#808080",
+            detail: "Train léger",
+            id: "6",
+            name: "Ligne 6 Finch West"
           }
         ]
       }

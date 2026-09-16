@@ -518,18 +518,20 @@
       credits.map(({ attribution: { label } }) => label)
     )}, adaptées pour cette extension non officielle.`;
 
-    const parts = ["Données : "];
+    // Each operator beside the licence its own data came out under, rather
+    // than one licence at the end standing in for all of them: two operators
+    // on one map need not be publishing on the same terms.
+    const parts = ["Données adaptées : "];
 
     for (const { attribution: credit } of credits) {
       if (parts.length > 1) parts.push(" · ");
-      parts.push(creditLink(credit.terms, credit.label));
+      parts.push(
+        creditLink(credit.terms, credit.label),
+        " (",
+        creditLink(credit.license.url, credit.license.label),
+        ")"
+      );
     }
-
-    parts.push(
-      " · adaptées (",
-      creditLink(STM_DATA_LICENSE.url, STM_DATA_LICENSE.label),
-      ")"
-    );
 
     attribution.append(...parts);
     map.append(attribution);

@@ -8,7 +8,7 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8');
 
 const context = vm.createContext({});
 vm.runInContext(read('networks.js'), context);
-const registry = vm.runInContext('({ STM_CITIES, STM_DATA_LICENSE, STM_DEFAULT_CITY_ID, STM_LINES, STM_SYSTEMS, stmCityAt, stmCityById, stmLineById })', context);
+const registry = vm.runInContext('({ STM_CITIES, STM_DEFAULT_CITY_ID, STM_LINES, STM_SYSTEMS, stmCityAt, stmCityById, stmLineById })', context);
 const { STM_CITIES, STM_LINES, STM_SYSTEMS } = registry;
 // The registry is evaluated in its own realm, so anything it maps or filters
 // comes back as that realm's array. Sorted copies made here are this one's.
@@ -41,12 +41,16 @@ test('every line is named once, with a colour and somebody to credit', () => {
     assert.ok(line.name.trim(), line.id);
     assert.match(line.color, /^#[0-9a-f]{6}$/i, line.id);
   }
+  // Nothing is drawn without a name to credit and the terms that name was
+  // handed out under. The licence sits on the operator rather than on the
+  // catalogue, because the catalogue spans more than one set of terms.
   for (const system of STM_SYSTEMS) {
     assert.ok(system.name.trim(), system.id);
     assert.ok(system.attribution.label.trim(), system.id);
     assert.match(system.attribution.terms, /^https:\/\//, system.id);
+    assert.ok(system.attribution.license.label.trim(), system.id);
+    assert.match(system.attribution.license.url, /^https:\/\//, system.id);
   }
-  assert.match(registry.STM_DATA_LICENSE.url, /^https:\/\//);
 });
 
 // The registry names the lines and the build draws them. Either one carrying a

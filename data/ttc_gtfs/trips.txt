@@ -1,0 +1,11 @@
+trip_id,route_id,service_id,trip_headsign,trip_short_name,direction_id,block_id,shape_id,wheelchair_accessible
+134936046,1,4,Yonge-University Line towards Vaughan Metropolitan Centre Station,,0,2240437,1124986,1
+134936304,1,4,Yonge-University Line towards Finch Station,,1,2240410,1125246,1
+134936560,2,4,Bloor-Danforth Line towards Kennedy Station,,0,2240486,1125423,1
+134936812,2,4,Bloor-Danforth Line towards Kipling Station,,1,2240497,1125629,1
+134937037,4,4,Sheppard Line towards Don Mills Station,,0,2240521,1125745,1
+134937263,4,4,Sheppard Line towards Sheppard-Yonge Station,,1,2240521,1125751,1
+134937298,5,4,Eglinton Line towards Kennedy Station,,0,2240112,1125765,1
+134937529,5,4,Eglinton Line towards Mount Dennis Station,,1,2240117,1125772,1
+134937661,6,4,Finch West Line towards Finch West Station,,0,2240175,1125786,1
+134937789,6,4,Finch West Line towards Humber College,,1,2240166,1125794,1

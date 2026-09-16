@@ -43,9 +43,10 @@ Automated tests cover parsing, site selection, resources, and packaging. They ca
 1. Marketplace rental search maps, listing map previews, and expanded listing maps.
 2. Centris search maps and the Local Logic map in a listing.
 3. Panning, zooming, resizing, and navigating between listings without a full reload.
-4. Toolbar enable/disable and the site, line, station, and label switches.
-5. Adding, editing, and deleting a synthetic landmark; rejecting invalid coordinates and short links.
-6. Reloading the browser and confirming preferences persist, while reset preserves landmarks.
-7. Visible transit attribution and no errors in extension or page consoles.
+4. A map in each city the registry declares, and the swap when a search moves from one city to another.
+5. Toolbar enable/disable and the site, line, station, and label switches.
+6. Adding, editing, and deleting a synthetic landmark; rejecting invalid coordinates and short links.
+7. Reloading the browser and confirming preferences persist, while reset preserves landmarks.
+8. Visible transit attribution and no errors in extension or page consoles.
 
 Use a test browser profile and non-personal landmarks. Include the checks you actually performed in the pull request.

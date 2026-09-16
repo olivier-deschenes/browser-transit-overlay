@@ -185,7 +185,10 @@ const STM_SITE_ADAPTERS = [
     // segment. Which segment to write is the city's to say; all this knows is
     // where in the path it goes.
     shortcut: {
-      label: (city) => `Voir ${city.name}`,
+      // The lead-in on the row of city buttons rather than a label for any one
+      // of them: every city the registry lists that passes applies() gets a
+      // button of its own, carrying its own name.
+      label: "Voir les logements à",
       // The shortcut rewrites a category path, so on a single listing there is
       // nothing for it to rewrite and the listing is simply where it is. A
       // city Marketplace has no slug for has nowhere to be sent either.

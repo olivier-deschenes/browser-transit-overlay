@@ -10,6 +10,7 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 - Individual switches for sites, transit operators and their lines, stations, labels, and map controls.
 - Custom landmarks from coordinates or full Google Maps links, with editable names and colours.
 - A toolbar switch to enable or disable the overlay without losing your settings.
+- When a Marketplace map wanders off the network, one button per supported city to jump to its housing search.
 
 This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, or the City of Toronto. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
 

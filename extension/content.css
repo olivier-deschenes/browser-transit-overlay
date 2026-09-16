@@ -74,7 +74,7 @@
 }
 
 #stm-network-status {
-  align-items: center;
+  align-items: flex-start;
   background: #ffffff;
   border: 1px solid #b9b9b9;
   border-radius: 4px;
@@ -82,7 +82,13 @@
   box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
   color: #202124;
   display: flex;
-  gap: 8px;
+  /*
+   * A column, because the cities go under the notice rather than beside it.
+   * With nothing to offer — a Centris map, or the network still loading — the
+   * notice is the only child and a column of one reads as the row it was.
+   */
+  flex-direction: column;
+  gap: 6px;
   max-width: 100%;
   padding: 6px 8px;
 }
@@ -107,6 +113,36 @@
   font-weight: 600;
   padding: 0;
   white-space: nowrap;
+}
+
+/*
+ * The cities are a row of their own so that they wrap among themselves: a
+ * fourth one lands under the first three instead of widening a notice that
+ * has to fit in the corner of someone else's map. They are drawn as chips
+ * rather than as the bare links above, since several links in a row with only
+ * a gap between them read as one run of words.
+ */
+#stm-network-cities {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  max-width: 100%;
+}
+
+#stm-network-cities[hidden] {
+  display: none;
+}
+
+#stm-network-cities .stm-shortcut-lead {
+  color: #606468;
+  font-weight: 400;
+}
+
+#stm-network-cities button {
+  border: 1px solid #b9b9b9;
+  border-radius: 999px;
+  padding: 1px 8px;
 }
 
 /*

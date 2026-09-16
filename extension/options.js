@@ -48,9 +48,9 @@
           label: "Avis « Réseau hors champ »"
         },
         {
-          hint: "Raccourci vers les logements de la ville du réseau affiché. Marketplace seulement.",
+          hint: "Raccourcis vers les logements de chaque ville prise en charge. Marketplace seulement.",
           key: "cityShortcut",
-          label: "Bouton « Voir la ville »",
+          label: "Boutons « Voir les villes »",
           parent: "networkStatus"
         },
         {

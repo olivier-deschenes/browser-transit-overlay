@@ -74,16 +74,23 @@ const STM_CITIES = [
           license: STM_CC_BY_4,
           terms: "https://www.stm.info/en/about/developers/terms-use"
         },
+        // The colours the STM's own plan du métro is drawn in. That map is
+        // authored in CMYK — 100/0/100/0, 0/60/100/0, 0/10/100/0, 100/50/0/0,
+        // in line order — which are the four-colour builds of Pantone 355,
+        // 158, 116 and 300; these are those Pantones' sRGB values. Sampling
+        // the rendered map instead would hand us whatever a PDF renderer
+        // guesses CMYK looks like on a screen, which is a different and worse
+        // answer.
         lines: [
-          { color: "#00A16B", detail: "Ligne 1", id: "1", name: "Ligne verte" },
+          { color: "#009739", detail: "Ligne 1", id: "1", name: "Ligne verte" },
           {
-            color: "#F58220",
+            color: "#E87722",
             detail: "Ligne 2",
             id: "2",
             name: "Ligne orange"
           },
-          { color: "#FFD520", detail: "Ligne 4", id: "4", name: "Ligne jaune" },
-          { color: "#0075C9", detail: "Ligne 5", id: "5", name: "Ligne bleue" }
+          { color: "#FFCD00", detail: "Ligne 4", id: "4", name: "Ligne jaune" },
+          { color: "#005EB8", detail: "Ligne 5", id: "5", name: "Ligne bleue" }
         ]
       },
       {
@@ -100,7 +107,9 @@ const STM_CITIES = [
         // pull that trunk out from under the others.
         lines: [
           {
-            color: "#73A400",
+            // The green the REM brands itself in, rather than the neighbouring
+            // one its feed declares.
+            color: "#72A300",
             detail: "Réseau express métropolitain",
             id: "a",
             name: "REM"
@@ -139,36 +148,41 @@ const STM_CITIES = [
           terms:
             "https://open.toronto.ca/dataset/merged-gtfs-ttc-routes-and-schedules/"
         },
-        // Colours as the feed declares them, the same way the REM's came
-        // from its own. The gap where 3 should be is the Scarborough RT,
-        // which stopped running in 2023 and is no longer in the feed.
+        // The TTC Brand Standards' line colours, which the TTC's own site
+        // serves verbatim: Pantone 123, 347 and 234 for lines 1, 2 and 4,
+        // Orange 021 for 5, and the grey 6 is drawn in. Not the feed's, even
+        // though the geometry is: the GTFS declares lines 2, 4, 5 and 6 as
+        // 008000, B300B3, FF8000 and 808080 — pure web-safe stand-ins, the
+        // colours named rather than the colours used. The gap where 3 should
+        // be is the Scarborough RT, which stopped running in 2023 and is no
+        // longer in the feed.
         lines: [
           {
-            color: "#D5C82B",
+            color: "#F8C300",
             detail: "Métro",
             id: "1",
             name: "Ligne 1 Yonge-University"
           },
           {
-            color: "#008000",
+            color: "#00923F",
             detail: "Métro",
             id: "2",
             name: "Ligne 2 Bloor-Danforth"
           },
           {
-            color: "#B300B3",
+            color: "#A21A68",
             detail: "Métro",
             id: "4",
             name: "Ligne 4 Sheppard"
           },
           {
-            color: "#FF8000",
+            color: "#EB8738",
             detail: "Train léger",
             id: "5",
             name: "Ligne 5 Eglinton"
           },
           {
-            color: "#808080",
+            color: "#969594",
             detail: "Train léger",
             id: "6",
             name: "Ligne 6 Finch West"

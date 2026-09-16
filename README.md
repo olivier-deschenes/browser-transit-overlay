@@ -48,7 +48,7 @@ npm ci
 npm run dev
 ```
 
-The ZIP is written to `dist/metro-marketplace-<version>.zip`, with `manifest.json` at its root. Generated archives are not committed. Unpack the ZIP before loading it through Chrome's **Load unpacked** option.
+The ZIP is written to `dist/browser-transit-overlay-<version>.zip`, with `manifest.json` at its root. Generated archives are not committed. Unpack the ZIP before loading it through Chrome's **Load unpacked** option.
 
 For website build and deployment details, see [web/README.md](web/README.md). To regenerate the bundled transit network, see [data/README.md](data/README.md). Both local development and CI work without Cloudflare credentials.
 

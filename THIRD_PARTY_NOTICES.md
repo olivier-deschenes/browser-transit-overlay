@@ -2,7 +2,7 @@
 
 The root MIT licence covers this project's original code and documentation. It does not replace the licences of third-party data, dependencies, branding, or imagery.
 
-Source repository: [fb-marketplace-metro-map](https://github.com/olivier-deschenes/fb-marketplace-metro-map). File paths below refer to that repository; release ZIPs include the data licence as `LICENSE-DATA.txt`.
+Source repository: [browser-transit-overlay](https://github.com/olivier-deschenes/browser-transit-overlay). File paths below refer to that repository; release ZIPs include the data licence as `LICENSE-DATA.txt`.
 
 ## STM transit data
 

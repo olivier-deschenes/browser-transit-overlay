@@ -36,16 +36,16 @@ test('ids are lowercase segments that spell out the levels above them', () => {
   assert.equal(registry.stmLineById(STM_LINES[0].id), STM_LINES[0]);
 });
 
-test('every line is named once, with a colour and somebody to credit', () => {
+// What each of these is called is up to each language, and i18n.test.mjs
+// checks that every language names every one of them.
+test('every line has a colour, and every operator somebody to credit', () => {
   for (const line of STM_LINES) {
-    assert.ok(line.name.trim(), line.id);
     assert.match(line.color, /^#[0-9a-f]{6}$/i, line.id);
   }
   // Nothing is drawn without a name to credit and the terms that name was
   // handed out under. The licence sits on the operator rather than on the
   // catalogue, because the catalogue spans more than one set of terms.
   for (const system of STM_SYSTEMS) {
-    assert.ok(system.name.trim(), system.id);
     assert.ok(system.attribution.label.trim(), system.id);
     assert.match(system.attribution.terms, /^https:\/\//, system.id);
     assert.ok(system.attribution.license.label.trim(), system.id);
@@ -53,7 +53,7 @@ test('every line is named once, with a colour and somebody to credit', () => {
   }
 });
 
-// The registry names the lines and the build draws them. Either one carrying a
+// The registry declares the lines and the build draws them. Either one carrying a
 // line the other has never heard of is a line that switches nothing, or a
 // switch that draws nothing.
 test('declared lines and bundled geometry are the same set', () => {

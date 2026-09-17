@@ -4,6 +4,11 @@
   --stm-border: #dcdfe3;
   --stm-danger: #b3261e;
   --stm-muted: #5f6368;
+  /*
+   * A list's arrow, in the muted colour above. It is an image, and an image
+   * cannot take currentColor, so each scheme draws its own.
+   */
+  --stm-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%235f6368' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --stm-surface: #ffffff;
   --stm-text: #1c1e21;
   --stm-track: #cfd3d8;
@@ -17,6 +22,7 @@
     --stm-border: #3a3b3d;
     --stm-danger: #ff8a80;
     --stm-muted: #9fa4ab;
+    --stm-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%239fa4ab' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     --stm-surface: #242526;
     --stm-text: #e4e6eb;
     --stm-track: #4a4b4d;
@@ -224,6 +230,34 @@ h2 {
 
 .stm-switch:disabled {
   cursor: default;
+}
+
+/*
+ * The one row that ends in a list rather than a switch. It keeps the
+ * platform's own menu, so it opens and reads out the way every other list
+ * does, but not the platform's arrow, which is drawn hard against the border
+ * whatever the padding says. The tip of this one sits as far in from the
+ * right edge as the text does from the left (the icon's own margin makes up
+ * the difference with the padding), and the padding on the right keeps a long
+ * option from running under it. The cap keeps a long option from squeezing
+ * the label beside it down to a word per line.
+ */
+.stm-select {
+  appearance: none;
+  background-color: var(--stm-background);
+  background-image: var(--stm-select-arrow);
+  background-position: right 7px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  border: 1px solid var(--stm-border);
+  border-radius: 6px;
+  color: inherit;
+  cursor: pointer;
+  flex: none;
+  font: inherit;
+  max-width: 55%;
+  padding: 6px 30px 6px 10px;
+  text-overflow: ellipsis;
 }
 
 @media (prefers-reduced-motion: reduce) {

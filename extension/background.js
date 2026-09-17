@@ -1,4 +1,4 @@
-importScripts("networks.js", "settings.js");
+importScripts("i18n.js", "networks.js", "settings.js");
 
 async function readEnabled() {
   const stored = await chrome.storage.local.get(STM_ENABLED_KEY);
@@ -6,14 +6,25 @@ async function readEnabled() {
   return stored[STM_ENABLED_KEY] ?? true;
 }
 
-async function paintAction(enabled) {
+// The badge and the title say what the master switch says, in the language the
+// settings ask for, so both are read fresh rather than taken from whichever of
+// the two changed.
+async function paintAction() {
+  const stored = await chrome.storage.local.get([
+    STM_ENABLED_KEY,
+    STM_SETTINGS_KEY
+  ]);
+  const enabled = stored[STM_ENABLED_KEY] ?? true;
+
+  stmUseLanguage(stmMergeSettings(stored[STM_SETTINGS_KEY]).language);
+
   await Promise.all([
-    chrome.action.setBadgeText({ text: enabled ? "" : "OFF" }),
+    chrome.action.setBadgeText({
+      text: enabled ? "" : stmText("toolbar.badgeOff")
+    }),
     chrome.action.setBadgeBackgroundColor({ color: "#6b7280" }),
     chrome.action.setTitle({
-      title: enabled
-        ? "Transport en commun — activé (cliquer pour désactiver)"
-        : "Transport en commun — désactivé (cliquer pour activer)"
+      title: enabled ? stmText("toolbar.on") : stmText("toolbar.off")
     })
   ]);
 }
@@ -29,9 +40,9 @@ chrome.action.onClicked.addListener(async () => {
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== "local" || !changes[STM_ENABLED_KEY]) return;
+  if (area !== "local") return;
 
-  paintAction(changes[STM_ENABLED_KEY].newValue ?? true);
+  if (changes[STM_ENABLED_KEY] || changes[STM_SETTINGS_KEY]) paintAction();
 });
 
 // Content scripts cannot open the options page themselves, so the gear button
@@ -44,9 +55,5 @@ chrome.runtime.onMessage.addListener((message) => {
 
 // The worker is torn down between events and the badge does not survive it,
 // so it has to be repainted on every wake-up rather than set once at install.
-chrome.runtime.onStartup.addListener(async () =>
-  paintAction(await readEnabled())
-);
-chrome.runtime.onInstalled.addListener(async () =>
-  paintAction(await readEnabled())
-);
+chrome.runtime.onStartup.addListener(paintAction);
+chrome.runtime.onInstalled.addListener(paintAction);

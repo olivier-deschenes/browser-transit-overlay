@@ -1,6 +1,6 @@
 # Transport en commun pour Marketplace et Centris
 
-A Chrome extension that overlays rapid transit lines and stations on housing maps in Facebook Marketplace and Centris: Montréal's métro and the REM, and Toronto's TTC subway and light rail. The interface is in French.
+A Chrome extension that overlays rapid transit lines and stations on housing maps in Facebook Marketplace and Centris: Montréal's métro and the REM, and Toronto's TTC subway and light rail. The interface is in English and French: it follows the browser's language unless another is chosen in the settings.
 
 ![Montréal transit lines overlaid on a Marketplace map](docs/images/marketplace-map.png)
 
@@ -10,6 +10,7 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 - Individual switches for sites, transit operators and their lines, stations, labels, and map controls.
 - Custom landmarks from coordinates or full Google Maps links, with editable names and colours.
 - A toolbar switch to enable or disable the overlay without losing your settings.
+- An English and French interface, in the browser's language by default, with a language picker in the settings.
 - When a Marketplace map wanders off the network, one button per supported city to jump to its housing search.
 
 This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, or the City of Toronto. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
@@ -66,31 +67,51 @@ data/scripts/cities/<city>.py       maps feed routes to public line ids
 extension/networks/<city>.json      geometry only: ids, paths, stations, notice
         ▲
         │  fetched by content.js for the city the map is showing
-extension/networks.js               registry: names, colours, bounds, attribution
+extension/networks.js               registry: ids, colours, bounds, attribution
         │
         ├─ settings.js / options.js  a switch for each city, operator, and line
         └─ content.js + sites.js     draws lines on Marketplace, Centris, and Local Logic maps
+
+extension/i18n.js                   every word shown, per language, including what
+                                    each city, operator, and line is called
 ```
 
 - **[`data/scripts/cities/`](data/scripts/cities/)** is the only place where GTFS route ids or shapefile route ids appear. [`montreal.py`](data/scripts/cities/montreal.py) combines the STM métro and the REM into one city; [`toronto.py`](data/scripts/cities/toronto.py) takes the TTC's subway and light rail out of one city-wide feed.
 - **[`data/scripts/build_networks.py`](data/scripts/build_networks.py)** writes one file per city in [`CITIES`](data/scripts/cities/__init__.py) to [`extension/networks/`](extension/networks/). Shared simplification, deduplication, and rounding live in [`transit_geometry.py`](data/scripts/transit_geometry.py).
 - **[`extension/networks.js`](extension/networks.js)** declares each city's operators, lines, colours, map bounds, data file, and the licence each operator's data was published under. Geometry files never repeat this information.
 - **[`extension/settings.js`](extension/settings.js)** gets its defaults from the registry, so a new city, operator, or line is switched on without a settings migration. [`options.js`](extension/options.js) builds the settings page from the same registry.
+- **[`extension/i18n.js`](extension/i18n.js)** names each city, operator, and line by its id, in every language, next to the rest of the interface's text.
 - **[`extension/content.js`](extension/content.js)** chooses the city whose bounds contain the viewport, loads its geometry, and draws it through the site adapter selected in [`sites.js`](extension/sites.js).
 - **[`tests/networks.test.mjs`](tests/networks.test.mjs)** checks that the registry and generated geometry list the same lines, and that each city's bounds contain everything it draws.
 
 To add a city, follow [Add a city](data/README.md#add-a-city). The data licences for each network are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
+## Languages
+
+Everything the extension shows lives in [`extension/i18n.js`](extension/i18n.js), with one block of messages per language. The setting defaults to `auto`, which picks the first of the browser's preferred languages (`navigator.languages`) that has a block and falls back to English. The settings page can pin a language instead. The settings page, the map controls, and the toolbar button all switch languages right away, without a reload.
+
+Brand names, operator acronyms, licence titles, and station names are the same in every language and are not translated.
+
+### Add a language
+
+1. In [`extension/i18n.js`](extension/i18n.js), copy an existing block in `STM_LOCALES` under the new language code (for example `es`, or `pt-BR`), set `name` to the language's name in that language, and translate every message. Keep each `{placeholder}` as it is.
+2. Copy `extension/_locales/en/` to a folder named with [Chrome's code for the language](https://developer.chrome.com/docs/extensions/reference/api/i18n#locales) (`es`, `pt_BR`), and translate `extName` and `extDescription`. Chrome reads the extension's own name and description from there, and `extName` must match the block's `extension.name`.
+3. Run `npm test`. [`tests/i18n.test.mjs`](tests/i18n.test.mjs) lists any message the new block is missing or has extra, any placeholder that doesn't match, and any `_locales` folder that doesn't match a block.
+
+The new language then appears in the settings page's language list, and browsers that prefer it pick it automatically. Nothing else needs to be registered: the manifest, the options page, and the packaging script already pick it up.
+
+Adding a message works the same way. Add it to every block, and write the key out in full where it is used (`stmText("map.loading")`) so the tests can find it.
+
 ## Repository layout
 
 | Path | Purpose |
 | --- | --- |
-| [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [settings](extension/settings.js), [site adapters](extension/sites.js), and [bundled geometry](extension/networks/) |
+| [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [languages](extension/i18n.js), [settings](extension/settings.js), [site adapters](extension/sites.js), and [bundled geometry](extension/networks/) |
 | [`web/`](web/) | TanStack Start / React / Tailwind support and privacy website ([guide](web/README.md)) |
 | [`data/`](data/) | STM and TTC source files and the [per-city network generators](data/scripts/cities/) ([guide](data/README.md)) |
 | [`rem_data/`](rem_data/) | REM GTFS source subset and original licence |
 | [`scripts/`](scripts/) | Reproducible [extension packaging](scripts/package_extension.py) |
-| [`tests/`](tests/) | Extension behaviour, [network registry](tests/networks.test.mjs), and resource checks |
+| [`tests/`](tests/) | Extension behaviour, [network registry](tests/networks.test.mjs), [translations](tests/i18n.test.mjs), and resource checks |
 | [`docs/`](docs/) | Screenshot and [release instructions](docs/RELEASING.md) |
 
 ## Contributing and releases

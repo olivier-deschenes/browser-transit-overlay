@@ -12,6 +12,7 @@ RUNTIME_FILES = (
     "bridge.js",
     "content.css",
     "content.js",
+    "i18n.js",
     "icons/icon-16.png",
     "icons/icon-32.png",
     "icons/icon-48.png",
@@ -43,6 +44,21 @@ def network_files(root):
     return names
 
 
+def locale_files(root):
+    """The name and description Chrome shows for the extension, per language.
+
+    Found rather than listed, like the geometry: which languages ship is
+    extension/i18n.js's decision, and its tests hold these folders to it.
+    """
+    names = sorted(
+        f"_locales/{path.parent.name}/messages.json"
+        for path in (root / "extension/_locales").glob("*/messages.json")
+    )
+    if not names:
+        raise ValueError("No locale messages to package")
+    return names
+
+
 def package_extension(root=ROOT, output_directory=None):
     root = Path(root)
     output_directory = Path(output_directory or root / "dist")
@@ -53,7 +69,7 @@ def package_extension(root=ROOT, output_directory=None):
 
     sources = {
         name: root / "extension" / name
-        for name in (*RUNTIME_FILES, *network_files(root))
+        for name in (*RUNTIME_FILES, *network_files(root), *locale_files(root))
     } | {
         "LICENSE": root / "LICENSE",
         "LICENSE-DATA.txt": root / "rem_data/__Licence.txt",

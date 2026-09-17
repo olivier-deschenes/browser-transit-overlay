@@ -4,12 +4,13 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const context = vm.createContext({});
-// The defaults are derived from the registry at load, so it has to be there
-// first — the same order the manifest, the options page and the worker use.
-for (const name of ['networks.js', 'settings.js']) {
+// The defaults are derived from the registry and the language list at load, so
+// both have to be there first — the same order the manifest, the options page
+// and the worker use.
+for (const name of ['i18n.js', 'networks.js', 'settings.js']) {
   vm.runInContext(readFileSync(new URL(`../extension/${name}`, import.meta.url), 'utf8'), context);
 }
-const settings = vm.runInContext('({ stmCoordinatesFromLocation, stmIsLineEnabled, stmMergeSettings, stmFormatCoordinates, stmLocationErrorMessage, STM_LINES })', context);
+const settings = vm.runInContext('({ stmCoordinatesFromLocation, stmIsLineEnabled, stmMergeSettings, stmFormatCoordinates, stmLocationErrorMessage, stmUseLanguage, STM_AUTO_LANGUAGE, STM_LINES })', context);
 const [line] = settings.STM_LINES;
 const [cityId, systemId] = line.id.split(':');
 const plain = (value) => value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -37,9 +38,15 @@ test('invalid, missing, and out-of-range coordinates are rejected', () => {
   }
 });
 
-test('short-link errors explain how to obtain full coordinates', () => {
+test('short-link errors explain how to obtain full coordinates, in the chosen language', () => {
+  settings.stmUseLanguage('fr');
   assert.match(settings.stmLocationErrorMessage('https://maps.app.goo.gl/example'), /Lien court/);
   assert.match(settings.stmLocationErrorMessage(''), /Entrez/);
+
+  settings.stmUseLanguage('en');
+  assert.match(settings.stmLocationErrorMessage('https://maps.app.goo.gl/example'), /Short link/);
+  assert.match(settings.stmLocationErrorMessage(''), /Enter/);
+  assert.match(settings.stmLocationErrorMessage('not a location'), /No coordinates/);
 });
 
 test('saved preferences survive new defaults without sharing mutable state', () => {
@@ -47,6 +54,9 @@ test('saved preferences survive new defaults without sharing mutable state', () 
   const stored = { stations: false, lines: { [line.id]: false }, sites: { centris: false } };
   const merged = settings.stmMergeSettings(stored);
   assert.equal(merged.stations, false);
+  // Nobody has picked a language yet, so the browser's is the one followed.
+  assert.equal(merged.language, settings.STM_AUTO_LANGUAGE);
+  assert.equal(settings.stmMergeSettings({ language: 'fr' }).language, 'fr');
   assert.equal(merged.lines[line.id], false);
   assert.equal(merged.lines[other], true);
   assert.equal(merged.sites.centris, false);

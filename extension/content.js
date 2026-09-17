@@ -546,13 +546,21 @@
   }
 
   function buildAttribution(credits) {
+    // By who is being credited rather than by operator, the same way the
+    // settings page counts them: Paris splits its métro from its RER so that
+    // each has a switch, and both came out of Île-de-France Mobilités, who
+    // is one name to thank rather than two.
+    const named = new Map();
+
+    for (const { attribution: credit } of credits) {
+      if (!named.has(credit.label)) named.set(credit.label, credit);
+    }
+
     attribution = document.createElement("div");
     attribution.id = "stm-metro-attribution";
     attribution.dataset.stmSite = site.id;
     attribution.title = stmText("map.creditTitle", {
-      operators: new Intl.ListFormat(stmLocale).format(
-        credits.map(({ attribution: { label } }) => label)
-      )
+      operators: new Intl.ListFormat(stmLocale).format([...named.keys()])
     });
 
     // Each operator beside the licence its own data came out under, rather
@@ -560,7 +568,7 @@
     // on one map need not be publishing on the same terms.
     const parts = [`${stmText("credits.lead")} `];
 
-    for (const { attribution: credit } of credits) {
+    for (const credit of named.values()) {
       if (parts.length > 1) parts.push(" · ");
       parts.push(
         creditLink(credit.terms, credit.label),
@@ -1085,9 +1093,9 @@
         "stroke-width": "2",
         x: "4"
       });
-      stripCredit.textContent = geometry.credits
-        .map(({ attribution: { label } }) => label)
-        .join(" · ");
+      stripCredit.textContent = [
+        ...new Set(geometry.credits.map(({ attribution: { label } }) => label))
+      ].join(" · ");
       stripOverlay.append(stripCredit);
     }
 

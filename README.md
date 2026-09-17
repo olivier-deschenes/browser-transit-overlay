@@ -1,6 +1,6 @@
 # Transport en commun pour Marketplace et Centris
 
-A Chrome extension that overlays rapid transit lines and stations on housing maps in Facebook Marketplace and Centris: Montréal's métro and the REM, and Toronto's TTC subway and light rail. The interface is in English and French: it follows the browser's language unless another is chosen in the settings.
+A Chrome extension that overlays rapid transit lines and stations on housing maps in Facebook Marketplace and Centris: Montréal's métro and the REM, Toronto's TTC subway and light rail, and the six French métros — Paris, with the RER alongside it, plus Lyon, Marseille, Lille, Toulouse and Rennes. The interface is in English and French: it follows the browser's language unless another is chosen in the settings.
 
 ![Montréal transit lines overlaid on a Marketplace map](docs/images/marketplace-map.png)
 
@@ -13,7 +13,7 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 - An English and French interface, in the browser's language by default, with a language picker in the settings.
 - When a Marketplace map wanders off the network, one button per supported city to jump to its housing search.
 
-This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, or the City of Toronto. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
+This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, the City of Toronto, or any of the French transit authorities and operators whose data it uses. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
 
 ## Install from source
 
@@ -58,11 +58,15 @@ For website build and deployment details, see [web/README.md](web/README.md). To
 Networks are organised by city. Every line has a three-part id, such as `montreal:stm:1` (city, operator, line), and that id is shared from the data sources to the saved switches.
 
 ```text
-data/stm_sig/, rem_data/,           source shapefiles and GTFS
-data/ttc_gtfs/
+data/stm_sig/, rem_data/,           source shapefiles, GTFS and map layers
+data/ttc_gtfs/, data/idfm_gtfs/,
+data/tcl_sytral/, data/rtm_gtfs/,
+data/ilevia_gtfs/, data/tisseo_gtfs/,
+data/star_gtfs/
         │
 data/scripts/cities/<city>.py       maps feed routes to public line ids
-        │  data/scripts/build_networks.py  (uses transit_geometry.py)
+        │  data/scripts/build_networks.py
+        │  (uses transit_geometry.py and gtfs_network.py)
         ▼
 extension/networks/<city>.json      geometry only: ids, paths, stations, notice
         ▲
@@ -76,8 +80,8 @@ extension/i18n.js                   every word shown, per language, including wh
                                     each city, operator, and line is called
 ```
 
-- **[`data/scripts/cities/`](data/scripts/cities/)** is the only place where GTFS route ids or shapefile route ids appear. [`montreal.py`](data/scripts/cities/montreal.py) combines the STM métro and the REM into one city; [`toronto.py`](data/scripts/cities/toronto.py) takes the TTC's subway and light rail out of one city-wide feed.
-- **[`data/scripts/build_networks.py`](data/scripts/build_networks.py)** writes one file per city in [`CITIES`](data/scripts/cities/__init__.py) to [`extension/networks/`](extension/networks/). Shared simplification, deduplication, and rounding live in [`transit_geometry.py`](data/scripts/transit_geometry.py).
+- **[`data/scripts/cities/`](data/scripts/cities/)** is the only place where GTFS route ids or shapefile route ids appear. [`montreal.py`](data/scripts/cities/montreal.py) combines the STM métro and the REM into one city; [`toronto.py`](data/scripts/cities/toronto.py) takes the TTC's subway and light rail out of one city-wide feed; [`paris.py`](data/scripts/cities/paris.py) takes the métro and the RER out of Île-de-France Mobilités' feed for the whole region; [`lyon.py`](data/scripts/cities/lyon.py) is built from SYTRAL's map layers rather than its feed, which draws no métro at all.
+- **[`data/scripts/build_networks.py`](data/scripts/build_networks.py)** writes one file per city in [`CITIES`](data/scripts/cities/__init__.py) to [`extension/networks/`](extension/networks/). Shared simplification, deduplication, and rounding live in [`transit_geometry.py`](data/scripts/transit_geometry.py), and what every GTFS city needs done to its feed lives in [`gtfs_network.py`](data/scripts/gtfs_network.py).
 - **[`extension/networks.js`](extension/networks.js)** declares each city's operators, lines, colours, map bounds, data file, and the licence each operator's data was published under. Geometry files never repeat this information.
 - **[`extension/settings.js`](extension/settings.js)** gets its defaults from the registry, so a new city, operator, or line is switched on without a settings migration. [`options.js`](extension/options.js) builds the settings page from the same registry.
 - **[`extension/i18n.js`](extension/i18n.js)** names each city, operator, and line by its id, in every language, next to the rest of the interface's text.
@@ -108,7 +112,7 @@ Adding a message works the same way. Add it to every block, and write the key ou
 | --- | --- |
 | [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [languages](extension/i18n.js), [settings](extension/settings.js), [site adapters](extension/sites.js), and [bundled geometry](extension/networks/) |
 | [`web/`](web/) | TanStack Start / React / Tailwind support and privacy website ([guide](web/README.md)) |
-| [`data/`](data/) | STM and TTC source files and the [per-city network generators](data/scripts/cities/) ([guide](data/README.md)) |
+| [`data/`](data/) | STM, TTC and French source files and the [per-city network generators](data/scripts/cities/) ([guide](data/README.md)) |
 | [`rem_data/`](rem_data/) | REM GTFS source subset and original licence |
 | [`scripts/`](scripts/) | Reproducible [extension packaging](scripts/package_extension.py) |
 | [`tests/`](tests/) | Extension behaviour, [network registry](tests/networks.test.mjs), [translations](tests/i18n.test.mjs), and resource checks |
@@ -120,4 +124,4 @@ Bug reports and contributions are welcome in English or French. See [CONTRIBUTIN
 
 ## Licence and attribution
 
-Original code and documentation are under the [MIT licence](LICENSE). The bundled transit data keeps the terms it was published under, and those differ by operator: STM and REM data are **CC BY 4.0**, while the TTC feed comes from the City of Toronto under the **Open Government Licence – Toronto**. The derived geometry in `extension/networks/` carries the same terms as the data it came from. Third-party branding and map imagery are not covered by the code licence. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for sources and modifications.
+Original code and documentation are under the [MIT licence](LICENSE). The bundled transit data keeps the terms it was published under, and those differ by operator: STM and REM data are **CC BY 4.0**; the TTC feed comes from the City of Toronto under the **Open Government Licence – Toronto**; Paris and Lyon are under the **Licence Mobilités** and the **Licence Ouverte 2.0** respectively, as are Marseille and Lille; and Toulouse and Rennes are under the **ODbL 1.0**, whose share-alike condition travels with anything derived from them. The derived geometry in `extension/networks/` carries the same terms as the data it came from. Third-party branding and map imagery are not covered by the code licence. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for sources and modifications.

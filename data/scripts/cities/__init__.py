@@ -5,6 +5,24 @@ Everything downstream — the extension's registry, its settings, its geometry
 files — speaks in the public line ids these modules map those routes onto.
 """
 
-from . import montreal, toronto
+from . import (
+    lille,
+    lyon,
+    marseille,
+    montreal,
+    paris,
+    rennes,
+    toronto,
+    toulouse,
+)
 
-CITIES = (montreal, toronto)
+CITIES = (
+    montreal,
+    toronto,
+    paris,
+    lyon,
+    marseille,
+    lille,
+    toulouse,
+    rennes,
+)

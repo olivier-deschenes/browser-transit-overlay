@@ -1,0 +1,3 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+ME1,ILE,M1,METRO LIGNE 1,CHU EURASANTÉ <> 4 CANTONS STADE P MAUROY,1,,FDC41F,000000
+ME2,ILE,M2,METRO LIGNE 2,SAINT PHILIBERT <> C.H. DRON,1,,E30613,FFFFFF

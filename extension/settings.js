@@ -11,18 +11,11 @@ const STM_OPEN_OPTIONS_MESSAGE = "stm-open-options";
 
 // The sites the overlay knows how to draw on. The adapter that actually does
 // the drawing lives in sites.js, which the settings page has no use for; what
-// it needs is the name to put beside a switch.
+// it needs is the name to put beside a switch. The name is the site's own in
+// every language, and the line under it is in i18n.js, keyed by the site's id.
 const STM_SITES = [
-  {
-    detail: "Cartes des logements et aperçu de carte des annonces.",
-    id: "facebook",
-    name: "Facebook Marketplace"
-  },
-  {
-    detail: "Cartes des résultats de recherche et des fiches.",
-    id: "centris",
-    name: "Centris.ca"
-  }
+  { id: "facebook", name: "Facebook Marketplace" },
+  { id: "centris", name: "Centris.ca" }
 ];
 
 // The three levels of networks.js each keep a map of their own, keyed by the
@@ -33,6 +26,8 @@ const STM_DEFAULT_SETTINGS = {
   cities: Object.fromEntries(STM_CITIES.map(({ id }) => [id, true])),
   cityShortcut: true,
   interactiveMaps: true,
+  // A language code from i18n.js, or the browser's choice until one is picked.
+  language: STM_AUTO_LANGUAGE,
   lines: Object.fromEntries(STM_LINES.map(({ id }) => [id, true])),
   listingPreview: true,
   networkStatus: true,
@@ -75,14 +70,10 @@ function stmIsLineEnabled(settings, lineId) {
 }
 
 // A point can be added from the panel on the map or from the settings page.
-// Both take the same thing, say the same things about it, and start from the
-// same colour, because they are two doors into one list.
+// Both take the same thing, say the same things about it — the point.* messages
+// in i18n.js — and start from the same colour, because they are two doors into
+// one list.
 const STM_DEFAULT_POINT_COLOR = "#e53935";
-const STM_LOCATION_LABEL = "Lien Google Maps ou coordonnées";
-const STM_LOCATION_HINT =
-  "Formats acceptés : lien google.com/maps/place/… ou coordonnées (45.5019, -73.5674).";
-const STM_SHORT_LINK_WARNING =
-  "Les liens courts maps.app.goo.gl ne sont pas acceptés.";
 
 const STM_SHORT_MAPS_LINK = /(?:maps\.app\.goo\.gl|goo\.gl\/maps)/i;
 const STM_RAW_COORDINATES = /^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/;
@@ -129,15 +120,11 @@ function stmCoordinatesFromLocation(value) {
 }
 
 function stmLocationErrorMessage(value) {
-  if (!value.trim()) {
-    return "Entrez un lien Google Maps ou des coordonnées.";
-  }
+  if (!value.trim()) return stmText("point.errorEmpty");
 
-  if (STM_SHORT_MAPS_LINK.test(value)) {
-    return "Lien court sans coordonnées. Ouvrez-le dans Google Maps, puis copiez l’adresse complète.";
-  }
+  if (STM_SHORT_MAPS_LINK.test(value)) return stmText("point.errorShortLink");
 
-  return "Aucune coordonnée trouvée. Utilisez un lien google.com/maps/place/… ou des coordonnées.";
+  return stmText("point.errorNotFound");
 }
 
 // Storage keeps longitude first, the way every projection here reads it, but

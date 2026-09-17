@@ -152,7 +152,7 @@
     }
 
     networkStatusText.textContent =
-      state === "loading" ? "Chargement du réseau…" : "Réseau hors champ";
+      state === "loading" ? stmText("map.loading") : stmText("map.offNetwork");
   }
 
   // Every city that can be reached from this page, a button apiece, rather
@@ -175,13 +175,13 @@
 
     const lead = document.createElement("span");
     lead.className = "stm-shortcut-lead";
-    lead.textContent = site.shortcut.label;
+    lead.textContent = stmText("map.citiesLead");
     cityShortcuts.append(lead);
 
     for (const city of cities) {
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = city.name;
+      button.textContent = stmText(`city.${city.id}.name`);
       button.addEventListener("click", () => site.shortcut.run(city));
       cityShortcuts.append(button);
     }
@@ -207,7 +207,7 @@
       cityShortcuts.id = "stm-network-cities";
       cityShortcuts.hidden = true;
       cityShortcuts.setAttribute("role", "group");
-      cityShortcuts.setAttribute("aria-label", site.shortcut.label);
+      cityShortcuts.setAttribute("aria-label", stmText("map.citiesLead"));
       networkStatus.append(cityShortcuts);
     }
 
@@ -219,8 +219,8 @@
     button.type = "button";
     button.id = "stm-settings-shortcut";
     button.textContent = "⚙";
-    button.title = "Réglages de l’extension";
-    button.setAttribute("aria-label", "Réglages de l’extension");
+    button.title = stmText("extension.settings");
+    button.setAttribute("aria-label", stmText("extension.settings"));
     button.addEventListener("click", () => {
       // A content script cannot open the options page itself. The worker
       // answers by opening it and nothing else, so the port closes without a
@@ -301,7 +301,7 @@
 
       const remove = document.createElement("button");
       remove.type = "button";
-      remove.textContent = "Supprimer";
+      remove.textContent = stmText("point.remove");
       remove.addEventListener("click", () =>
         saveCustomPoints(customPoints.filter(({ id }) => id !== point.id))
       );
@@ -320,7 +320,7 @@
 
     const toggle = document.createElement("button");
     toggle.type = "button";
-    toggle.textContent = "Ajouter un point";
+    toggle.textContent = stmText("point.addTitle");
     toggle.setAttribute("aria-expanded", "false");
     toggle.setAttribute("aria-controls", "stm-custom-points-panel");
 
@@ -333,8 +333,8 @@
 
     const label = document.createElement("input");
     label.name = "label";
-    label.placeholder = "Nom";
-    label.setAttribute("aria-label", "Nom");
+    label.placeholder = stmText("point.name");
+    label.setAttribute("aria-label", stmText("point.name"));
 
     // type="url" would reject a pasted coordinate pair before submit ever
     // fires, and its built-in bubble is not in our wording. Validate here.
@@ -343,8 +343,8 @@
     googleMapsUrl.type = "text";
     googleMapsUrl.autocomplete = "off";
     googleMapsUrl.spellcheck = false;
-    googleMapsUrl.placeholder = STM_LOCATION_LABEL;
-    googleMapsUrl.setAttribute("aria-label", STM_LOCATION_LABEL);
+    googleMapsUrl.placeholder = stmText("point.location");
+    googleMapsUrl.setAttribute("aria-label", stmText("point.location"));
     googleMapsUrl.setAttribute("aria-describedby", "stm-custom-point-hint");
 
     const hint = document.createElement("p");
@@ -352,11 +352,11 @@
     hint.className = "stm-custom-point-hint";
 
     const hintFormats = document.createElement("span");
-    hintFormats.textContent = STM_LOCATION_HINT;
+    hintFormats.textContent = stmText("point.formats");
 
     const hintShortLink = document.createElement("span");
     hintShortLink.className = "stm-custom-point-hint-warning";
-    hintShortLink.textContent = STM_SHORT_LINK_WARNING;
+    hintShortLink.textContent = stmText("point.shortLinks");
 
     hint.append(hintFormats, hintShortLink);
 
@@ -377,11 +377,11 @@
     color.name = "color";
     color.type = "color";
     color.value = STM_DEFAULT_POINT_COLOR;
-    color.setAttribute("aria-label", "Couleur");
+    color.setAttribute("aria-label", stmText("point.color"));
 
     const add = document.createElement("button");
     add.type = "submit";
-    add.textContent = "Ajouter";
+    add.textContent = stmText("point.add");
 
     const actions = document.createElement("div");
     actions.className = "stm-custom-point-actions";
@@ -549,14 +549,16 @@
     attribution = document.createElement("div");
     attribution.id = "stm-metro-attribution";
     attribution.dataset.stmSite = site.id;
-    attribution.title = `Données ${new Intl.ListFormat("fr").format(
-      credits.map(({ attribution: { label } }) => label)
-    )}, adaptées pour cette extension non officielle.`;
+    attribution.title = stmText("map.creditTitle", {
+      operators: new Intl.ListFormat(stmLocale).format(
+        credits.map(({ attribution: { label } }) => label)
+      )
+    });
 
     // Each operator beside the licence its own data came out under, rather
     // than one licence at the end standing in for all of them: two operators
     // on one map need not be publishing on the same terms.
-    const parts = ["Données adaptées : "];
+    const parts = [`${stmText("credits.lead")} `];
 
     for (const { attribution: credit } of credits) {
       if (parts.length > 1) parts.push(" · ");
@@ -1872,10 +1874,12 @@
 
   function applySettings(stored) {
     settings = stmMergeSettings(stored);
+    stmUseLanguage(settings.language);
     if (enabled) paintDetectAttributes();
     // The geometry is filtered by the line switches on the way in, and the
     // overlay is built once from what comes out, so both are thrown away and
-    // the next sync puts them back the way the new settings ask for.
+    // the next sync puts them back the way the new settings ask for. That is
+    // also what puts the map's own controls back in a newly picked language.
     networkGeometry = undefined;
     detach();
     detachStrip();
@@ -1923,6 +1927,7 @@
         // Settings first: the refresh below and everything activate() starts
         // read them, and the defaults are only a stand-in until this lands.
         settings = stmMergeSettings(stored[STM_SETTINGS_KEY]);
+        stmUseLanguage(settings.language);
         customPoints = stored[STM_CUSTOM_POINTS_KEY] ?? [];
         refreshCustomPoints();
         setEnabled(stored[STM_ENABLED_KEY] ?? true);

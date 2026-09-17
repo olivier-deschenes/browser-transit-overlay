@@ -1,32 +1,42 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Réglages — Transport en commun</title>
+    <!--
+      Every data-stm-text element is filled in by options.js from the message
+      of that key in i18n.js, in whichever language the settings ask for.
+    -->
+    <title data-stm-text="options.pageTitle"></title>
     <link rel="stylesheet" href="options.css" />
   </head>
   <body>
-    <main>
+    <!--
+      Hidden until the stored language is known, so the page is never seen in
+      one language before switching to another.
+    -->
+    <main hidden>
       <header>
         <img src="icons/icon-48.png" alt="" width="40" height="40" />
         <div>
-          <h1>Transport en commun pour Marketplace et Centris</h1>
-          <p>Réglages de l’extension</p>
+          <h1 data-stm-text="extension.name"></h1>
+          <p data-stm-text="extension.settings"></p>
         </div>
       </header>
 
       <section id="stm-master-section" class="stm-master"></section>
 
+      <section id="stm-language-section"></section>
+
       <div id="stm-sections"></div>
 
       <footer>
-        <button type="button" id="stm-reset">Réinitialiser les réglages</button>
-        <p class="stm-note">
-          Les points de repère enregistrés ne sont pas effacés. L’attribution
-          affichée sur la carte fait partie de la licence des données et reste
-          en place.
-        </p>
+        <button
+          type="button"
+          id="stm-reset"
+          data-stm-text="options.reset"
+        ></button>
+        <p class="stm-note" data-stm-text="options.reset.note"></p>
         <!--
           Filled in from the registry rather than written out: who is credited
           is whoever networks.js says the bundled networks came from.
@@ -35,6 +45,7 @@
       </footer>
     </main>
 
+    <script src="i18n.js"></script>
     <script src="networks.js"></script>
     <script src="settings.js"></script>
     <script src="options.js"></script>

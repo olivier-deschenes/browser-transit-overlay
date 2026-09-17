@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "Transport en commun pour Marketplace et Centris",
+    "description": "The extension's name in Chrome and the Chrome Web Store. Keep it identical to extension.name in extension/i18n.js."
+  },
+  "extDescription": {
+    "message": "Affiche le métro de Montréal, le REM et la TTC de Toronto sur les cartes de logements de Facebook Marketplace et de Centris.",
+    "description": "The extension's description in Chrome and the Chrome Web Store. At most 132 characters."
+  }
+}

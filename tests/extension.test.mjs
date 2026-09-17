@@ -43,13 +43,17 @@ test('all manifest resources and options assets exist', () => {
   for (const path of resources) assert.ok(resourceExists(path), path);
 });
 
-// The registry is what the settings are derived from, synchronously and at
-// load, so every place that reads a setting has to have run it first.
-test('the registry is loaded ahead of everything that reads it', () => {
-  assert.match(read('background.js'), /^importScripts\("networks\.js", "settings\.js"\);/);
-  assert.ok(read('options.html').indexOf('networks.js') < read('options.html').indexOf('settings.js'));
+// The registry and the language list are what the settings are derived from,
+// synchronously and at load, so every place that reads a setting has to have
+// run both first.
+test('the registry and the languages are loaded ahead of everything that reads them', () => {
+  assert.match(read('background.js'), /^importScripts\("i18n\.js", "networks\.js", "settings\.js"\);/);
+  const options = read('options.html');
+  assert.ok(options.indexOf('i18n.js') < options.indexOf('networks.js'));
+  assert.ok(options.indexOf('networks.js') < options.indexOf('settings.js'));
   for (const script of manifest.content_scripts) {
     if (!script.js.includes('settings.js')) continue;
+    assert.ok(script.js.indexOf('i18n.js') === 0, script.js.join(' '));
     assert.ok(script.js.indexOf('networks.js') < script.js.indexOf('settings.js'), script.js.join(' '));
   }
 });

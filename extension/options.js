@@ -1,79 +1,87 @@
 (() => {
   // The rows are described rather than written out in options.html so that a
-  // new switch is one entry here plus its default in settings.js, and so the
-  // dependency between a switch and the one it sits under is stated once.
-  const SECTIONS = [
-    {
-      rows: [
-        {
-          hint: "La carte de la liste des logements et celle qui s’ouvre depuis une annonce.",
-          key: "interactiveMaps",
-          label: "Cartes interactives"
-        },
-        {
-          hint: "L’image fixe affichée à côté de l’adresse d’une annonce. Marketplace seulement : une annonce Centris n’affiche aucune carte.",
-          key: "listingPreview",
-          label: "Aperçu de carte des annonces"
-        }
-      ],
-      title: "Où afficher le réseau"
-    },
-    {
-      rows: [
-        { key: "stations", label: "Stations" },
-        {
-          hint: "Affichés à partir d’un certain niveau de zoom seulement.",
-          key: "stationLabels",
-          label: "Noms des stations",
-          parent: "stations"
-        },
-        {
-          hint: "Vos points apparaissent sur les cartes et dans l’aperçu des annonces.",
-          key: "points",
-          label: "Points de repère"
-        }
-      ],
-      title: "Éléments affichés"
-    },
-    {
-      rows: [
-        {
-          hint: "Le bouton « Ajouter un point » et sa liste.",
-          key: "pointsTool",
-          label: "Ajout de points de repère"
-        },
-        {
-          hint: "Prévient quand la carte est loin du réseau.",
-          key: "networkStatus",
-          label: "Avis « Réseau hors champ »"
-        },
-        {
-          hint: "Raccourcis vers les logements de chaque ville prise en charge. Marketplace seulement.",
-          key: "cityShortcut",
-          label: "Boutons « Voir les villes »",
-          parent: "networkStatus"
-        },
-        {
-          hint: "L’engrenage qui ouvre cette page depuis la carte.",
-          key: "settingsShortcut",
-          label: "Bouton de réglages"
-        }
-      ],
-      title: "Outils sur la carte"
-    }
-  ];
+  // new switch is one entry here, its default in settings.js and its words in
+  // i18n.js, and so the dependency between a switch and the one it sits under
+  // is stated once. They are read again on every build, because a build is
+  // what a change of language comes down to.
+  function sections() {
+    return [
+      {
+        rows: [
+          {
+            hint: stmText("options.interactiveMaps.hint"),
+            key: "interactiveMaps",
+            label: stmText("options.interactiveMaps")
+          },
+          {
+            hint: stmText("options.listingPreview.hint"),
+            key: "listingPreview",
+            label: stmText("options.listingPreview")
+          }
+        ],
+        title: stmText("options.where.title")
+      },
+      {
+        rows: [
+          { key: "stations", label: stmText("options.stations") },
+          {
+            hint: stmText("options.stationLabels.hint"),
+            key: "stationLabels",
+            label: stmText("options.stationLabels"),
+            parent: "stations"
+          },
+          {
+            hint: stmText("options.points.hint"),
+            key: "points",
+            label: stmText("options.points")
+          }
+        ],
+        title: stmText("options.shown.title")
+      },
+      {
+        rows: [
+          {
+            hint: stmText("options.pointsTool.hint"),
+            key: "pointsTool",
+            label: stmText("options.pointsTool")
+          },
+          {
+            hint: stmText("options.networkStatus.hint"),
+            key: "networkStatus",
+            label: stmText("options.networkStatus")
+          },
+          {
+            hint: stmText("options.cityShortcut.hint"),
+            key: "cityShortcut",
+            label: stmText("options.cityShortcut"),
+            parent: "networkStatus"
+          },
+          {
+            hint: stmText("options.settingsShortcut.hint"),
+            key: "settingsShortcut",
+            label: stmText("options.settingsShortcut")
+          }
+        ],
+        title: stmText("options.tools.title")
+      }
+    ];
+  }
 
   // Every switch on the page, by the settings key it writes, and each one
   // holding on to the switch it hangs under. That chain is what a held row is
   // read off: a line answers to its system and its city as well as to itself.
   const rows = new Map();
-  const sectionsHost = document.querySelector("#stm-sections");
+  const main = document.querySelector("main");
   const masterSection = document.querySelector("#stm-master-section");
+  const languageSection = document.querySelector("#stm-language-section");
+  const sectionsHost = document.querySelector("#stm-sections");
+  const creditsHost = document.querySelector("#stm-credits");
 
   let enabled = true;
   let settings = stmMergeSettings();
   let points = [];
   let masterInput;
+  let languageInput;
   let pointList;
   // The row being edited, if any. Only one at a time: two half-finished
   // edits of the same list is a way to lose one of them.
@@ -109,7 +117,18 @@
     return chrome.storage.local.set({ [STM_CUSTOM_POINTS_KEY]: next });
   }
 
-  function createRow({ depth, hint, label, swatch }) {
+  function createSwitch() {
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.className = "stm-switch";
+    input.setAttribute("role", "switch");
+
+    return input;
+  }
+
+  // A switch unless told otherwise. The label wraps whichever control it is
+  // handed, so a click anywhere on the row still lands on that control.
+  function createRow({ control = createSwitch(), depth, hint, label, swatch }) {
     const row = document.createElement("label");
     row.className = "stm-row";
 
@@ -120,11 +139,6 @@
       row.classList.add("stm-row-nested");
       row.style.setProperty("--stm-depth", depth);
     }
-
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.className = "stm-switch";
-    input.setAttribute("role", "switch");
 
     const text = document.createElement("span");
     text.className = "stm-row-text";
@@ -149,15 +163,15 @@
       text.append(description);
     }
 
-    row.append(text, input);
+    row.append(text, control);
 
-    return { input, row };
+    return { input: control, row };
   }
 
   function buildMaster() {
     const { input, row } = createRow({
-      hint: "Coupe l’extension partout, sans toucher aux réglages ci-dessous. Le bouton de la barre d’outils fait la même chose.",
-      label: "Activer l’extension"
+      hint: stmText("options.enable.hint"),
+      label: stmText("options.enable")
     });
 
     masterInput = input;
@@ -168,6 +182,49 @@
       syncInputs();
     });
     masterSection.append(row);
+  }
+
+  // Its own card, above everything the master switch dims, because it is the
+  // one setting that is about this page as much as about the maps. Following
+  // the browser is offered by name, so it says which language that turns out
+  // to be.
+  function buildLanguageSection() {
+    const heading = document.createElement("h2");
+    heading.textContent = stmText("options.language.title");
+
+    const select = document.createElement("select");
+    select.className = "stm-select";
+    select.append(
+      new Option(
+        stmText("options.language.auto", {
+          language: STM_LOCALES[stmBrowserLocale()].name
+        }),
+        STM_AUTO_LANGUAGE
+      )
+    );
+
+    for (const [code, { name }] of Object.entries(STM_LOCALES)) {
+      const option = new Option(name, code);
+
+      // Read out in its own language by a screen reader, the way it is
+      // written.
+      option.lang = code;
+      select.append(option);
+    }
+
+    const { input, row } = createRow({
+      control: select,
+      hint: stmText("options.language.hint"),
+      label: stmText("options.language")
+    });
+
+    languageInput = input;
+    input.addEventListener("change", async () => {
+      settings.language = input.value;
+      await saveSettings();
+      refresh();
+    });
+    languageSection.append(heading, row);
   }
 
   function addRow(section, definition) {
@@ -210,14 +267,18 @@
     for (const definition of definitions) addRow(section, definition);
   }
 
-  // The sites are their own section rather than rows in "Où afficher le
-  // réseau": that one is about which kind of map, this one is about which
+  // The sites are their own section rather than rows in "Where to show the
+  // network": that one is about which kind of map, this one is about which
   // site, and the two switches multiply rather than overlap.
   function buildSitesSection() {
-    const section = createSection("Sites");
+    const section = createSection(stmText("options.sites.title"));
 
-    for (const { detail, id, name } of STM_SITES) {
-      addRow(section, { hint: detail, key: `sites.${id}`, label: name });
+    for (const { id, name } of STM_SITES) {
+      addRow(section, {
+        hint: stmText(`site.${id}.detail`),
+        key: `sites.${id}`,
+        label: name
+      });
     }
   }
 
@@ -230,8 +291,8 @@
     actions.className = "stm-bulk";
 
     for (const [label, value] of [
-      ["Tout activer", true],
-      ["Tout désactiver", false]
+      [stmText("options.lines.allOn"), true],
+      [stmText("options.lines.allOff"), false]
     ]) {
       const button = document.createElement("button");
       button.type = "button";
@@ -255,13 +316,18 @@
       actions.append(button);
     }
 
-    const section = createSection("Lignes", actions);
+    const section = createSection(stmText("options.lines.title"), actions);
 
     for (const city of STM_CITIES) {
       const cityKey = `cities.${city.id}`;
       const hasCityRow = STM_CITIES.length > 1;
 
-      if (hasCityRow) addRow(section, { key: cityKey, label: city.name });
+      if (hasCityRow) {
+        addRow(section, {
+          key: cityKey,
+          label: stmText(`city.${city.id}.name`)
+        });
+      }
 
       const underCity = hasCityRow ? cityKey : undefined;
 
@@ -272,7 +338,7 @@
         if (hasSystemRow) {
           addRow(section, {
             key: systemKey,
-            label: system.name,
+            label: stmText(`system.${city.id}:${system.id}.name`),
             parent: underCity
           });
         }
@@ -280,10 +346,12 @@
         const underSystem = hasSystemRow ? systemKey : underCity;
 
         for (const line of system.lines) {
+          const lineId = `${city.id}:${system.id}:${line.id}`;
+
           addRow(section, {
-            hint: line.detail,
-            key: `lines.${city.id}:${system.id}:${line.id}`,
-            label: line.name,
+            hint: stmText(`line.${lineId}.detail`),
+            key: `lines.${lineId}`,
+            label: stmText(`line.${lineId}.name`),
             parent: underSystem,
             swatch: line.color
           });
@@ -295,8 +363,7 @@
   // The licence asks for the credit to travel with the data, and this page
   // lists the whole catalogue rather than whatever one map happens to show.
   function buildCredits() {
-    const host = document.querySelector("#stm-credits");
-    const parts = ["Données adaptées : "];
+    const parts = [`${stmText("credits.lead")} `];
     // By who is being credited rather than by operator, since one operator
     // running into two cities is still one name to thank.
     const credited = new Set();
@@ -328,7 +395,7 @@
       );
     }
 
-    host.append(...parts);
+    creditsHost.append(...parts);
   }
 
   function createLocationHint() {
@@ -336,10 +403,10 @@
     hint.className = "stm-point-hint";
 
     const formats = document.createElement("span");
-    formats.textContent = STM_LOCATION_HINT;
+    formats.textContent = stmText("point.formats");
 
     const shortLink = document.createElement("span");
-    shortLink.textContent = STM_SHORT_LINK_WARNING;
+    shortLink.textContent = stmText("point.shortLinks");
 
     hint.append(formats, shortLink);
 
@@ -355,8 +422,8 @@
     const label = document.createElement("input");
     label.name = "label";
     label.type = "text";
-    label.placeholder = "Nom";
-    label.setAttribute("aria-label", "Nom");
+    label.placeholder = stmText("point.name");
+    label.setAttribute("aria-label", stmText("point.name"));
     label.value = point?.label ?? "";
 
     // type="url" would reject a pasted coordinate pair before submit ever
@@ -366,8 +433,8 @@
     location.type = "text";
     location.autocomplete = "off";
     location.spellcheck = false;
-    location.placeholder = STM_LOCATION_LABEL;
-    location.setAttribute("aria-label", STM_LOCATION_LABEL);
+    location.placeholder = stmText("point.location");
+    location.setAttribute("aria-label", stmText("point.location"));
     location.value = point ? stmFormatCoordinates(point.coordinates) : "";
 
     const error = document.createElement("p");
@@ -387,7 +454,7 @@
     color.name = "color";
     color.type = "color";
     color.value = point?.color ?? STM_DEFAULT_POINT_COLOR;
-    color.setAttribute("aria-label", "Couleur");
+    color.setAttribute("aria-label", stmText("point.color"));
 
     const submit = document.createElement("button");
     submit.type = "submit";
@@ -402,7 +469,7 @@
       const cancel = document.createElement("button");
       cancel.type = "button";
       cancel.className = "stm-point-cancel";
-      cancel.textContent = "Annuler";
+      cancel.textContent = stmText("point.cancel");
       cancel.addEventListener("click", onCancel);
       actions.append(cancel);
     }
@@ -462,7 +529,7 @@
     const title = document.createElement("span");
     // A point saved without a name is still a place on the map, and it has
     // to be findable in this list to be edited or deleted.
-    title.textContent = point.label?.trim() || "Sans nom";
+    title.textContent = point.label?.trim() || stmText("point.unnamed");
 
     if (!point.label?.trim()) title.className = "stm-point-unnamed";
 
@@ -479,7 +546,7 @@
 
     const edit = document.createElement("button");
     edit.type = "button";
-    edit.textContent = "Modifier";
+    edit.textContent = stmText("point.edit");
     edit.addEventListener("click", () => {
       editingId = point.id;
       renderPoints();
@@ -489,7 +556,7 @@
     const remove = document.createElement("button");
     remove.type = "button";
     remove.className = "stm-point-remove";
-    remove.textContent = "Supprimer";
+    remove.textContent = stmText("point.remove");
     remove.addEventListener("click", () =>
       savePoints(points.filter(({ id }) => id !== point.id))
     );
@@ -506,8 +573,7 @@
     if (!points.length) {
       const empty = document.createElement("p");
       empty.className = "stm-point-empty";
-      empty.textContent =
-        "Aucun point enregistré. Ajoutez-en un ci-dessous, ou depuis la carte.";
+      empty.textContent = stmText("options.points.empty");
       pointList.append(empty);
       return;
     }
@@ -532,7 +598,7 @@
           );
         },
         point,
-        submitLabel: "Enregistrer"
+        submitLabel: stmText("point.save")
       });
 
       pointList.append(form.element);
@@ -543,21 +609,21 @@
     const section = document.createElement("section");
 
     const heading = document.createElement("h2");
-    heading.textContent = "Points de repère";
+    heading.textContent = stmText("options.points.title");
 
     pointList = document.createElement("div");
     pointList.className = "stm-point-list";
 
     const addHeading = document.createElement("p");
     addHeading.className = "stm-point-add-heading";
-    addHeading.textContent = "Ajouter un point";
+    addHeading.textContent = stmText("point.addTitle");
 
     const add = createPointForm({
       onSubmit: async (values) => {
         await savePoints([...points, { id: crypto.randomUUID(), ...values }]);
         add.reset();
       },
-      submitLabel: "Ajouter"
+      submitLabel: stmText("point.add")
     });
 
     section.append(heading, pointList, addHeading, add.element);
@@ -568,6 +634,11 @@
   function syncInputs() {
     masterInput.checked = enabled;
     document.body.classList.toggle("stm-off", !enabled);
+    // A stored language this build has no words for is followed as the
+    // browser's choice, and the list says so rather than showing a blank.
+    languageInput.value = Object.hasOwn(STM_LOCALES, settings.language)
+      ? settings.language
+      : STM_AUTO_LANGUAGE;
 
     for (const { input, key, parent, row } of rows.values()) {
       input.checked = readSetting(key) !== false;
@@ -587,44 +658,54 @@
     }
   }
 
-  async function load() {
-    const stored = await chrome.storage.local.get([
-      STM_CUSTOM_POINTS_KEY,
-      STM_ENABLED_KEY,
-      STM_SETTINGS_KEY
-    ]);
+  // The whole page, from nothing, in the current language. Only the storage it
+  // is drawn from survives a rebuild: a half-typed point is lost with the form
+  // it was typed into, which is a fair price for a change of language.
+  function build() {
+    rows.clear();
+    masterSection.replaceChildren();
+    languageSection.replaceChildren();
+    sectionsHost.replaceChildren();
+    creditsHost.replaceChildren();
 
-    enabled = stored[STM_ENABLED_KEY] ?? true;
-    settings = stmMergeSettings(stored[STM_SETTINGS_KEY]);
-    points = stored[STM_CUSTOM_POINTS_KEY] ?? [];
+    document.documentElement.lang = stmLocale;
+
+    for (const element of document.querySelectorAll("[data-stm-text]")) {
+      element.textContent = stmText(element.dataset.stmText);
+    }
+
+    buildMaster();
+    buildLanguageSection();
+    buildSitesSection();
+
+    for (const section of sections()) buildSection(section);
+
+    buildLinesSection();
+    buildPointsSection();
+    buildCredits();
     syncInputs();
-    renderPoints();
   }
 
-  buildMaster();
-  buildSitesSection();
+  // Everything on the page was written in the language it was built in, so a
+  // new language is a rebuild, and anything else is only switches to sync. The
+  // list that asked for the rebuild is rebuilt with the rest, and is handed
+  // the focus back so a keyboard is not dropped at the top of the page.
+  function refresh() {
+    if (!stmUseLanguage(settings.language)) {
+      syncInputs();
+      return;
+    }
 
-  for (const section of SECTIONS) buildSection(section);
+    const refocus = document.activeElement === languageInput;
 
-  buildLinesSection();
-  buildPointsSection();
-  buildCredits();
+    build();
 
-  document.querySelector("#stm-reset").addEventListener("click", async () => {
-    if (!confirm("Rétablir tous les réglages par défaut ?")) return;
-
-    enabled = true;
-    settings = stmMergeSettings();
-    await chrome.storage.local.set({
-      [STM_ENABLED_KEY]: enabled,
-      [STM_SETTINGS_KEY]: settings
-    });
-    syncInputs();
-  });
+    if (refocus) languageInput.focus();
+  }
 
   // The toolbar button writes the master switch behind this page's back, and
   // a second copy of the page may be open in another window.
-  chrome.storage.onChanged.addListener((changes, area) => {
+  function handleStorageChange(changes, area) {
     if (area !== "local") return;
 
     if (changes[STM_ENABLED_KEY]) {
@@ -635,7 +716,7 @@
       settings = stmMergeSettings(changes[STM_SETTINGS_KEY].newValue);
     }
 
-    if (changes[STM_ENABLED_KEY] || changes[STM_SETTINGS_KEY]) syncInputs();
+    if (changes[STM_ENABLED_KEY] || changes[STM_SETTINGS_KEY]) refresh();
 
     // The panel on the map writes the same list, so a point added or deleted
     // there lands here. An edit in progress whose point has just gone is an
@@ -647,6 +728,37 @@
 
       renderPoints();
     }
+  }
+
+  // Nothing is built before the settings are in, because the settings say
+  // which language to build in. Changes are listened for from then on, once
+  // there is a page for them to land on.
+  async function load() {
+    const stored = await chrome.storage.local.get([
+      STM_CUSTOM_POINTS_KEY,
+      STM_ENABLED_KEY,
+      STM_SETTINGS_KEY
+    ]);
+
+    enabled = stored[STM_ENABLED_KEY] ?? true;
+    settings = stmMergeSettings(stored[STM_SETTINGS_KEY]);
+    points = stored[STM_CUSTOM_POINTS_KEY] ?? [];
+    stmUseLanguage(settings.language);
+    build();
+    main.hidden = false;
+    chrome.storage.onChanged.addListener(handleStorageChange);
+  }
+
+  document.querySelector("#stm-reset").addEventListener("click", async () => {
+    if (!confirm(stmText("options.reset.confirm"))) return;
+
+    enabled = true;
+    settings = stmMergeSettings();
+    await chrome.storage.local.set({
+      [STM_ENABLED_KEY]: enabled,
+      [STM_SETTINGS_KEY]: settings
+    });
+    refresh();
   });
 
   load();

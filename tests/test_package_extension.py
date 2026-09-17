@@ -40,6 +40,9 @@ class PackageTests(unittest.TestCase):
                         self.assertTrue(fnmatch.filter(names, asset), asset)
                 for icon in manifest["icons"].values():
                     self.assertIn(icon, names)
+                # A manifest that names its default locale will not load
+                # without that locale's messages beside it.
+                self.assertIn(f"_locales/{manifest['default_locale']}/messages.json", names)
 
     def test_unlisted_local_files_cannot_enter_the_archive(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -1,9 +1,10 @@
 """Generate one geometry file per city from the checked-in source data.
 
 The files hold geometry and nothing else: ids, paths, stations, and the notice
-the licence asks to travel with them. What each line is called, what colour it
-is drawn in and who to credit for it are the extension registry's to say, in
-extension/networks.js, so that none of it is stated in two places.
+the licence asks to travel with them. What colour each line is drawn in and who
+to credit for it are the extension registry's to say, in extension/networks.js,
+and what it is called is each language's, in extension/i18n.js, so that none of
+it is stated in two places.
 """
 
 import json

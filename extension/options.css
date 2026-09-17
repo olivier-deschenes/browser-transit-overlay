@@ -226,6 +226,24 @@ h2 {
   cursor: default;
 }
 
+/*
+ * The one row that ends in a list rather than a switch. It stays the
+ * platform's own control, drawn in the page's colours, so it opens and reads
+ * out the way every other list does. The cap keeps a long option from
+ * squeezing the label beside it down to a word per line.
+ */
+.stm-select {
+  background: var(--stm-background);
+  border: 1px solid var(--stm-border);
+  border-radius: 6px;
+  color: inherit;
+  cursor: pointer;
+  flex: none;
+  font: inherit;
+  max-width: 55%;
+  padding: 6px 8px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .stm-switch,
   .stm-switch::after {

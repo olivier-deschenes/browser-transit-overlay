@@ -1,6 +1,7 @@
-// Every network the overlay can draw, and the only place any of them is
-// named. A line's identity, its name, its colour and who to credit for it are
-// stated here once; the files under networks/ carry nothing but geometry.
+// Every network the overlay can draw. A line's identity, its colour and who to
+// credit for it are stated here once; what a city, an operator or a line is
+// called depends on the language, so each language says so in i18n.js, keyed
+// by the ids below. The files under networks/ carry nothing but geometry.
 //
 // Identity is three levels deep and spelled with colons:
 //
@@ -43,7 +44,6 @@ const STM_OGL_TORONTO = {
 const STM_CITIES = [
   {
     id: "montreal",
-    name: "Montréal",
 
     // What the geometry's local coordinates are measured from, so a path
     // string stays a run of small numbers at two decimals rather than six
@@ -61,14 +61,13 @@ const STM_CITIES = [
     data: "networks/montreal.json",
 
     // Marketplace names the city in its category path, which is what the
-    // "Voir Montréal" shortcut rewrites. A city with nowhere to jump to
-    // simply leaves this out and the button never appears.
+    // city's shortcut button rewrites. A city with nowhere to jump to simply
+    // leaves this out and the button never appears.
     marketplaceSlug: "montreal",
 
     systems: [
       {
         id: "stm",
-        name: "Métro de Montréal",
         attribution: {
           label: "STM",
           license: STM_CC_BY_4,
@@ -82,20 +81,14 @@ const STM_CITIES = [
         // guesses CMYK looks like on a screen, which is a different and worse
         // answer.
         lines: [
-          { color: "#009739", detail: "Ligne 1", id: "1", name: "Ligne verte" },
-          {
-            color: "#E87722",
-            detail: "Ligne 2",
-            id: "2",
-            name: "Ligne orange"
-          },
-          { color: "#FFCD00", detail: "Ligne 4", id: "4", name: "Ligne jaune" },
-          { color: "#005EB8", detail: "Ligne 5", id: "5", name: "Ligne bleue" }
+          { color: "#009739", id: "1" },
+          { color: "#E87722", id: "2" },
+          { color: "#FFCD00", id: "4" },
+          { color: "#005EB8", id: "5" }
         ]
       },
       {
         id: "rem",
-        name: "REM",
         attribution: {
           label: "REM",
           license: STM_CC_BY_4,
@@ -106,21 +99,15 @@ const STM_CITIES = [
         // nothing left out here to explain: taking one away on its own would
         // pull that trunk out from under the others.
         lines: [
-          {
-            // The green the REM brands itself in, rather than the neighbouring
-            // one its feed declares.
-            color: "#72A300",
-            detail: "Réseau express métropolitain",
-            id: "a",
-            name: "REM"
-          }
+          // The green the REM brands itself in, rather than the neighbouring
+          // one its feed declares.
+          { color: "#72A300", id: "a" }
         ]
       }
     ]
   },
   {
     id: "toronto",
-    name: "Toronto",
 
     origin: [-79.4, 43.7],
 
@@ -141,7 +128,6 @@ const STM_CITIES = [
     systems: [
       {
         id: "ttc",
-        name: "Métro et train léger de Toronto",
         attribution: {
           label: "TTC",
           license: STM_OGL_TORONTO,
@@ -157,36 +143,11 @@ const STM_CITIES = [
         // be is the Scarborough RT, which stopped running in 2023 and is no
         // longer in the feed.
         lines: [
-          {
-            color: "#F8C300",
-            detail: "Métro",
-            id: "1",
-            name: "Ligne 1 Yonge-University"
-          },
-          {
-            color: "#00923F",
-            detail: "Métro",
-            id: "2",
-            name: "Ligne 2 Bloor-Danforth"
-          },
-          {
-            color: "#A21A68",
-            detail: "Métro",
-            id: "4",
-            name: "Ligne 4 Sheppard"
-          },
-          {
-            color: "#EB8738",
-            detail: "Train léger",
-            id: "5",
-            name: "Ligne 5 Eglinton"
-          },
-          {
-            color: "#969594",
-            detail: "Train léger",
-            id: "6",
-            name: "Ligne 6 Finch West"
-          }
+          { color: "#F8C300", id: "1" },
+          { color: "#00923F", id: "2" },
+          { color: "#A21A68", id: "4" },
+          { color: "#EB8738", id: "5" },
+          { color: "#969594", id: "6" }
         ]
       }
     ]
@@ -212,11 +173,10 @@ const STM_LINES = STM_CITIES.flatMap((city) =>
 // ids are the one thing this whole shape exists to rule out. STM_LINES is
 // where lines are found.
 const STM_SYSTEMS = STM_CITIES.flatMap((city) =>
-  city.systems.map(({ attribution, id, name }) => ({
+  city.systems.map(({ attribution, id }) => ({
     attribution,
     cityId: city.id,
-    id: `${city.id}:${id}`,
-    name
+    id: `${city.id}:${id}`
   }))
 );
 

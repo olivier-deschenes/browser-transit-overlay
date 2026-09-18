@@ -70,7 +70,32 @@
   // Every switch on the page, by the settings key it writes, and each one
   // holding on to the switch it hangs under. That chain is what a held row is
   // read off: a line answers to its system and its city as well as to itself.
+  // The catalogue's own switches are kept apart because they are thrown away
+  // and built again whenever the filters change, and the rest of the page is
+  // not.
   const rows = new Map();
+  const networkRows = new Map();
+
+  // What every filter reads when it is asking for nothing in particular.
+  const STM_ANY = "all";
+
+  // How the catalogue is being looked at, rather than anything it stores: a
+  // filter is not a setting and is never written to storage. It outlives a
+  // change of language, which rebuilds the page, and nothing else.
+  let lineQuery = "";
+  let countryFilter = STM_ANY;
+  let modeFilter = STM_ANY;
+
+  // Which cities are open. A card opened by hand stays open until it is
+  // closed by hand; a search opens whatever it matches for as long as it runs.
+  const openCities = new Set();
+
+  // Redraws the catalogue, and brings what its switches say back in line with
+  // the settings. Assigned when the section is built, since everything the two
+  // of them touch is built along with it.
+  let renderNetwork = () => {};
+  let syncNetwork = () => {};
+
   const main = document.querySelector("main");
   const masterSection = document.querySelector("#stm-master-section");
   const languageSection = document.querySelector("#stm-language-section");
@@ -168,6 +193,71 @@
     return { input: control, row };
   }
 
+  // Accents are how these networks spell themselves and not how anyone types
+  // them in a hurry, so "metro" has to find "Métro".
+  function foldText(value) {
+    return value
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .toLowerCase();
+  }
+
+  // Everything about a line somebody might type to look for it: the country
+  // and city it runs in, who runs it, what it is called, what kind of service
+  // it is, and the id itself.
+  function lineSearchText(line) {
+    return foldText(
+      [
+        stmText(`country.${line.countryId}.name`),
+        stmText(`city.${line.cityId}.name`),
+        stmText(`system.${line.systemId}.name`),
+        stmText(`line.${line.id}.name`),
+        stmText(`line.${line.id}.detail`),
+        stmText(`mode.${line.mode}.name`),
+        line.id
+      ].join(" ")
+    );
+  }
+
+  // A line's own short name, the way its network prints it on a bullet: 1,
+  // 3bis, A, M1. Only the first character is raised, which is what keeps
+  // Paris's 3bis from shouting.
+  function lineBadge({ id }) {
+    const short = id.slice(id.lastIndexOf(":") + 1);
+
+    return short.charAt(0).toUpperCase() + short.slice(1);
+  }
+
+  // Which ink a line's colour can carry, by whichever of black and white
+  // stands further from it. The catalogue runs from the Toulouse yellow to the
+  // Paris purple, and one ink for both would be unreadable on one of them.
+  // 0.179 is where the two contrast ratios meet, both at 4.58:1.
+  function inkFor(color) {
+    const channel = (offset) => {
+      const value = parseInt(color.slice(offset, offset + 2), 16) / 255;
+
+      return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    };
+
+    const luminance =
+      0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
+
+    return luminance > 0.179 ? "#000000" : "#ffffff";
+  }
+
+  // The bullet a line is known by: its colour, carrying its short name. Drawn
+  // both in the strip a closed city shows and on the button that switches the
+  // line, because it is the one part of a line anybody recognises at a glance.
+  function createBullet(line) {
+    const bullet = document.createElement("span");
+    bullet.className = "stm-bullet";
+    bullet.style.setProperty("--stm-swatch", line.color);
+    bullet.style.setProperty("--stm-ink", inkFor(line.color));
+    bullet.textContent = lineBadge(line);
+
+    return bullet;
+  }
+
   function buildMaster() {
     const { input, row } = createRow({
       hint: stmText("options.enable.hint"),
@@ -238,24 +328,24 @@
       syncInputs();
     });
 
-    rows.set(definition.key, { depth, input, key: definition.key, parent, row });
+    rows.set(definition.key, {
+      depth,
+      key: definition.key,
+      parent,
+      sync(checked, held) {
+        input.checked = checked;
+        input.disabled = held;
+        row.classList.toggle("stm-row-held", held);
+      }
+    });
     section.append(row);
   }
 
-  function createSection(title, actions) {
+  function createSection(title) {
     const section = document.createElement("section");
     const heading = document.createElement("h2");
     heading.textContent = title;
-
-    if (actions) {
-      const header = document.createElement("div");
-      header.className = "stm-section-header";
-      header.append(heading, actions);
-      section.append(header);
-    } else {
-      section.append(heading);
-    }
-
+    section.append(heading);
     sectionsHost.append(section);
 
     return section;
@@ -282,13 +372,167 @@
     }
   }
 
-  // The registry's three levels, drawn as three depths of switch. A level
-  // with nothing to choose between is left out rather than given a row that
-  // could only repeat what the row under it already says: one city is the
-  // whole catalogue, and a lone operator in a city is all of that city.
+  // The catalogue is too long to read as a list — eight cities and better
+  // than forty lines — so it is shown as a card per city that opens, over a
+  // search and two filters that decide what those cards hold. The filters are
+  // the country a network runs in and the kind of service it is, because those
+  // are the two questions somebody arrives with: everything here is a métro
+  // except where it is not, and half of it is in another country.
+  //
+  // Everything the buttons do, they do to whatever the filters have left
+  // standing. Turning off the regional lines in France is two chips and one
+  // button rather than eleven switches, and that is the whole point of them.
   function buildLinesSection() {
-    const actions = document.createElement("div");
-    actions.className = "stm-bulk";
+    const section = createSection(stmText("options.lines.title"));
+
+    // What the last render left on screen, which is what the buttons beside
+    // the count act on and what the fold button counts to name itself.
+    let shownLines = [];
+    let shownCities = [];
+    let searching = false;
+
+    const cards = [];
+    const chips = [];
+
+    const search = document.createElement("input");
+    search.type = "search";
+    search.className = "stm-search";
+    search.autocomplete = "off";
+    search.spellcheck = false;
+    search.value = lineQuery;
+    search.placeholder = stmText("options.lines.search");
+    search.setAttribute("aria-label", stmText("options.lines.search"));
+    search.addEventListener("input", () => {
+      lineQuery = search.value;
+      renderNetwork();
+    });
+
+    // Radio buttons rather than anything drawn from scratch, so that a group
+    // is one stop in the tab order and the arrow keys walk it without a line
+    // of keyboard code of our own. Each one is left where it is and made
+    // invisible, and the chip drawn beside it is styled from it: what is
+    // wanted is the platform's control wearing our clothes.
+    const createFilter = (name, heading, choices, selected, pick) => {
+      const group = document.createElement("div");
+      group.className = "stm-filter";
+      group.setAttribute("role", "radiogroup");
+
+      const caption = document.createElement("span");
+      caption.className = "stm-filter-label";
+      caption.id = `stm-filter-${name}`;
+      caption.textContent = heading;
+      group.setAttribute("aria-labelledby", caption.id);
+      group.append(caption);
+
+      for (const { id, label } of choices) {
+        const chip = document.createElement("label");
+        chip.className = "stm-chip";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = name;
+        input.checked = id === selected;
+        input.addEventListener("change", () => {
+          pick(id);
+          renderNetwork();
+        });
+
+        // How many lines this chip would leave, counted under whatever the
+        // other filter and the search already say rather than on its own: a
+        // chip promising twenty-one lines that turn out to be none is worse
+        // than no number at all. Filled in on every render.
+        const count = document.createElement("span");
+        count.className = "stm-chip-count";
+
+        const face = document.createElement("span");
+        face.className = "stm-chip-face";
+        face.append(label, count);
+
+        chip.append(input, face);
+        chips.push({ count, face, group: name, id, input });
+        group.append(chip);
+      }
+
+      return group;
+    };
+
+    const filters = document.createElement("div");
+    filters.className = "stm-filters";
+    filters.append(
+      createFilter(
+        "stm-country",
+        stmText("options.lines.country"),
+        [
+          { id: STM_ANY, label: stmText("options.lines.filterAll") },
+          ...STM_COUNTRIES.map((id) => ({
+            id,
+            label: stmText(`country.${id}.name`)
+          }))
+        ],
+        countryFilter,
+        (id) => {
+          countryFilter = id;
+        }
+      ),
+      createFilter(
+        "stm-mode",
+        stmText("options.lines.mode"),
+        [
+          { id: STM_ANY, label: stmText("options.lines.filterAll") },
+          ...STM_MODES.map((id) => ({ id, label: stmText(`mode.${id}.name`) }))
+        ],
+        modeFilter,
+        (id) => {
+          modeFilter = id;
+        }
+      )
+    );
+
+    const summary = document.createElement("p");
+    summary.className = "stm-network-summary";
+
+    const clear = document.createElement("button");
+    clear.type = "button";
+    clear.className = "stm-link";
+    clear.textContent = stmText("options.lines.clearFilters");
+    clear.addEventListener("click", () => {
+      countryFilter = STM_ANY;
+      modeFilter = STM_ANY;
+      lineQuery = "";
+      search.value = "";
+
+      for (const chip of chips) chip.input.checked = chip.id === STM_ANY;
+
+      renderNetwork();
+    });
+
+    const fold = document.createElement("button");
+    fold.type = "button";
+    fold.className = "stm-link";
+
+    // Named for what it would do rather than for what is open, so it never
+    // reads as a label for a state.
+    const updateFold = () => {
+      const closed = shownCities.some(({ id }) => !openCities.has(id));
+
+      fold.hidden = searching || shownCities.length < 2;
+      fold.textContent = closed
+        ? stmText("options.lines.expandAll")
+        : stmText("options.lines.collapseAll");
+    };
+
+    fold.addEventListener("click", () => {
+      const open = shownCities.some(({ id }) => !openCities.has(id));
+
+      // Through the cards rather than through the set, so that the one part
+      // of the page that changed is the only part redrawn and the button
+      // keeps the focus that was just put on it.
+      for (const card of cards) card.setOpen(open);
+    });
+
+    const bulk = document.createElement("div");
+    bulk.className = "stm-bulk";
+    bulk.title = stmText("options.lines.bulkHint");
 
     for (const [label, value] of [
       [stmText("options.lines.allOn"), true],
@@ -298,66 +542,347 @@
       button.type = "button";
       button.textContent = label;
       button.addEventListener("click", async () => {
-        for (const { id } of STM_LINES) settings.lines[id] = value;
+        for (const { id } of shownLines) settings.lines[id] = value;
 
-        // Switching everything back on has to reach the rows above the lines
-        // too, or a system left off would go on hiding lines that now say
-        // they are on. Switching everything off needs only the lines: holding
-        // their parents off as well would leave a section of dimmed rows with
+        // Switching lines back on has to reach the switches above them too,
+        // or a city or an operator left off would go on hiding lines that now
+        // say they are on. Switching them off needs only the lines: holding
+        // their parents off as well would leave a card of dimmed bullets with
         // nothing in it left to click.
         if (value) {
-          for (const { id } of STM_CITIES) settings.cities[id] = true;
-          for (const { id } of STM_SYSTEMS) settings.systems[id] = true;
+          for (const { cityId, systemId } of shownLines) {
+            settings.cities[cityId] = true;
+            settings.systems[systemId] = true;
+          }
         }
 
         await saveSettings();
         syncInputs();
       });
-      actions.append(button);
+      bulk.append(button);
     }
 
-    const section = createSection(stmText("options.lines.title"), actions);
+    const actions = document.createElement("div");
+    actions.className = "stm-network-actions";
+    actions.append(clear, fold, bulk);
 
-    for (const city of STM_CITIES) {
+    const bar = document.createElement("div");
+    bar.className = "stm-network-bar";
+    bar.append(summary, actions);
+
+    const list = document.createElement("div");
+    list.className = "stm-network-list";
+
+    const empty = document.createElement("p");
+    empty.className = "stm-network-empty";
+    empty.textContent = stmText("options.lines.empty");
+
+    section.append(search, filters, bar, list, empty);
+
+    // A switch inside the catalogue, kept in the shape the rest of the page's
+    // switches are kept in so that one pass can hold every one of them to the
+    // switches above it.
+    const register = (key, parent, sync) => {
+      const control = { key, parent, sync };
+      networkRows.set(key, control);
+
+      return control;
+    };
+
+    // One line, as the button that switches it. A button rather than a
+    // checkbox because the bullet and the name are the control here, and
+    // there is no room beside them for a switch as well; role="switch" is
+    // what says it is still one of those.
+    const createLineChip = (line, parent, drawn) => {
+      const key = `lines.${line.id}`;
+
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "stm-line";
+      chip.setAttribute("role", "switch");
+      chip.title = stmText(`line.${line.id}.detail`);
+
+      const name = document.createElement("span");
+      name.className = "stm-line-name";
+      name.textContent = stmText(`line.${line.id}.name`);
+
+      const bullet = createBullet(line);
+
+      chip.append(bullet, name);
+      chip.addEventListener("click", async () => {
+        writeSetting(key, readSetting(key) === false);
+        await saveSettings();
+        syncInputs();
+      });
+
+      register(key, parent, (checked, held) => {
+        chip.setAttribute("aria-checked", String(checked));
+        chip.disabled = held;
+        chip.classList.toggle("stm-line-off", !checked);
+
+        // Both of the line's bullets: the one on this button, and the one the
+        // card's header shows while it is closed. A line held by the switch
+        // above it is not being drawn either, whatever its own switch says.
+        for (const shown of [bullet, drawn]) {
+          shown.classList.toggle("stm-bullet-off", !checked || held);
+        }
+      });
+
+      return chip;
+    };
+
+    // One city, closed by default: eight cards and the strip of bullets each
+    // one carries say more about the catalogue at a glance than forty rows
+    // of switch ever did.
+    const createCityCard = (city, lines, open) => {
+      const card = document.createElement("div");
+      card.className = "stm-city";
+
+      const head = document.createElement("div");
+      head.className = "stm-city-head";
+
+      const body = document.createElement("div");
+      body.className = "stm-city-body";
+      body.id = `stm-city-${city.id}`;
+
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.className = "stm-city-toggle";
+      toggle.setAttribute("aria-controls", body.id);
+
+      const chevron = document.createElement("span");
+      chevron.className = "stm-chevron";
+      chevron.setAttribute("aria-hidden", "true");
+
+      const name = document.createElement("span");
+      name.className = "stm-city-name";
+      name.textContent = stmText(`city.${city.id}.name`);
+
+      const country = document.createElement("span");
+      country.className = "stm-city-country";
+      country.textContent = stmText(`country.${city.country}.name`);
+
+      const badge = document.createElement("span");
+      badge.className = "stm-city-badge";
+
+      const title = document.createElement("span");
+      title.className = "stm-city-title";
+      title.append(name, country, badge);
+
+      // The lines themselves, on a line of their own under the name, which is
+      // the one place a city's worth of them fits while the card is closed.
+      // They are named inside the card, so out here they are decoration and
+      // are kept out of the button's name.
+      const strip = document.createElement("span");
+      strip.className = "stm-city-strip";
+      strip.setAttribute("aria-hidden", "true");
+
+      const bullets = new Map(
+        lines.map((line) => {
+          const bullet = createBullet(line);
+          strip.append(bullet);
+
+          return [line.id, bullet];
+        })
+      );
+
+      toggle.append(chevron, title, strip);
+
+      const control = createSwitch();
       const cityKey = `cities.${city.id}`;
-      const hasCityRow = STM_CITIES.length > 1;
 
-      if (hasCityRow) {
-        addRow(section, {
-          key: cityKey,
-          label: stmText(`city.${city.id}.name`)
-        });
-      }
+      control.addEventListener("change", async () => {
+        writeSetting(cityKey, control.checked);
+        await saveSettings();
+        syncInputs();
+      });
 
-      const underCity = hasCityRow ? cityKey : undefined;
+      const cityControl = register(cityKey, undefined, (checked) => {
+        control.checked = checked;
+        card.classList.toggle("stm-city-off", !checked);
+      });
+
+      head.append(toggle, control);
+      card.append(head, body);
 
       for (const system of city.systems) {
-        const systemKey = `systems.${city.id}:${system.id}`;
-        const hasSystemRow = city.systems.length > 1;
+        const systemId = `${city.id}:${system.id}`;
+        const owned = lines.filter((line) => line.systemId === systemId);
 
-        if (hasSystemRow) {
-          addRow(section, {
-            key: systemKey,
-            label: stmText(`system.${city.id}:${system.id}.name`),
-            parent: underCity
+        if (!owned.length) continue;
+
+        const group = document.createElement("div");
+        group.className = "stm-system";
+        let parent = cityControl;
+
+        // An operator with nobody to be told apart from is left out rather
+        // than given a row that could only repeat what the card already says.
+        // Which operators a city has is the registry's answer and not the
+        // filter's, so that a switch turned off can never be filtered out of
+        // reach of the lines it is holding.
+        if (city.systems.length > 1) {
+          const header = document.createElement("label");
+          header.className = "stm-system-head";
+
+          const label = document.createElement("span");
+          label.textContent = stmText(`system.${systemId}.name`);
+
+          const input = createSwitch();
+          const key = `systems.${systemId}`;
+
+          input.addEventListener("change", async () => {
+            writeSetting(key, input.checked);
+            await saveSettings();
+            syncInputs();
           });
+
+          parent = register(key, cityControl, (checked, held) => {
+            input.checked = checked;
+            input.disabled = held;
+            header.classList.toggle("stm-row-held", held);
+            group.classList.toggle("stm-system-off", !checked);
+          });
+
+          header.append(label, input);
+          group.append(header);
         }
 
-        const underSystem = hasSystemRow ? systemKey : underCity;
+        // Within an operator, by kind of service, and only where there is
+        // more than one of them to tell apart: Toronto runs its light rail
+        // under the same name and out of the same feed as its subway.
+        for (const mode of STM_MODES) {
+          const run = owned.filter((line) => line.mode === mode);
 
-        for (const line of system.lines) {
-          const lineId = `${city.id}:${system.id}:${line.id}`;
+          if (!run.length) continue;
 
-          addRow(section, {
-            hint: stmText(`line.${lineId}.detail`),
-            key: `lines.${lineId}`,
-            label: stmText(`line.${lineId}.name`),
-            parent: underSystem,
-            swatch: line.color
-          });
+          if (new Set(owned.map((line) => line.mode)).size > 1) {
+            const label = document.createElement("p");
+            label.className = "stm-mode";
+            label.textContent = stmText(`mode.${mode}.name`);
+            group.append(label);
+          }
+
+          const grid = document.createElement("div");
+          grid.className = "stm-line-grid";
+
+          for (const line of run) {
+            grid.append(createLineChip(line, parent, bullets.get(line.id)));
+          }
+
+          group.append(grid);
         }
+
+        body.append(group);
       }
-    }
+
+      // Opening a card by hand is remembered and opening one on a filter's
+      // behalf is not, so that a city the search happened to land on is closed
+      // again by clearing the search rather than left standing open.
+      const setOpen = (value, remember = true) => {
+        if (remember && value) openCities.add(city.id);
+        if (remember && !value) openCities.delete(city.id);
+
+        body.hidden = !value;
+        card.classList.toggle("stm-city-open", value);
+        toggle.setAttribute("aria-expanded", String(value));
+        updateFold();
+      };
+
+      toggle.addEventListener("click", () => setOpen(body.hidden));
+      setOpen(open, false);
+
+      cards.push({
+        setOpen,
+        update() {
+          const on = lines.filter(({ id }) =>
+            stmIsLineEnabled(settings, id)
+          ).length;
+
+          badge.textContent = `${on}/${lines.length}`;
+          badge.title = stmText("options.lines.summary", {
+            on,
+            shown: lines.length
+          });
+        }
+      });
+
+      return card;
+    };
+
+    renderNetwork = () => {
+      const terms = foldText(lineQuery).split(/\s+/).filter(Boolean);
+      const haystacks = new Map(
+        STM_LINES.map((line) => [line.id, lineSearchText(line)])
+      );
+      const matching = (country, mode) =>
+        STM_LINES.filter(
+          (line) =>
+            (country === STM_ANY || line.countryId === country) &&
+            (mode === STM_ANY || line.mode === mode) &&
+            terms.every((term) => haystacks.get(line.id).includes(term))
+        );
+
+      searching = terms.length > 0;
+      shownLines = matching(countryFilter, modeFilter);
+      shownCities = STM_CITIES.filter(({ id }) =>
+        shownLines.some(({ cityId }) => cityId === id)
+      );
+
+      for (const chip of chips) {
+        const left =
+          chip.group === "stm-country"
+            ? matching(chip.id, modeFilter)
+            : matching(countryFilter, chip.id);
+
+        chip.count.textContent = String(left.length);
+        chip.face.classList.toggle("stm-chip-empty", left.length === 0);
+      }
+
+      cards.length = 0;
+      networkRows.clear();
+      list.replaceChildren();
+
+      for (const city of shownCities) {
+        // A search opens what it found, and so does a filter that has left
+        // one city standing: either way there is nothing else on screen to
+        // read, and a card that has to be opened to show the one answer is a
+        // click asking for nothing.
+        const open =
+          searching || shownCities.length === 1 || openCities.has(city.id);
+
+        list.append(
+          createCityCard(
+            city,
+            shownLines.filter(({ cityId }) => cityId === city.id),
+            open
+          )
+        );
+      }
+
+      empty.hidden = shownCities.length > 0;
+      clear.hidden =
+        !searching && countryFilter === STM_ANY && modeFilter === STM_ANY;
+      updateFold();
+      syncInputs();
+    };
+
+    // Everything that counts rather than everything that is drawn: a line
+    // switched off changes these and nothing else on the page, so they are
+    // brought up to date wherever the switches are.
+    syncNetwork = () => {
+      const on = shownLines.filter(({ id }) =>
+        stmIsLineEnabled(settings, id)
+      ).length;
+
+      summary.textContent = stmText("options.lines.summary", {
+        on,
+        shown: shownLines.length
+      });
+
+      for (const card of cards) card.update();
+    };
+
+    renderNetwork();
   }
 
   // The licence asks for the credit to travel with the data, and this page
@@ -640,22 +1165,21 @@
       ? settings.language
       : STM_AUTO_LANGUAGE;
 
-    for (const { input, key, parent, row } of rows.values()) {
-      input.checked = readSetting(key) !== false;
-
+    for (const control of [...rows.values(), ...networkRows.values()]) {
       // A switch drives something that only exists inside whatever it hangs
       // under, so it is held rather than left to look as though it still does
       // something. Any switch above it being off is enough: a line answers to
       // its system and its city as well as to itself.
       let held = false;
 
-      for (let above = parent; above && !held; above = above.parent) {
+      for (let above = control.parent; above && !held; above = above.parent) {
         held = readSetting(above.key) === false;
       }
 
-      input.disabled = held;
-      row.classList.toggle("stm-row-held", held);
+      control.sync(readSetting(control.key) !== false, held);
     }
+
+    syncNetwork();
   }
 
   // The whole page, from nothing, in the current language. Only the storage it

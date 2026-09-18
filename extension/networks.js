@@ -21,6 +21,14 @@
 //   routinely several routes — that is exactly what the REM's S1/S2/S3 are —
 //   so the route-to-line mapping belongs in the build rather than out here.
 //
+// A city also names its country and a system the kind of service it runs, and
+// neither is a fourth level of id: nothing is keyed by them and no setting is
+// stored against them. They are what the settings page sorts and filters a
+// catalogue of this size by, and what a rider comparing a métro line with a
+// regional one is actually choosing between. A line whose service differs from
+// the rest of its operator's says so itself — Toronto's light rail runs in the
+// same feed, under the same operator, as its subway.
+//
 // This is a script rather than a JSON file because the settings are derived
 // from it synchronously, at load, in a service worker that reads it through
 // importScripts. Geometry is fetched; identity cannot be.
@@ -65,6 +73,7 @@ const STM_ODBL_1 = {
 const STM_CITIES = [
   {
     id: "montreal",
+    country: "ca",
 
     // What the geometry's local coordinates are measured from, so a path
     // string stays a run of small numbers at two decimals rather than six
@@ -89,6 +98,7 @@ const STM_CITIES = [
     systems: [
       {
         id: "stm",
+        mode: "metro",
         attribution: {
           label: "STM",
           license: STM_CC_BY_4,
@@ -110,6 +120,7 @@ const STM_CITIES = [
       },
       {
         id: "rem",
+        mode: "regional-rail",
         attribution: {
           label: "REM",
           license: STM_CC_BY_4,
@@ -129,6 +140,7 @@ const STM_CITIES = [
   },
   {
     id: "toronto",
+    country: "ca",
 
     origin: [-79.4, 43.7],
 
@@ -149,6 +161,7 @@ const STM_CITIES = [
     systems: [
       {
         id: "ttc",
+        mode: "metro",
         attribution: {
           label: "TTC",
           license: STM_OGL_TORONTO,
@@ -167,14 +180,15 @@ const STM_CITIES = [
           { color: "#F8C300", id: "1" },
           { color: "#00923F", id: "2" },
           { color: "#A21A68", id: "4" },
-          { color: "#EB8738", id: "5" },
-          { color: "#969594", id: "6" }
+          { color: "#EB8738", id: "5", mode: "light-rail" },
+          { color: "#969594", id: "6", mode: "light-rail" }
         ]
       }
     ]
   },
   {
     id: "paris",
+    country: "fr",
 
     origin: [2.35, 48.85],
 
@@ -199,6 +213,7 @@ const STM_CITIES = [
     systems: [
       {
         id: "metro",
+        mode: "metro",
         attribution: {
           label: "IDFM",
           license: STM_LICENCE_MOBILITES,
@@ -231,6 +246,7 @@ const STM_CITIES = [
       },
       {
         id: "rer",
+        mode: "regional-rail",
         attribution: {
           label: "IDFM",
           license: STM_LICENCE_MOBILITES,
@@ -249,6 +265,7 @@ const STM_CITIES = [
   },
   {
     id: "lyon",
+    country: "fr",
 
     origin: [4.85, 45.75],
 
@@ -264,6 +281,7 @@ const STM_CITIES = [
     systems: [
       {
         id: "tcl",
+        mode: "metro",
         attribution: {
           label: "TCL",
           license: STM_LICENCE_OUVERTE_2,
@@ -284,6 +302,7 @@ const STM_CITIES = [
   },
   {
     id: "marseille",
+    country: "fr",
 
     origin: [5.38, 43.3],
 
@@ -299,6 +318,7 @@ const STM_CITIES = [
     systems: [
       {
         id: "rtm",
+        mode: "metro",
         attribution: {
           label: "RTM",
           license: STM_LICENCE_OUVERTE_2,
@@ -314,6 +334,7 @@ const STM_CITIES = [
   },
   {
     id: "lille",
+    country: "fr",
 
     origin: [3.06, 50.63],
 
@@ -329,6 +350,7 @@ const STM_CITIES = [
     systems: [
       {
         id: "ilevia",
+        mode: "metro",
         attribution: {
           label: "ilévia",
           license: STM_LICENCE_OUVERTE_2,
@@ -344,6 +366,7 @@ const STM_CITIES = [
   },
   {
     id: "toulouse",
+    country: "fr",
 
     origin: [1.44, 43.6],
 
@@ -359,6 +382,7 @@ const STM_CITIES = [
     systems: [
       {
         id: "tisseo",
+        mode: "metro",
         attribution: {
           label: "Tisséo",
           license: STM_ODBL_1,
@@ -374,6 +398,7 @@ const STM_CITIES = [
   },
   {
     id: "rennes",
+    country: "fr",
 
     origin: [-1.68, 48.11],
 
@@ -389,6 +414,7 @@ const STM_CITIES = [
     systems: [
       {
         id: "star",
+        mode: "metro",
         attribution: {
           label: "STAR",
           license: STM_ODBL_1,
@@ -410,8 +436,11 @@ const STM_CITIES = [
 const STM_LINES = STM_CITIES.flatMap((city) =>
   city.systems.flatMap((system) =>
     system.lines.map((line) => ({
+      // Whatever its operator runs, unless this line says otherwise.
+      mode: system.mode,
       ...line,
       cityId: city.id,
+      countryId: city.country,
       id: `${city.id}:${system.id}:${line.id}`,
       systemId: `${city.id}:${system.id}`
     }))
@@ -429,6 +458,16 @@ const STM_SYSTEMS = STM_CITIES.flatMap((city) =>
     id: `${city.id}:${id}`
   }))
 );
+
+// The countries and the kinds of service the catalogue covers, each in the
+// order the registry first mentions it, and each carrying nothing but its id:
+// what a country or a kind of service is called is i18n.js's to say, and which
+// lines are in one is a question the lines themselves answer. They exist so
+// that the settings page can offer them without walking the catalogue to find
+// out what is in it.
+const STM_COUNTRIES = [...new Set(STM_CITIES.map(({ country }) => country))];
+
+const STM_MODES = [...new Set(STM_LINES.map(({ mode }) => mode))];
 
 const STM_LINES_BY_ID = new Map(STM_LINES.map((line) => [line.id, line]));
 const STM_CITIES_BY_ID = new Map(STM_CITIES.map((city) => [city.id, city]));

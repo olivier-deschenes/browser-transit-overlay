@@ -8,8 +8,8 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8');
 
 const context = vm.createContext({});
 vm.runInContext(read('networks.js'), context);
-const registry = vm.runInContext('({ STM_CITIES, STM_DEFAULT_CITY_ID, STM_LINES, STM_SYSTEMS, stmCityAt, stmCityById, stmLineById })', context);
-const { STM_CITIES, STM_LINES, STM_SYSTEMS } = registry;
+const registry = vm.runInContext('({ STM_CITIES, STM_COUNTRIES, STM_DEFAULT_CITY_ID, STM_LINES, STM_MODES, STM_SYSTEMS, stmCityAt, stmCityById, stmLineById })', context);
+const { STM_CITIES, STM_COUNTRIES, STM_LINES, STM_MODES, STM_SYSTEMS } = registry;
 // The registry is evaluated in its own realm, so anything it maps or filters
 // comes back as that realm's array. Sorted copies made here are this one's.
 const sorted = (values) => [...values].sort();
@@ -34,6 +34,28 @@ test('ids are lowercase segments that spell out the levels above them', () => {
   }
   assert.ok(registry.stmCityById(registry.STM_DEFAULT_CITY_ID));
   assert.equal(registry.stmLineById(STM_LINES[0].id), STM_LINES[0]);
+});
+
+// Neither is a level of id, so nothing checks them by spelling a key out: what
+// keeps them honest is that the settings page offers exactly these and
+// i18n.test.mjs holds every language to naming them.
+test('every city names its country and every line its kind of service', () => {
+  for (const city of STM_CITIES) {
+    assert.match(city.country, SEGMENT, city.id);
+    for (const system of city.systems) assert.match(system.mode, SEGMENT, system.id);
+  }
+
+  // A line takes its operator's kind of service unless it says otherwise, so
+  // every one of them has one either way.
+  for (const line of STM_LINES) {
+    assert.ok(STM_MODES.includes(line.mode), line.id);
+    assert.equal(line.countryId, registry.stmCityById(line.cityId).country, line.id);
+  }
+
+  // Derived rather than declared, so what they hold is every country and kind
+  // of service the catalogue has, each of them once.
+  assert.deepEqual(sorted(STM_COUNTRIES), sorted(new Set(STM_CITIES.map(({ country }) => country))));
+  assert.deepEqual(sorted(STM_MODES), sorted(new Set(STM_LINES.map(({ mode }) => mode))));
 });
 
 // What each of these is called is up to each language, and i18n.test.mjs

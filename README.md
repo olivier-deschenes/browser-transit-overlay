@@ -71,20 +71,22 @@ data/scripts/cities/<city>.py       maps feed routes to public line ids
 extension/networks/<city>.json      geometry only: ids, paths, stations, notice
         ▲
         │  fetched by content.js for the city the map is showing
-extension/networks.js               registry: ids, colours, bounds, attribution
-        │
-        ├─ settings.js / options.js  a switch for each city, operator, and line
+extension/networks.js               registry: ids, colours, bounds, attribution,
+        │                           country, and kind of service
+        ├─ settings.js / options.js  a switch for each city, operator, and line,
+        │                            browsed by country, city, and service
         └─ content.js + sites.js     draws lines on Marketplace, Centris, and Local Logic maps
 
 extension/i18n.js                   every word shown, per language, including what
-                                    each city, operator, and line is called
+                                    each country, city, operator, line, and kind
+                                    of service is called
 ```
 
 - **[`data/scripts/cities/`](data/scripts/cities/)** is the only place where GTFS route ids or shapefile route ids appear. [`montreal.py`](data/scripts/cities/montreal.py) combines the STM métro and the REM into one city; [`toronto.py`](data/scripts/cities/toronto.py) takes the TTC's subway and light rail out of one city-wide feed; [`paris.py`](data/scripts/cities/paris.py) takes the métro and the RER out of Île-de-France Mobilités' feed for the whole region; [`lyon.py`](data/scripts/cities/lyon.py) is built from SYTRAL's map layers rather than its feed, which draws no métro at all.
 - **[`data/scripts/build_networks.py`](data/scripts/build_networks.py)** writes one file per city in [`CITIES`](data/scripts/cities/__init__.py) to [`extension/networks/`](extension/networks/). Shared simplification, deduplication, and rounding live in [`transit_geometry.py`](data/scripts/transit_geometry.py), and what every GTFS city needs done to its feed lives in [`gtfs_network.py`](data/scripts/gtfs_network.py).
-- **[`extension/networks.js`](extension/networks.js)** declares each city's operators, lines, colours, map bounds, data file, and the licence each operator's data was published under. Geometry files never repeat this information.
-- **[`extension/settings.js`](extension/settings.js)** gets its defaults from the registry, so a new city, operator, or line is switched on without a settings migration. [`options.js`](extension/options.js) builds the settings page from the same registry.
-- **[`extension/i18n.js`](extension/i18n.js)** names each city, operator, and line by its id, in every language, next to the rest of the interface's text.
+- **[`extension/networks.js`](extension/networks.js)** declares each city's operators, lines, colours, map bounds, data file, and the licence each operator's data was published under. Geometry files never repeat this information. A city also names the country it is in and an operator the kind of service it runs — métro, regional rail, light rail — which a line may override for itself; neither is a level of id, and nothing is stored against them.
+- **[`extension/settings.js`](extension/settings.js)** gets its defaults from the registry, so a new city, operator, or line is switched on without a settings migration. [`options.js`](extension/options.js) builds the settings page from the same registry: the lines are shown as a card per city, over a search and filters for country and kind of service, and whatever the filters leave standing is what the page's buttons switch on or off together.
+- **[`extension/i18n.js`](extension/i18n.js)** names each country, city, operator, line, and kind of service by its id, in every language, next to the rest of the interface's text.
 - **[`extension/content.js`](extension/content.js)** chooses the city whose bounds contain the viewport, loads its geometry, and draws it through the site adapter selected in [`sites.js`](extension/sites.js).
 - **[`tests/networks.test.mjs`](tests/networks.test.mjs)** checks that the registry and generated geometry list the same lines, and that each city's bounds contain everything it draws.
 

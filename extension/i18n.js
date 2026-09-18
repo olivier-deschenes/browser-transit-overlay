@@ -8,8 +8,9 @@
 //
 // Keys are written out whole wherever they are used, so that the tests can
 // find them. The one exception is the names the registry's own ids pick out —
-// city.montreal.name, system.montreal:stm.name, line.montreal:stm:1.name —
-// because a place or a line is called something different in each language
+// country.ca.name, city.montreal.name, system.montreal:stm.name,
+// line.montreal:stm:1.name, mode.metro.name — because a country, a place, a
+// line or a kind of service is called something different in each language
 // while its id, its colour and who to credit for it are not.
 //
 // Brand names, the operators' acronyms, licence titles and station names read
@@ -101,8 +102,18 @@ const STM_LOCALES = {
         "The gear that opens this page from the map.",
       "options.sites.title": "Sites",
       "options.lines.title": "Lines",
-      "options.lines.allOn": "Turn all on",
-      "options.lines.allOff": "Turn all off",
+      "options.lines.search": "Search a line, a city or a network",
+      "options.lines.country": "Country",
+      "options.lines.mode": "Type",
+      "options.lines.filterAll": "All",
+      "options.lines.summary": "{on} of {shown} lines on",
+      "options.lines.allOn": "Turn on",
+      "options.lines.allOff": "Turn off",
+      "options.lines.bulkHint": "Applies to the lines shown below.",
+      "options.lines.expandAll": "Expand all",
+      "options.lines.collapseAll": "Collapse all",
+      "options.lines.clearFilters": "Clear filters",
+      "options.lines.empty": "No line matches this search.",
       "options.points.title": "Landmarks",
       "options.points.empty":
         "No landmarks saved. Add one below, or from the map.",
@@ -113,6 +124,13 @@ const STM_LOCALES = {
 
       "site.facebook.detail": "Housing maps and listing map previews.",
       "site.centris.detail": "Search result maps and listing maps.",
+
+      "country.ca.name": "Canada",
+      "country.fr.name": "France",
+
+      "mode.metro.name": "Metro",
+      "mode.regional-rail.name": "Regional rail",
+      "mode.light-rail.name": "Light rail",
 
       "city.montreal.name": "Montréal",
       "system.montreal:stm.name": "Montréal Métro",
@@ -302,8 +320,18 @@ const STM_LOCALES = {
         "L’engrenage qui ouvre cette page depuis la carte.",
       "options.sites.title": "Sites",
       "options.lines.title": "Lignes",
-      "options.lines.allOn": "Tout activer",
-      "options.lines.allOff": "Tout désactiver",
+      "options.lines.search": "Rechercher une ligne, une ville ou un réseau",
+      "options.lines.country": "Pays",
+      "options.lines.mode": "Type",
+      "options.lines.filterAll": "Tous",
+      "options.lines.summary": "{on} lignes activées sur {shown}",
+      "options.lines.allOn": "Activer",
+      "options.lines.allOff": "Désactiver",
+      "options.lines.bulkHint": "S’applique aux lignes affichées ci-dessous.",
+      "options.lines.expandAll": "Tout déplier",
+      "options.lines.collapseAll": "Tout replier",
+      "options.lines.clearFilters": "Effacer les filtres",
+      "options.lines.empty": "Aucune ligne ne correspond à cette recherche.",
       "options.points.title": "Points de repère",
       "options.points.empty":
         "Aucun point enregistré. Ajoutez-en un ci-dessous, ou depuis la carte.",
@@ -315,6 +343,13 @@ const STM_LOCALES = {
       "site.facebook.detail":
         "Cartes des logements et aperçu de carte des annonces.",
       "site.centris.detail": "Cartes des résultats de recherche et des fiches.",
+
+      "country.ca.name": "Canada",
+      "country.fr.name": "France",
+
+      "mode.metro.name": "Métro",
+      "mode.regional-rail.name": "Train régional",
+      "mode.light-rail.name": "Train léger",
 
       "city.montreal.name": "Montréal",
       "system.montreal:stm.name": "Métro de Montréal",

@@ -9,6 +9,8 @@
    * cannot take currentColor, so each scheme draws its own.
    */
   --stm-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%235f6368' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --stm-selected: #e7f0ff;
+  --stm-soft: #eef0f2;
   --stm-surface: #ffffff;
   --stm-text: #1c1e21;
   --stm-track: #cfd3d8;
@@ -23,6 +25,8 @@
     --stm-danger: #ff8a80;
     --stm-muted: #9fa4ab;
     --stm-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%239fa4ab' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    --stm-selected: #1f3153;
+    --stm-soft: #2f3031;
     --stm-surface: #242526;
     --stm-text: #e4e6eb;
     --stm-track: #4a4b4d;
@@ -83,33 +87,6 @@ h2 {
   letter-spacing: 0.04em;
   margin: 16px 0 4px;
   text-transform: uppercase;
-}
-
-.stm-section-header {
-  align-items: baseline;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-}
-
-.stm-bulk {
-  display: flex;
-  flex: none;
-  gap: 12px;
-}
-
-.stm-bulk button {
-  background: none;
-  border: 0;
-  color: var(--stm-accent);
-  cursor: pointer;
-  font: inherit;
-  font-size: 12px;
-  padding: 0;
-}
-
-.stm-bulk button:hover {
-  text-decoration: underline;
 }
 
 .stm-row {
@@ -261,10 +238,392 @@ h2 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .stm-chevron,
   .stm-switch,
   .stm-switch::after {
     transition: none;
   }
+}
+
+/* Réseau ------------------------------------------------------------------ */
+
+.stm-search {
+  background: var(--stm-background);
+  border: 1px solid var(--stm-border);
+  border-radius: 8px;
+  color: inherit;
+  font: inherit;
+  margin: 10px 0;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+.stm-search::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.stm-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/*
+ * A row of chips behind one name. The group is a radiogroup rather than a
+ * fieldset because a legend cannot be laid out beside what it names, and
+ * beside it is where the name belongs when there are two of these.
+ */
+.stm-filter {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stm-filter-label {
+  color: var(--stm-muted);
+  flex: none;
+  font-size: 12px;
+  text-align: end;
+  width: 54px;
+}
+
+.stm-chip {
+  cursor: pointer;
+  position: relative;
+}
+
+/*
+ * The radio itself, left where it is so that it keeps the keyboard and the
+ * screen reader, and given no size so that the chip beside it is what is
+ * seen. Everything that chip says about itself is read off this.
+ */
+.stm-chip input {
+  appearance: none;
+  border: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  width: 0;
+}
+
+.stm-chip-face {
+  align-items: center;
+  border: 1px solid var(--stm-border);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 13px;
+  gap: 6px;
+  padding: 4px 11px;
+  white-space: nowrap;
+}
+
+.stm-chip:hover .stm-chip-face {
+  background: var(--stm-soft);
+}
+
+.stm-chip input:checked + .stm-chip-face {
+  background: var(--stm-selected);
+  border-color: var(--stm-accent);
+  color: var(--stm-accent);
+  font-weight: 600;
+}
+
+.stm-chip-count {
+  color: var(--stm-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+.stm-chip input:checked + .stm-chip-face .stm-chip-count {
+  color: inherit;
+}
+
+/* A chip that would leave nothing still says so rather than disappearing. */
+.stm-chip-empty {
+  opacity: 0.5;
+}
+
+.stm-network-bar {
+  align-items: center;
+  border-top: 1px solid var(--stm-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 10px 0;
+}
+
+.stm-network-summary {
+  color: var(--stm-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+.stm-network-actions {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.stm-bulk {
+  display: flex;
+  gap: 14px;
+}
+
+.stm-link,
+.stm-bulk button {
+  background: none;
+  border: 0;
+  color: var(--stm-accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 0;
+}
+
+.stm-link:hover,
+.stm-bulk button:hover {
+  text-decoration: underline;
+}
+
+.stm-link[hidden] {
+  display: none;
+}
+
+.stm-network-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+}
+
+.stm-network-empty {
+  color: var(--stm-muted);
+  margin: 4px 0 18px;
+}
+
+.stm-network-empty[hidden] {
+  display: none;
+}
+
+.stm-city {
+  border: 1px solid var(--stm-border);
+  border-radius: 8px;
+}
+
+.stm-city-head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  padding-right: 12px;
+}
+
+/*
+ * Everything in the header but the switch, so that opening a city and turning
+ * it off are never the same click. The chevron stands beside two rows: what
+ * the city is called, and the lines it holds.
+ */
+.stm-city-toggle {
+  background: none;
+  border: 0;
+  color: inherit;
+  column-gap: 10px;
+  cursor: pointer;
+  display: grid;
+  flex: 1;
+  font: inherit;
+  grid-template-areas: "chevron title" "chevron strip";
+  grid-template-columns: auto minmax(0, 1fr);
+  min-width: 0;
+  padding: 10px 0 10px 12px;
+  row-gap: 5px;
+  text-align: start;
+}
+
+.stm-chevron {
+  align-self: center;
+  border-bottom: 1.5px solid var(--stm-muted);
+  border-right: 1.5px solid var(--stm-muted);
+  grid-area: chevron;
+  height: 7px;
+  rotate: -45deg;
+  transition: rotate 120ms ease-in-out;
+  width: 7px;
+}
+
+.stm-city-open .stm-chevron {
+  rotate: 45deg;
+}
+
+.stm-city-title {
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+  grid-area: title;
+  min-width: 0;
+}
+
+.stm-city-name {
+  font-weight: 600;
+}
+
+.stm-city-country {
+  color: var(--stm-muted);
+  font-size: 12px;
+}
+
+.stm-city-badge {
+  color: var(--stm-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  margin-inline-start: auto;
+}
+
+.stm-city-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  grid-area: strip;
+}
+
+/* Open, the card names its lines, so the strip has nothing left to say. */
+.stm-city-open .stm-city-strip {
+  display: none;
+}
+
+.stm-city-body {
+  border-top: 1px solid var(--stm-border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+}
+
+.stm-city-body[hidden] {
+  display: none;
+}
+
+.stm-system-head {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.stm-system-head span {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/*
+ * The kind of service, named only where one operator runs more than one of
+ * them: Toronto's light rail comes out of the same feed, under the same name,
+ * as its subway.
+ */
+.stm-mode {
+  color: var(--stm-muted);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  margin: 12px 0 6px;
+  text-transform: uppercase;
+}
+
+.stm-system > .stm-mode:first-child,
+.stm-system-head + .stm-mode {
+  margin-top: 0;
+}
+
+.stm-line-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/*
+ * A line, as the button that switches it. The bullet and the name are the
+ * control: there is no room beside them for a switch as well, and no need for
+ * one, since a bullet filled in is a line drawn.
+ */
+.stm-line {
+  align-items: center;
+  background: none;
+  border: 1px solid var(--stm-border);
+  border-radius: 999px;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 13px;
+  gap: 7px;
+  padding: 3px 12px 3px 3px;
+}
+
+.stm-line:hover {
+  background: var(--stm-soft);
+}
+
+.stm-line-off {
+  color: var(--stm-muted);
+}
+
+.stm-line:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.stm-line:disabled:hover {
+  background: none;
+}
+
+.stm-bullet {
+  align-items: center;
+  background: var(--stm-swatch);
+  border-radius: 5px;
+  color: var(--stm-ink);
+  display: inline-flex;
+  flex: none;
+  font-size: 10px;
+  font-weight: 700;
+  height: 18px;
+  justify-content: center;
+  line-height: 1;
+  min-width: 18px;
+  padding: 0 4px;
+}
+
+/*
+ * A line switched off keeps its colour and loses its fill. The colour is how
+ * it is recognised, and an outline is how a strip of them says at a glance
+ * which of a city's lines are being drawn.
+ */
+.stm-bullet-off {
+  background: none;
+  box-shadow: inset 0 0 0 1.5px var(--stm-swatch);
+  color: var(--stm-muted);
+}
+
+.stm-city-off .stm-city-title,
+.stm-city-off .stm-city-strip,
+.stm-system-off .stm-mode,
+.stm-system-off .stm-line-grid {
+  opacity: 0.5;
+}
+
+.stm-search:focus-visible,
+.stm-city-toggle:focus-visible,
+.stm-line:focus-visible,
+.stm-link:focus-visible,
+.stm-bulk button:focus-visible,
+.stm-chip input:focus-visible + .stm-chip-face {
+  outline: 2px solid var(--stm-accent);
+  outline-offset: 2px;
 }
 
 /* Points de repère -------------------------------------------------------- */

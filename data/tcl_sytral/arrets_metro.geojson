@@ -1,0 +1,1340 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 643,
+    "nom": "Croix-Rousse",
+    "desserte": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83182114,
+     45.77459687
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 644,
+    "nom": "Croix-Rousse",
+    "desserte": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83182667,
+     45.77446371
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 10787,
+    "nom": "Croix-Paquet",
+    "desserte": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83616803,
+     45.7709214
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 10788,
+    "nom": "Croix-Paquet",
+    "desserte": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83630869,
+     45.77096534
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30101,
+    "nom": "Perrache",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.82690366,
+     45.7498055
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30103,
+    "nom": "Bellecour",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8330193,
+     45.75762738
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30133,
+    "nom": "Saxe - Gambetta",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84695136,
+     45.75368742
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30156,
+    "nom": "Hôtel de Ville L. Pradel",
+    "desserte": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83595222,
+     45.76813941
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30157,
+    "nom": "Hénon",
+    "desserte": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.82744202,
+     45.77925491
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30158,
+    "nom": "Hénon",
+    "desserte": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.82759921,
+     45.77927744
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30159,
+    "nom": "Cuire",
+    "desserte": "C"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8324983,
+     45.78525777
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30183,
+    "nom": "Parilly",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.88750039,
+     45.71978225
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30184,
+    "nom": "Parilly",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.88740833,
+     45.71974518
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30185,
+    "nom": "Mermoz - Pinel",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.88729059,
+     45.73046663
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30186,
+    "nom": "Mermoz - Pinel",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.88720521,
+     45.73049908
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30187,
+    "nom": "Laennec",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.88633595,
+     45.73871704
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30188,
+    "nom": "Laennec",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.88625692,
+     45.73866771
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30189,
+    "nom": "Grange Blanche",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.87899079,
+     45.74295382
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30190,
+    "nom": "Grange Blanche",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.87890001,
+     45.74282833
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30191,
+    "nom": "Monplaisir Lumière",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.87187323,
+     45.74538774
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30192,
+    "nom": "Monplaisir Lumière",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.87179458,
+     45.74532705
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30193,
+    "nom": "Sans Souci",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.86488876,
+     45.7477849
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30194,
+    "nom": "Sans Souci",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.86475826,
+     45.74775417
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30197,
+    "nom": "Saxe - Gambetta",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84714959,
+     45.753892
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30198,
+    "nom": "Saxe - Gambetta",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84712621,
+     45.7538306
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30199,
+    "nom": "Guillotière Gabriel Péri",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8425742,
+     45.75547313
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30200,
+    "nom": "Guillotière Gabriel Péri",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84253189,
+     45.75541098
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30201,
+    "nom": "Bellecour",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83376022,
+     45.75657576
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30202,
+    "nom": "Bellecour",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8338328,
+     45.75671592
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30205,
+    "nom": "Gorge de Loup",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80554721,
+     45.76643291
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30206,
+    "nom": "Gorge de Loup",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80543659,
+     45.76642688
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30207,
+    "nom": "Valmy",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80552897,
+     45.77478592
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30208,
+    "nom": "Valmy",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80532725,
+     45.77477389
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30209,
+    "nom": "Gare de Vaise-G.Collomb",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80385368,
+     45.77979192
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30210,
+    "nom": "Gare de Vaise-G.Collomb",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8037359,
+     45.77980467
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30445,
+    "nom": "Garibaldi",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.85420641,
+     45.751467
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30446,
+    "nom": "Garibaldi",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.85420666,
+     45.75138526
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30447,
+    "nom": "Gare de Vénissieux",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.88807923,
+     45.70556815
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30448,
+    "nom": "Gare de Vénissieux",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8879624,
+     45.70560321
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30459,
+    "nom": "Perrache",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.82699877,
+     45.74975919
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 30472,
+    "nom": "Charpennes Charles Hernu",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.86282537,
+     45.77016855
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 31663,
+    "nom": "Place Jean Jaurès",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83742803,
+     45.73787615
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 33264,
+    "nom": "Vieux Lyon Cat. St-Jean",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.82653633,
+     45.76013308
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 33265,
+    "nom": "Vieux Lyon Cat. St-Jean",
+    "desserte": "D"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.82648837,
+     45.76005943
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 36394,
+    "nom": "Vaulx-en-Velin La Soie",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.92104036,
+     45.76102547
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 36434,
+    "nom": "Vaulx-en-Velin La Soie",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.92109969,
+     45.76092509
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42736,
+    "nom": "Cusset",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.90027631,
+     45.7656717
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42737,
+    "nom": "Flachet - Alain Gilles",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.89005101,
+     45.76755348
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42738,
+    "nom": "Gratte-Ciel",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8822018,
+     45.76898955
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42739,
+    "nom": "République Villeurbanne",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.87366974,
+     45.77056507
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42740,
+    "nom": "Charpennes Charles Hernu",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.86429537,
+     45.77054855
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42741,
+    "nom": "Masséna",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.85342649,
+     45.76954391
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42742,
+    "nom": "Foch",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84449984,
+     45.76870909
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42743,
+    "nom": "Hôtel de Ville L. Pradel",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83609145,
+     45.76731729
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42744,
+    "nom": "Cordeliers",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83589089,
+     45.76346958
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 42745,
+    "nom": "Ampère - Victor Hugo",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.82925383,
+     45.75310566
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46022,
+    "nom": "Brotteaux",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.85949414,
+     45.76692095
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46023,
+    "nom": "Brotteaux",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.85936277,
+     45.7668609
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46024,
+    "nom": "Gare Part-Dieu V.Merle",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.85725499,
+     45.76156144
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46025,
+    "nom": "Gare Part-Dieu V.Merle",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.85723507,
+     45.7616879
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46026,
+    "nom": "Place Guichard",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84765099,
+     45.75936428
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46027,
+    "nom": "Place Guichard",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84756435,
+     45.75943823
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46028,
+    "nom": "Jean Macé",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84247097,
+     45.74614914
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46029,
+    "nom": "Jean Macé",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84235783,
+     45.74620567
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46030,
+    "nom": "Place Jean Jaurès",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83755424,
+     45.73782464
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46031,
+    "nom": "Debourg",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83392042,
+     45.73196475
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46032,
+    "nom": "Debourg",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83402151,
+     45.7319265
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46033,
+    "nom": "Stade de Gerland Le LOU",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83133425,
+     45.72736866
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46034,
+    "nom": "Stade de Gerland Le LOU",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8312083,
+     45.72742546
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46035,
+    "nom": "Gare d'Oullins",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.81449235,
+     45.71667944
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46036,
+    "nom": "Gare d'Oullins",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.81451924,
+     45.71670585
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46040,
+    "nom": "Saxe - Gambetta",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84680073,
+     45.75369448
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46049,
+    "nom": "Ampère - Victor Hugo",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.82917186,
+     45.75312413
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46050,
+    "nom": "Cordeliers",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.8357347,
+     45.76342868
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46051,
+    "nom": "Bellecour",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83325596,
+     45.757552
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46052,
+    "nom": "Hôtel de Ville L. Pradel",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.83598871,
+     45.76732057
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46053,
+    "nom": "Foch",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.84445582,
+     45.76882403
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46054,
+    "nom": "Masséna",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.85331573,
+     45.76962497
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46055,
+    "nom": "Charpennes Charles Hernu",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.86421762,
+     45.77063131
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46056,
+    "nom": "République Villeurbanne",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.87367247,
+     45.77065214
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46057,
+    "nom": "Gratte-Ciel",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.88216624,
+     45.76908271
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46058,
+    "nom": "Flachet - Alain Gilles",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.89004741,
+     45.76762558
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46059,
+    "nom": "Cusset",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.90027498,
+     45.76574527
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46060,
+    "nom": "Laurent Bonnevay",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.90950608,
+     45.76402188
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 46061,
+    "nom": "Laurent Bonnevay",
+    "desserte": "A"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.90948944,
+     45.76394125
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 48136,
+    "nom": "Oullins Centre",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80541325,
+     45.71435821
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 48137,
+    "nom": "Oullins Centre",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80541325,
+     45.71435821
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 48138,
+    "nom": "St-Genis-Laval Hôp. Sud",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80467104,
+     45.70121228
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "id": 48139,
+    "nom": "St-Genis-Laval Hôp. Sud",
+    "desserte": "B"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.80467104,
+     45.70121228
+    ]
+   }
+  }
+ ]
+}

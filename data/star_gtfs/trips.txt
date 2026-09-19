@@ -1,0 +1,5 @@
+route_id,service_id,trip_id,trip_headsign,trip_short_name,direction_id,block_id,shape_id,wheelchair_accessible,bikes_allowed
+7-1002,prog-00000000038,00000050625,Cesson - Viasilva,,1,b-5.4665570,1002-B-5065-5079,1,0
+7-1002,prog-00000000038,00000050629,St-Jacques Gaîté,,0,b-1.4665568,1002-A-5050-5064,1,0
+7-1001,prog-00000000004,00000054241,La Poterie,,0,a-1.4665928,1001-A-5001-5015,1,0
+7-1001,prog-00000000004,00000054244,Kennedy,,1,a-4.4665926,1001-B-5030-5001,1,0

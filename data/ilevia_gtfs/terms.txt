@@ -1,0 +1,2 @@
+https://transport.data.gouv.fr/datasets/ilevia-localisation-des-arrets-bus-metro-et-tram-gtfs
+https://www.etalab.gouv.fr/licence-ouverte-open-licence/

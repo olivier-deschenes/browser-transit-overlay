@@ -1,0 +1,3 @@
+route_id,agency_id,route_short_name,route_long_name,route_type,route_color,route_text_color
+RTM-116,RTM,M1,La Rose - La Fourragère,1,009FE3,ffffff
+RTM-125,RTM,M2,Gèze - Sainte-Marguerite Dromel,1,E30613,ffffff

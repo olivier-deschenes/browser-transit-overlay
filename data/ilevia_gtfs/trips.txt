@@ -1,0 +1,5 @@
+route_id,service_id,trip_id,trip_headsign,direction_id,block_id,wheelchair_accessible
+ME1,52950-_ME101-LAMJV,5538697,Villeneuve D Ascq 4 Cantons Stade P. Mauroy,1,,1
+ME1,52950-_ME101-LAMJV,5538698,Lille Chu - Eurasanté,0,,1
+ME2,52971-_ME201-LAMJV,5552477,Lomme Saint Philibert,0,,1
+ME2,52971-_ME201-LAMJV,5552478,Tourcoing C.H. Dron,1,,1

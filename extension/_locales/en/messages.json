@@ -4,7 +4,7 @@
     "description": "The extension's name in Chrome and the Chrome Web Store. Keep it identical to extension.name in extension/i18n.js."
   },
   "extDescription": {
-    "message": "Shows the Montréal métro, the REM and Toronto’s TTC on Facebook Marketplace and Centris housing maps.",
+    "message": "Shows the métro and rapid transit of Montréal, Toronto, Paris and five more cities on Marketplace and Centris housing maps.",
     "description": "The extension's description in Chrome and the Chrome Web Store. At most 132 characters."
   }
 }

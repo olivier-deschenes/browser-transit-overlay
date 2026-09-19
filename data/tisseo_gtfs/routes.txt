@@ -1,0 +1,3 @@
+route_id,agency_id,route_short_name,route_long_name,route_color,route_text_color,route_type
+line:61,network:1,A,Basso Cambo / Balma - Gramont,db001b,ffffff,1
+line:69,network:1,B,Borderouge / Ramonville,ffdd00,000000,1

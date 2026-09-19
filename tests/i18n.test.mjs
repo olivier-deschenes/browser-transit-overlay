@@ -8,7 +8,7 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8');
 
 const context = vm.createContext({});
 for (const name of ['i18n.js', 'networks.js', 'settings.js']) vm.runInContext(read(name), context);
-const i18n = vm.runInContext('({ STM_AUTO_LANGUAGE, STM_FALLBACK_LOCALE, STM_LOCALES, STM_CITIES, STM_LINES, STM_SITES, STM_SYSTEMS, stmBrowserLocale, stmResolveLocale, stmText, stmUseLanguage })', context);
+const i18n = vm.runInContext('({ STM_AUTO_LANGUAGE, STM_FALLBACK_LOCALE, STM_LOCALES, STM_CITIES, STM_COUNTRIES, STM_LINES, STM_MODES, STM_SITES, STM_SYSTEMS, stmBrowserLocale, stmResolveLocale, stmText, stmUseLanguage })', context);
 const { STM_FALLBACK_LOCALE, STM_LOCALES } = i18n;
 // The registry is evaluated in its own realm, so anything it maps or filters
 // comes back as that realm's array. Sorted copies made here are this one's.
@@ -16,13 +16,16 @@ const sorted = (values) => [...values].sort();
 const reference = STM_LOCALES[STM_FALLBACK_LOCALE].messages;
 const placeholders = (message) => sorted(new Set(message.match(/\{\w+\}/g) ?? []));
 
-// What each language has to say about the registry: every city, operator and
-// line by its own id, and the line under each site's switch.
-const REGISTRY_FAMILIES = ['city', 'line', 'site', 'system'];
+// What each language has to say about the registry: every country, city,
+// operator, line and kind of service by its own id, and the line under each
+// site's switch.
+const REGISTRY_FAMILIES = ['city', 'country', 'line', 'mode', 'site', 'system'];
 const registryKeys = new Set([
+  ...i18n.STM_COUNTRIES.map((id) => `country.${id}.name`),
   ...i18n.STM_CITIES.map(({ id }) => `city.${id}.name`),
   ...i18n.STM_SYSTEMS.map(({ id }) => `system.${id}.name`),
   ...i18n.STM_LINES.flatMap(({ id }) => [`line.${id}.name`, `line.${id}.detail`]),
+  ...i18n.STM_MODES.map((id) => `mode.${id}.name`),
   ...i18n.STM_SITES.map(({ id }) => `site.${id}.detail`)
 ]);
 

@@ -1,0 +1,5 @@
+route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id,wheelchair_accessible,bikes_allowed
+RTM-116,RTM-6b74314b2e,RTM-186394_01M1HSA0101,,1,,SHP28,0,0
+RTM-116,RTM-6b74314b2e,RTM-186395_01M1HSA0101,,0,,SHP11,0,0
+RTM-125,RTM-6b74314b2e,RTM-196766_01M2HSA0101,,0,,SHP18,0,0
+RTM-125,RTM-6b74314b2e,RTM-196922_01M2HSA0101,,1,,SHP38,0,0

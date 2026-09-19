@@ -1,0 +1,3 @@
+https://www.data.gouv.fr/datasets/lignes-de-metro-et-funiculaire-du-reseau-transports-en-commun-lyonnais
+https://www.data.gouv.fr/datasets/points-darret-du-reseau-transports-en-commun-lyonnais
+https://www.etalab.gouv.fr/licence-ouverte-open-licence/

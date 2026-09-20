@@ -38,6 +38,12 @@ function Privacy() {
           peuvent désigner un lieu personnel, comme votre domicile ou votre
           travail.
         </li>
+        <li>
+          La dernière ville dont une carte a montré le réseau, pour que la page
+          suivante charge le bon réseau plutôt que d’en essayer un autre
+          d’abord. C’est le nom d’une des villes prises en charge par
+          l’extension, jamais une position.
+        </li>
       </ul>
       <p>
         Les liens Google Maps que vous collez sont lus localement pour en

@@ -38,9 +38,21 @@ const STM_LOCALES = {
       "toolbar.off": "Public transit — off (click to turn on)",
       "toolbar.badgeOff": "OFF",
 
-      "map.loading": "Loading the network…",
-      "map.offNetwork": "Network out of view",
-      "map.citiesLead": "See housing in",
+      "map.loading": "Loading {city}…",
+      "map.offNetwork": "{city} is out of view",
+      "map.failed": "{city} could not be loaded.",
+      "map.retry": "Try again",
+      "map.cityPicker": "Network shown: {city}. Choose a city.",
+      "map.cityToggle": "Show {city}",
+      "map.cityCount": "{on}/{all}",
+      "map.here": "Current",
+      "map.goTo": "See housing in {city}",
+      "map.lines": "Lines",
+      "map.linePicker":
+        "Lines in {city}: {on} of {all} drawn. Choose which to show.",
+      "map.lineCount": "{on}/{all}",
+      "map.lineAllOn": "Show all",
+      "map.lineAllOff": "Hide all",
       "map.creditTitle":
         "{operators} data, adapted for this unofficial extension.",
 
@@ -94,9 +106,12 @@ const STM_LOCALES = {
       "options.networkStatus": "“Network out of view” notice",
       "options.networkStatus.hint":
         "Warns when the map is far from the network.",
-      "options.cityShortcut": "“See housing in” buttons",
-      "options.cityShortcut.hint":
-        "Shortcuts to the housing in each supported city. Marketplace only.",
+      "options.cityPicker": "City panel",
+      "options.cityPicker.hint":
+        "Names the city being drawn and opens a list of the others, to switch them on or off. On Marketplace it also jumps the search to one of them.",
+      "options.linePicker": "Line panel",
+      "options.linePicker.hint":
+        "Switches the lines of the city being drawn on or off from the map, without opening this page.",
       "options.settingsShortcut": "Settings button",
       "options.settingsShortcut.hint":
         "The gear that opens this page from the map.",
@@ -255,9 +270,21 @@ const STM_LOCALES = {
       "toolbar.off": "Transport en commun — désactivé (cliquer pour activer)",
       "toolbar.badgeOff": "OFF",
 
-      "map.loading": "Chargement du réseau…",
-      "map.offNetwork": "Réseau hors champ",
-      "map.citiesLead": "Voir les logements à",
+      "map.loading": "Chargement de {city}…",
+      "map.offNetwork": "{city} est hors champ",
+      "map.failed": "{city} n’a pas pu être chargé.",
+      "map.retry": "Réessayer",
+      "map.cityPicker": "Réseau affiché : {city}. Choisir une ville.",
+      "map.cityToggle": "Afficher {city}",
+      "map.cityCount": "{on}/{all}",
+      "map.here": "Actuelle",
+      "map.goTo": "Voir les logements à {city}",
+      "map.lines": "Lignes",
+      "map.linePicker":
+        "Lignes à {city} : {on} sur {all} dessinées. Choisir celles à afficher.",
+      "map.lineCount": "{on}/{all}",
+      "map.lineAllOn": "Tout afficher",
+      "map.lineAllOff": "Tout masquer",
       "map.creditTitle":
         "Données {operators}, adaptées pour cette extension non officielle.",
 
@@ -312,9 +339,12 @@ const STM_LOCALES = {
       "options.networkStatus": "Avis « Réseau hors champ »",
       "options.networkStatus.hint":
         "Prévient quand la carte est loin du réseau.",
-      "options.cityShortcut": "Boutons « Voir les villes »",
-      "options.cityShortcut.hint":
-        "Raccourcis vers les logements de chaque ville prise en charge. Marketplace seulement.",
+      "options.cityPicker": "Panneau des villes",
+      "options.cityPicker.hint":
+        "Nomme la ville dessinée et ouvre la liste des autres, pour les activer ou non. Sur Marketplace, il amène aussi la recherche à l’une d’elles.",
+      "options.linePicker": "Panneau des lignes",
+      "options.linePicker.hint":
+        "Active ou désactive les lignes de la ville dessinée depuis la carte, sans ouvrir cette page.",
       "options.settingsShortcut": "Bouton de réglages",
       "options.settingsShortcut.hint":
         "L’engrenage qui ouvre cette page depuis la carte.",

@@ -45,8 +45,28 @@
   let mapTools;
   let networkStatus;
   let networkStatusText;
-  let cityShortcuts;
+  let networkStatusAction;
+  let cityPicker;
+  let cityPickerButton;
+  let cityPickerName;
+  let cityPickerPanel;
   let networkState;
+  let linePicker;
+  let linePickerButton;
+  let linePickerCount;
+  let linePickerPanel;
+  // Which of the two panels is open, if either. They are one question in two
+  // halves — which city, then which of its lines — and they sit one directly
+  // above the other, so only ever one of them is: the popup map beside a
+  // Centris listing has nothing like the height for both, and on any map a
+  // second panel opening below the first pushes the rest of the column off the
+  // bottom of it.
+  //
+  // Kept out here because it is the one piece of the column that has to
+  // survive the column: throwing a switch inside either panel writes the
+  // settings, and a settings change that took the panel down with it would
+  // shut it in the face of whoever was using it.
+  let openPicker;
   let customPanel;
   let customPointGroup;
   let customPointList;
@@ -78,8 +98,26 @@
   let renderedScale;
   let customPointsDirty = true;
   let linePaths = [];
+  let haloGroup;
+  let lineGroup;
+  let stationGroup;
   let networkData;
-  let networkDataRequest;
+  // Every city's geometry that has been fetched in this page's lifetime, and
+  // whichever fetches are still out, both by city id. A map wandering back
+  // into a city it has already drawn puts the network up in the same frame,
+  // which is the difference between a swap that reads as a swap and one that
+  // reads as the overlay having given up and needing a reload.
+  const networkCache = new Map();
+  const networkRequests = new Map();
+  // The city whose last fetch failed, so the notice can offer to ask again.
+  // Nothing else on the page ever would: the map is already where it was sent,
+  // and a city does not change under a map that has stopped moving.
+  let networkFailure;
+  // Which city's geometry is actually drawn, by the data it was drawn from.
+  // That is what tells an overlay that is merely up from one that is up and
+  // current, and it is how the drawing catches up with a fetch that landed
+  // after the overlay went on the map.
+  let drawnFrom;
   let networkGeometry;
   let networkOrigin;
   let anchorPoint;
@@ -101,6 +139,10 @@
   let stripObserver;
   let stripResizeObserver;
   let stripRenderRequest;
+  // The map's drawnFrom, for the strip: which city's geometry the little
+  // raster beside the address was drawn with, so the strip catches up with a
+  // fetch the same way the map does.
+  let stripDrawnFrom;
   let pageObserver;
   let pageController;
   let enabled = false;
@@ -133,9 +175,65 @@
     await chrome.storage.local.set({ [STM_CUSTOM_POINTS_KEY]: next });
   }
 
-  function setNetworkState(state) {
-    if (state === networkState) return;
+  // The settings page and the panel on the map are two views of one stored
+  // object, so neither of them writes a copy of its own: the patch is merged
+  // over the settings in hand and the storage listener hands the result back
+  // to both, in this tab and in every other one. The maps inside the settings
+  // are merged a level deeper, or a patch naming one city would take the rest
+  // of them away.
+  async function saveSettings(patch) {
+    // Applied here as well as written, so that a second switch thrown before
+    // the first write has come back round through storage is merged over the
+    // first rather than over whatever was there before it.
+    settings = {
+      ...settings,
+      ...patch,
+      cities: { ...settings.cities, ...patch.cities },
+      lines: { ...settings.lines, ...patch.lines },
+      systems: { ...settings.systems, ...patch.systems }
+    };
+
+    await chrome.storage.local.set({ [STM_SETTINGS_KEY]: settings });
+  }
+
+  // What the overlay is doing about the city it is on. "visible" is the only
+  // one with nothing to say — the network is drawn and on screen — and the
+  // notice is hidden for it; the other three are the swap, and being able to
+  // see them happen is the whole point of saying them out loud.
+  function setNetworkState(state, force = false) {
+    if (state === networkState && !force) return;
+
     networkState = state;
+    paintNetworkState();
+  }
+
+  // What the state would be for a column of tools that has just been built and
+  // has not seen the render loop yet. The loop corrects it on the next frame;
+  // this is only so the notice never opens on "loading" for a city whose
+  // geometry has been in hand since the last map.
+  function currentNetworkState() {
+    if (networkData) return "visible";
+    if (networkFailure === activeCity.id) return "failed";
+
+    return "loading";
+  }
+
+  // Both places the overlay says where it is: the notice, which has the words,
+  // and the picker's button, which carries the city's name and a dot for the
+  // rest. Either can be switched off, and neither needs the other to be right.
+  function paintNetworkState() {
+    const state = networkState ?? "loading";
+    const city = stmText(`city.${activeCity.id}.name`);
+
+    if (cityPicker) {
+      cityPicker.dataset.stmState = state;
+      cityPickerName.textContent = city;
+      cityPickerButton.title = stmText("map.cityPicker", { city });
+      cityPickerButton.setAttribute(
+        "aria-label",
+        stmText("map.cityPicker", { city })
+      );
+    }
 
     if (!networkStatus) return;
 
@@ -145,46 +243,13 @@
     }
 
     networkStatus.hidden = false;
-
-    if (cityShortcuts) {
-      if (state === "outside") renderCityShortcuts();
-      else cityShortcuts.hidden = true;
-    }
-
+    networkStatusAction.hidden = state !== "failed";
     networkStatusText.textContent =
-      state === "loading" ? stmText("map.loading") : stmText("map.offNetwork");
-  }
-
-  // Every city that can be reached from this page, a button apiece, rather
-  // than only the one the overlay happens to be holding: a map that has
-  // wandered off the network is exactly where someone needs to be told what
-  // else there is. The row is rebuilt each time the notice is shown rather
-  // than once with the panel it sits in, because both of the things that
-  // decide its contents — the route applies() reads and the city switches —
-  // change under a map that is never rebuilt.
-  function renderCityShortcuts() {
-    const cities = STM_CITIES.filter(
-      (city) =>
-        settings.cities[city.id] !== false && site.shortcut.applies(city)
-    );
-
-    cityShortcuts.replaceChildren();
-    cityShortcuts.hidden = cities.length === 0;
-
-    if (cityShortcuts.hidden) return;
-
-    const lead = document.createElement("span");
-    lead.className = "stm-shortcut-lead";
-    lead.textContent = stmText("map.citiesLead");
-    cityShortcuts.append(lead);
-
-    for (const city of cities) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = stmText(`city.${city.id}.name`);
-      button.addEventListener("click", () => site.shortcut.run(city));
-      cityShortcuts.append(button);
-    }
+      state === "failed"
+        ? stmText("map.failed", { city })
+        : state === "outside"
+          ? stmText("map.offNetwork", { city })
+          : stmText("map.loading", { city });
   }
 
   function buildNetworkStatus() {
@@ -192,26 +257,444 @@
     networkStatus.id = "stm-network-status";
 
     // The message is the part that changes on its own, so it is the part that
-    // announces itself. The buttons under it are controls, and they are
-    // rebuilt every time the notice is shown: inside the live region that
-    // rebuild would be read out as news each time the map wandered off.
+    // announces itself. The button beside it is a control, and it is shown and
+    // hidden with the state: inside the live region that would be read out as
+    // news every time the map wandered off the network.
     networkStatusText = document.createElement("span");
     networkStatusText.setAttribute("role", "status");
     networkStatusText.setAttribute("aria-live", "polite");
-    networkStatus.append(networkStatusText);
 
-    // Only Marketplace has somewhere to jump to: its category path names the
-    // city, so it can be rewritten. A Centris search is an opaque payload.
-    if (settings.cityShortcut && site.shortcut) {
-      cityShortcuts = document.createElement("div");
-      cityShortcuts.id = "stm-network-cities";
-      cityShortcuts.hidden = true;
-      cityShortcuts.setAttribute("role", "group");
-      cityShortcuts.setAttribute("aria-label", stmText("map.citiesLead"));
-      networkStatus.append(cityShortcuts);
+    // A load that failed has nowhere else to be retried from. Nothing on the
+    // page asks again by itself, and the city will not change under a map
+    // that is already where it was sent, so without this the overlay is
+    // waiting on a request that was given up on and a reload is the only way
+    // out — which is exactly what this notice exists to make unnecessary.
+    networkStatusAction = document.createElement("button");
+    networkStatusAction.type = "button";
+    networkStatusAction.textContent = stmText("map.retry");
+    networkStatusAction.hidden = true;
+    networkStatusAction.addEventListener("click", () => {
+      networkFailure = undefined;
+      setNetworkState("loading", true);
+      loadNetworkData();
+    });
+
+    networkStatus.append(networkStatusText, networkStatusAction);
+    mapTools.append(networkStatus);
+  }
+
+  // Opening one panel shuts the other, and a button pressed twice shuts its
+  // own. Either panel can be switched off on the settings page, so neither is
+  // assumed to be there.
+  function showPicker(name) {
+    openPicker = openPicker === name ? undefined : name;
+    paintPickers();
+  }
+
+  // Both buttons and both panels agree with the one piece of state, whether
+  // they were just built or a press has moved it.
+  function paintPickers() {
+    for (const [name, button, panel] of [
+      ["city", cityPickerButton, cityPickerPanel],
+      ["line", linePickerButton, linePickerPanel]
+    ]) {
+      if (!panel) continue;
+
+      panel.hidden = openPicker !== name;
+      button.setAttribute("aria-expanded", String(openPicker === name));
+    }
+  }
+
+  // Which city the overlay is on, and which of the others it could be on, in
+  // the corner of the map rather than two clicks away on the settings page.
+  // The button alone is worth the room: a map that swaps its network as it
+  // pans has to be able to say which one it swapped to.
+  function buildCityPicker() {
+    cityPicker = document.createElement("div");
+    cityPicker.id = "stm-city-picker";
+
+    cityPickerButton = document.createElement("button");
+    cityPickerButton.type = "button";
+    cityPickerButton.className = "stm-tool-button";
+    cityPickerButton.setAttribute("aria-controls", "stm-city-panel");
+
+    // The state, for anyone reading the column rather than the notice under
+    // it. It is named by the notice in words, so here it is decoration.
+    const dot = document.createElement("span");
+    dot.className = "stm-city-dot";
+    dot.setAttribute("aria-hidden", "true");
+
+    cityPickerName = document.createElement("span");
+    cityPickerName.className = "stm-city-current";
+
+    const chevron = document.createElement("span");
+    chevron.className = "stm-tool-chevron";
+    chevron.setAttribute("aria-hidden", "true");
+
+    cityPickerButton.append(dot, cityPickerName, chevron);
+
+    cityPickerPanel = document.createElement("div");
+    cityPickerPanel.id = "stm-city-panel";
+    cityPickerPanel.className = "stm-tool-panel";
+
+    cityPickerButton.addEventListener("click", () => showPicker("city"));
+
+    cityPicker.append(cityPickerButton, cityPickerPanel);
+    mapTools.append(cityPicker);
+
+    renderCityPicker();
+    paintPickers();
+  }
+
+  // One row per city, under the country it is in. The switch is the same one
+  // the settings page shows, written to the same place; the name beside it is
+  // a button wherever the site's own routing names the city and can therefore
+  // be rewritten, and plain text everywhere else — a Centris search is an
+  // opaque payload with no city in it to swap.
+  //
+  // The switches are a choice between cities rather than a row of independent
+  // ones: the map draws a single city, so the one switched on is the one that
+  // draws and the rest go off with it. Unchecking the one that is on is still
+  // allowed, and leaves a map with no network drawn on it at all.
+  function cityPickerRow(city) {
+    const name = stmText(`city.${city.id}.name`);
+    const current = city === activeCity;
+
+    const row = document.createElement("div");
+    row.className = "stm-city-row";
+
+    if (current) row.dataset.stmCurrent = "";
+
+    const toggle = document.createElement("input");
+    toggle.type = "checkbox";
+    toggle.checked = settings.cities[city.id] !== false;
+    toggle.dataset.stmKey = `city:${city.id}`;
+    toggle.setAttribute("aria-label", stmText("map.cityToggle", { city: name }));
+    toggle.addEventListener("change", () => {
+      saveSettings({
+        cities: stmOnlyCity(toggle.checked ? city.id : undefined)
+      });
+    });
+
+    const jumps = !current && Boolean(site.shortcut?.applies(city));
+    const label = document.createElement(jumps ? "button" : "span");
+    label.className = "stm-city-label";
+    label.textContent = name;
+
+    if (jumps) {
+      label.type = "button";
+      label.dataset.stmKey = `go:${city.id}`;
+      label.title = stmText("map.goTo", { city: name });
+      label.addEventListener("click", () => site.shortcut.run(city));
     }
 
-    mapTools.append(networkStatus);
+    row.append(toggle, label);
+
+    if (current) {
+      const here = document.createElement("span");
+      here.className = "stm-city-here";
+      here.textContent = stmText("map.here");
+      row.append(here);
+    }
+
+    return row;
+  }
+
+  // Rebuilt outright rather than synced switch by switch: it is a dozen rows,
+  // and both of the things that decide what is in them — which city is active
+  // and what the settings say — change under a map that is never rebuilt.
+  function renderCityPicker() {
+    if (!cityPickerPanel) return;
+
+    // The panel is rebuilt under whoever just threw a switch in it: the write
+    // goes out to storage and comes back as a settings change. Whatever had
+    // the focus is therefore put back on the control that replaced it, or a
+    // keyboard is dropped at the top of the page on every click.
+    const focused = cityPickerPanel.contains(document.activeElement)
+      ? document.activeElement.dataset.stmKey
+      : undefined;
+
+    cityPickerPanel.replaceChildren();
+
+    for (const [country, cities] of STM_CITIES_BY_COUNTRY) {
+      const countryName = stmText(`country.${country}.name`);
+      const on = cities.filter(({ id }) => settings.cities[id] !== false);
+
+      const group = document.createElement("div");
+      group.className = "stm-city-country";
+
+      const head = document.createElement("div");
+      head.className = "stm-city-country-head";
+
+      const heading = document.createElement("span");
+      heading.className = "stm-city-country-name";
+      heading.textContent = countryName;
+
+      // Which country the one city that is on belongs to, for a panel long
+      // enough that the row itself can be scrolled out of sight. There is no
+      // switch beside it: a country is several cities, and several cities is
+      // the one thing this panel cannot be asked for.
+      const count = document.createElement("span");
+      count.className = "stm-city-count";
+      count.textContent = stmText("map.cityCount", {
+        all: cities.length,
+        on: on.length
+      });
+
+      head.append(heading, count);
+      group.append(head);
+
+      for (const city of cities) group.append(cityPickerRow(city));
+
+      cityPickerPanel.append(group);
+    }
+
+    if (focused) {
+      cityPickerPanel
+        .querySelector(`[data-stm-key="${CSS.escape(focused)}"]`)
+        ?.focus();
+    }
+  }
+
+  // Which of the city's lines are drawn, under the button that says which city
+  // it is. Picking a city is half of the question a map raises — the other
+  // half is which of the dozen-odd lines it just put on screen were the ones
+  // being looked for — and answering that on the settings page means leaving
+  // the map, coming back, and finding out there whether it was the right
+  // answer. Only the city being drawn is offered: the rest of the catalogue is
+  // the settings page's to show, and none of it could draw here anyway.
+  function buildLinePicker() {
+    linePicker = document.createElement("div");
+    linePicker.id = "stm-line-picker";
+
+    linePickerButton = document.createElement("button");
+    linePickerButton.type = "button";
+    linePickerButton.className = "stm-tool-button";
+    linePickerButton.setAttribute("aria-controls", "stm-line-panel");
+
+    const name = document.createElement("span");
+    name.className = "stm-line-heading";
+    name.textContent = stmText("map.lines");
+
+    // How many of them are drawn, which is the whole of what the panel says
+    // while it is shut: a map missing a line is a map whose count is short.
+    linePickerCount = document.createElement("span");
+    linePickerCount.className = "stm-line-count";
+
+    const chevron = document.createElement("span");
+    chevron.className = "stm-tool-chevron";
+    chevron.setAttribute("aria-hidden", "true");
+
+    linePickerButton.append(name, linePickerCount, chevron);
+
+    linePickerPanel = document.createElement("div");
+    linePickerPanel.id = "stm-line-panel";
+    linePickerPanel.className = "stm-tool-panel stm-line-panel";
+
+    linePickerButton.addEventListener("click", () => showPicker("line"));
+
+    linePicker.append(linePickerButton, linePickerPanel);
+    mapTools.append(linePicker);
+
+    renderLinePicker();
+    paintPickers();
+  }
+
+  // One line, as the bullet its own network prints it on and the name beside
+  // it. A button carrying both rather than a checkbox and a label: at this
+  // size the colour is what a line is recognised by, and role="switch" is what
+  // says the pair is still a switch.
+  //
+  // That role is also why the name is written out rather than left to the
+  // contents: a switch is named by its author and by nothing else, so a button
+  // carrying its name in a span is a switch with no name at all. The bullet
+  // repeats that name in the network's own shorthand, which is worth seeing
+  // and not worth hearing twice.
+  //
+  // A line under a switch that is off is disabled rather than left looking as
+  // though it still decides anything — its city or its operator has already
+  // decided — and its bullet is hollowed out the way the settings page
+  // hollows one, since neither is being drawn.
+  function linePickerChip(line, held) {
+    const checked = settings.lines[line.id] !== false;
+
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "stm-line-chip";
+    chip.dataset.stmKey = `line:${line.id}`;
+    chip.disabled = held;
+    chip.title = stmText(`line.${line.id}.detail`);
+    chip.setAttribute("role", "switch");
+    chip.setAttribute("aria-checked", String(checked));
+    chip.setAttribute("aria-label", stmText(`line.${line.id}.name`));
+    chip.classList.toggle("stm-line-chip-off", !checked);
+
+    const bullet = document.createElement("span");
+    bullet.className = "stm-bullet";
+    bullet.style.setProperty("--stm-swatch", line.color);
+    bullet.style.setProperty("--stm-ink", stmLineInk(line.color));
+    bullet.textContent = stmLineBadge(line);
+    bullet.setAttribute("aria-hidden", "true");
+    bullet.classList.toggle("stm-bullet-off", !checked || held);
+
+    const name = document.createElement("span");
+    name.className = "stm-line-name";
+    name.textContent = stmText(`line.${line.id}.name`);
+
+    chip.append(bullet, name);
+    chip.addEventListener("click", () => {
+      saveSettings({ lines: { [line.id]: !checked } });
+    });
+
+    return chip;
+  }
+
+  // One operator's lines, headed by the operator wherever the city runs more
+  // than one: a city with nobody to be told apart from is a grid of lines and
+  // nothing else, since the button above the panel has already named it. The
+  // header is a switch of its own — the same one the settings page shows —
+  // because switching the REM off is a thing to want on a map of Montréal and
+  // doing it one line at a time is not.
+  function linePickerGroup(system, lines, cityOff) {
+    const systemId = `${activeCity.id}:${system.id}`;
+    const checked = settings.systems[systemId] !== false;
+
+    const group = document.createElement("div");
+    group.className = "stm-line-system";
+
+    if (activeCity.systems.length > 1) {
+      const head = document.createElement("label");
+      head.className = "stm-line-system-head";
+
+      const toggle = document.createElement("input");
+      toggle.type = "checkbox";
+      toggle.checked = checked;
+      toggle.disabled = cityOff;
+      toggle.dataset.stmKey = `system:${systemId}`;
+      toggle.addEventListener("change", () => {
+        saveSettings({ systems: { [systemId]: toggle.checked } });
+      });
+
+      const name = document.createElement("span");
+      name.className = "stm-line-system-name";
+      name.textContent = stmText(`system.${systemId}.name`);
+
+      head.append(toggle, name);
+      group.append(head);
+    }
+
+    const grid = document.createElement("div");
+    grid.className = "stm-line-grid";
+
+    for (const line of lines) {
+      grid.append(linePickerChip(line, cityOff || !checked));
+    }
+
+    group.append(grid);
+
+    return group;
+  }
+
+  // The pair of buttons that act on every line at once. Isolating one line out
+  // of the twenty-one Paris draws is otherwise twenty clicks, and putting them
+  // back is another twenty.
+  //
+  // Turning them on reaches the switches above them as well, or a city or an
+  // operator left off would go on hiding lines that now say they are on —
+  // including the city this panel is about, since a map with every line on and
+  // nothing drawn is exactly the state this button is being pressed to leave.
+  // Turning them off needs only the lines: holding their parents off as well
+  // would leave a panel of hollow bullets with nothing in it left to click.
+  function linePickerBulk(lines) {
+    const bulk = document.createElement("div");
+    bulk.className = "stm-line-bulk";
+
+    for (const [key, label, value] of [
+      ["all-on", stmText("map.lineAllOn"), true],
+      ["all-off", stmText("map.lineAllOff"), false]
+    ]) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.stmKey = key;
+      button.textContent = label;
+      button.addEventListener("click", () => {
+        const patch = {
+          lines: Object.fromEntries(lines.map(({ id }) => [id, value]))
+        };
+
+        if (value) {
+          patch.cities = stmOnlyCity(activeCity.id);
+          patch.systems = Object.fromEntries(
+            activeCity.systems.map(({ id }) => [`${activeCity.id}:${id}`, true])
+          );
+        }
+
+        saveSettings(patch);
+      });
+
+      bulk.append(button);
+    }
+
+    return bulk;
+  }
+
+  // Rebuilt outright, like the city panel and for the same reasons: it is a
+  // handful of switches, and both of the things that decide what is in them —
+  // which city the map is on and what the settings say — change under a map
+  // that is never rebuilt.
+  function renderLinePicker() {
+    if (!linePickerPanel) return;
+
+    const lines = STM_LINES.filter(({ cityId }) => cityId === activeCity.id);
+    // What is actually on screen rather than what the line switches say: a
+    // line whose city or operator is off is not being drawn, and a count that
+    // claimed otherwise would be the one number on the map that lied.
+    const on = lines.filter(({ id }) => stmIsLineEnabled(settings, id)).length;
+    const cityOff = settings.cities[activeCity.id] === false;
+
+    linePickerCount.textContent = stmText("map.lineCount", {
+      all: lines.length,
+      on
+    });
+
+    // The count is in the name rather than beside it, because the name is what
+    // replaces everything the button shows for anyone who cannot see it.
+    const label = stmText("map.linePicker", {
+      all: lines.length,
+      city: stmText(`city.${activeCity.id}.name`),
+      on
+    });
+
+    linePickerButton.title = label;
+    linePickerButton.setAttribute("aria-label", label);
+
+    // Same as the city panel: the write goes out to storage and comes back as
+    // a settings change, which rebuilds this under whoever just threw a switch
+    // in it. Whatever had the focus is put back on the control that replaced
+    // it, or a keyboard is dropped at the top of the page on every click.
+    const focused = linePickerPanel.contains(document.activeElement)
+      ? document.activeElement.dataset.stmKey
+      : undefined;
+
+    linePickerPanel.replaceChildren(linePickerBulk(lines));
+
+    for (const system of activeCity.systems) {
+      const systemId = `${activeCity.id}:${system.id}`;
+
+      linePickerPanel.append(
+        linePickerGroup(
+          system,
+          lines.filter((line) => line.systemId === systemId),
+          cityOff
+        )
+      );
+    }
+
+    if (focused) {
+      linePickerPanel
+        .querySelector(`[data-stm-key="${CSS.escape(focused)}"]`)
+        ?.focus();
+    }
   }
 
   function buildSettingsShortcut() {
@@ -242,6 +725,12 @@
     // moves the column out from under whichever ones this one has.
     mapTools.dataset.stmSite = site.id;
 
+    // The city first: it is the one thing in the column that is true whatever
+    // the overlay is doing, and the notice under it only ever elaborates. The
+    // lines come straight after, because they are the same question one level
+    // down and the notice between them would come and go as the city loaded.
+    if (settings.cityPicker) buildCityPicker();
+    if (settings.linePicker) buildLinePicker();
     if (settings.networkStatus) buildNetworkStatus();
 
     map.append(mapTools);
@@ -252,7 +741,9 @@
       });
     }
 
-    setNetworkState("loading");
+    // A rebuilt column has said nothing yet, so the state it carries is
+    // repainted into it whether or not it has changed.
+    setNetworkState(networkState ?? currentNetworkState(), true);
   }
 
   function refreshCustomPoints() {
@@ -429,9 +920,13 @@
     });
   }
 
+  // The shell: the svg, the groups the render loop writes transforms onto, and
+  // the column of tools in the corner. None of it belongs to a city, and none
+  // of it comes down when the map moves into another one — taking it down is
+  // what used to make a swap look like the overlay had given up and needed a
+  // reload to come back.
   function buildOverlay() {
     const pane = site.overlayHost(map) ?? map;
-    const geometry = getNetworkGeometry();
     overlay = createSvgElement("svg", {
       "aria-hidden": "true",
       id: "stm-metro-overlay"
@@ -442,7 +937,7 @@
     // layer it belongs on to land between the tiles and the property pins.
     if (site.overlayZIndex) overlay.style.zIndex = site.overlayZIndex;
 
-    const haloGroup = createSvgElement("g", {
+    haloGroup = createSvgElement("g", {
       fill: "none",
       stroke: "#ffffff",
       "stroke-linecap": "round",
@@ -450,13 +945,13 @@
       "stroke-opacity": "0.9",
       "stroke-width": "9"
     });
-    const lineGroup = createSvgElement("g", {
+    lineGroup = createSvgElement("g", {
       fill: "none",
       "stroke-linecap": "round",
       "stroke-linejoin": "round",
       "stroke-width": "5"
     });
-    const stationGroup = createSvgElement("g", {
+    stationGroup = createSvgElement("g", {
       fill: "#ffffff",
       stroke: "#292929",
       "stroke-width": "2"
@@ -480,6 +975,46 @@
     // instead of two coordinates per station.
     stationTransformGroup = createSvgElement("g", {});
     customPointTransformGroup = createSvgElement("g", {});
+
+    lineTransformGroup.append(haloGroup, lineGroup);
+    stationTransformGroup.append(stationGroup, stationLabelGroup);
+    customPointTransformGroup.append(customPointGroup);
+    networkGroup.append(lineTransformGroup, stationTransformGroup);
+    overlay.append(networkGroup, customPointTransformGroup);
+
+    // A pane that stacks its own contents in the order they were added says
+    // where in that order the overlay belongs. Everywhere else there is
+    // nothing to go before, and the overlay is simply the last thing in.
+    const before = site.overlayAnchor?.(pane);
+
+    if (before?.parentElement === pane) pane.insertBefore(overlay, before);
+    else pane.append(overlay);
+
+    overlayFrame = positionedAncestor(overlay) ?? pane;
+
+    // The tools before the network rather than after it: the column is where
+    // a city still on its way is announced, and it cannot announce anything
+    // from a corner it has not been put in yet.
+    buildOverlayTools();
+    drawNetwork();
+    refreshCustomPoints();
+  }
+
+  // Everything in the overlay that is made out of geometry, which is
+  // everything that belongs to one city: the lines, the stations, and who to
+  // credit for them. Called again on a swap instead of the shell being rebuilt
+  // around it, and again when a fetch lands under an overlay that went up
+  // while it was still in flight.
+  function drawNetwork() {
+    const geometry = getNetworkGeometry();
+
+    drawnFrom = networkData;
+    linePaths = [];
+    stationMarkers = [];
+    haloGroup.replaceChildren();
+    lineGroup.replaceChildren();
+    stationGroup.replaceChildren();
+    stationLabelGroup.replaceChildren();
 
     for (const { bounds, color, path } of geometry.paths) {
       const halo = createSvgElement("path", {
@@ -515,23 +1050,28 @@
       });
     }
 
-    lineTransformGroup.append(haloGroup, lineGroup);
-    stationTransformGroup.append(stationGroup, stationLabelGroup);
-    customPointTransformGroup.append(customPointGroup);
-    networkGroup.append(lineTransformGroup, stationTransformGroup);
-    overlay.append(networkGroup, customPointTransformGroup);
+    // Everything the render loop remembers about where it put things was
+    // measured from an origin that has just changed, so none of it is worth
+    // keeping. The labels are hidden outright rather than left to be shown at
+    // the last city's coordinates for the frame before the loop catches up.
+    renderedOriginX = undefined;
+    renderedOriginY = undefined;
+    renderedScale = undefined;
+    stationLabelsVisible = undefined;
+    stationLabelGroup.setAttribute("display", "none");
+    networkGroup.setAttribute("display", "none");
 
-    // A pane that stacks its own contents in the order they were added says
-    // where in that order the overlay belongs. Everywhere else there is
-    // nothing to go before, and the overlay is simply the last thing in.
-    const before = site.overlayAnchor?.(pane);
+    refreshAttribution(geometry.credits);
+    scheduleRender();
+  }
 
-    if (before?.parentElement === pane) pane.insertBefore(overlay, before);
-    else pane.append(overlay);
+  // The drawing again, points and all. A landmark is stored in degrees and
+  // drawn in units measured from the city's origin, so one that is not placed
+  // again after a swap is a landmark left out over the old city.
+  function redrawNetwork() {
+    if (!overlay) return;
 
-    overlayFrame = positionedAncestor(overlay) ?? pane;
-
-    buildOverlayTools(geometry);
+    drawNetwork();
     refreshCustomPoints();
   }
 
@@ -582,12 +1122,20 @@
     map.append(attribution);
   }
 
-  function buildOverlayTools(geometry) {
+  // The credit belongs to whoever published what is on screen, so it is made
+  // again with the drawing rather than once with the overlay: a map that has
+  // moved from Montréal to Toronto must stop thanking the STM.
+  function refreshAttribution(credits) {
+    attribution?.remove();
+    attribution = undefined;
+
     // Crediting an operator for a map drawing none of its lines would be an
     // odd thing to do, and the licence asks for the credit to travel with the
     // data rather than with the extension.
-    if (geometry.credits.length) buildAttribution(geometry.credits);
+    if (credits.length) buildAttribution(credits);
+  }
 
+  function buildOverlayTools() {
     buildMapTools();
 
     if (settings.pointsTool) buildCustomPointPanel();
@@ -832,29 +1380,48 @@
   }
 
   // Everything that was measured from the city just left behind: its origin,
-  // the drawing made against that origin, and the file the drawing came from.
+  // and the drawing made against that origin. The geometry itself is whatever
+  // has already been fetched for the city now in front of us, which on a map
+  // wandering back over its own path is all of it.
   function resetNetwork() {
-    networkData = undefined;
-    networkDataRequest = undefined;
+    networkData = networkCache.get(activeCity.id);
     networkGeometry = undefined;
     networkOrigin = undefined;
-    detach();
     detachStrip();
+    redrawNetwork();
     scheduleSync();
   }
 
   // A map is only ever asked where it is looking, never which city it is in,
   // so a viewport out over the Atlantic names no city at all and whatever
-  // network is already up stays up. A swap is a teardown: one city's drawing
-  // cannot be reused as another's, because every coordinate in it is relative
-  // to an origin that has just changed.
+  // network is already up stays up. A swap throws the drawing away — every
+  // coordinate in it is relative to an origin that has just changed — but not
+  // the overlay around it: the column in the corner is the only thing on the
+  // page that can say a swap is what happened.
   function considerCity(coordinates) {
     const next = stmCityAt(coordinates);
 
     if (!next || next === activeCity) return false;
 
     activeCity = next;
+
+    // Where the next page in this browser starts its guess. A map that has
+    // been over Paris all afternoon has no business opening on Montréal and
+    // fetching it before finding out.
+    chrome.storage.local
+      .set({ [STM_ACTIVE_CITY_KEY]: next.id })
+      .catch(() => {});
+
     resetNetwork();
+
+    // Forced, because the state itself often does not change across a swap —
+    // a city already in hand goes straight from drawn to drawn — while the
+    // name beside it always does, and a column still naming the city just
+    // left behind is worse than one saying nothing. The render loop settles
+    // the rest on the next frame.
+    setNetworkState(currentNetworkState(), true);
+    renderCityPicker();
+    renderLinePicker();
 
     return true;
   }
@@ -885,24 +1452,57 @@
 
   function loadNetworkData() {
     const city = activeCity;
+    const cached = networkCache.get(city.id);
 
-    networkDataRequest ??= fetch(chrome.runtime.getURL(city.data))
-      .then((response) => response.json())
+    // A city drawn once in this page's life is drawn again without waiting on
+    // anything, which is what a map panned back and forth across a boundary
+    // should feel like.
+    if (cached) {
+      networkData = cached;
+      return;
+    }
+
+    if (networkRequests.has(city.id)) return;
+
+    // A city that has just failed is not asked for again on its own. Every
+    // sync would ask, and on a page that resyncs off its own feed that turns
+    // one failed load into a stream of them; the notice carries the way back,
+    // and a route change below is the other one.
+    if (networkFailure === city.id) return;
+
+    const request = fetch(chrome.runtime.getURL(city.data))
+      .then((response) => {
+        // A 404 answers with a page rather than by rejecting, and parsing it
+        // as the geometry would fail somewhere far less obvious than here.
+        if (!response.ok) throw new Error(String(response.status));
+
+        return response.json();
+      })
       .then((data) => {
+        networkRequests.delete(city.id);
+        networkCache.set(city.id, qualifyNetwork(city, data));
+
         // The city can be swapped while this is in flight, and an answer about
-        // the one just left behind is no answer about the one now drawn.
+        // the one just left behind is no answer about the one now drawn. It is
+        // still worth keeping: a map that has left a city once is a map that
+        // can come back to it.
         if (city !== activeCity) return;
 
-        networkData = qualifyNetwork(city, data);
+        networkFailure = undefined;
+        networkData = networkCache.get(city.id);
         scheduleSync();
       })
       .catch(() => {
-        // Let a later sync retry instead of leaving the overlay waiting on a
-        // request that already failed.
-        if (city === activeCity) networkDataRequest = undefined;
+        networkRequests.delete(city.id);
+        networkFailure = city.id;
+
+        // Nothing on the page would ask again by itself, so the notice says so
+        // and offers to. Staying quiet here is what left a failed load looking
+        // like an overlay that needed the page reloaded.
+        if (city === activeCity) setNetworkState("failed", true);
       });
 
-    return networkDataRequest;
+    networkRequests.set(city.id, request);
   }
 
   // The registry entry for a line that is going to be drawn, or nothing: a
@@ -923,6 +1523,12 @@
     // Switching every line off leaves nothing to project, and the origin is
     // seeded by projecting. Both renderers read it directly, so seed it here.
     getNetworkOrigin();
+
+    // Nothing to draw yet is not nothing to show: the overlay and its tools go
+    // up while the city's geometry is still on its way, which is what lets the
+    // notice say so instead of the map sitting bare. The empty answer is not
+    // memoised, because the data landing is exactly what makes it wrong.
+    if (!networkData) return { credits: [], paths: [], stations: [] };
 
     const paths = [];
     // Which operators are actually on screen. The licence asks for the credit
@@ -1036,6 +1642,8 @@
 
   function buildStripOverlay(host) {
     const geometry = getNetworkGeometry();
+
+    stripDrawnFrom = networkData;
 
     stripOverlay = createSvgElement("svg", {
       "aria-hidden": "true",
@@ -1200,6 +1808,7 @@
     stripObserver = undefined;
     stripResizeObserver = undefined;
     stripRenderRequest = undefined;
+    stripDrawnFrom = undefined;
   }
 
   function syncStrip() {
@@ -1231,7 +1840,15 @@
       return;
     }
 
-    if (next === strip && stripOverlay?.isConnected) {
+    // Same strip, same geometry: there is nothing to build, only to place. A
+    // strip that went up while the city was still loading is a different
+    // matter — it has the landmarks and none of the lines, and the lines are
+    // what has just arrived.
+    if (
+      next === strip &&
+      stripOverlay?.isConnected &&
+      stripDrawnFrom === networkData
+    ) {
       scheduleStripRender();
       return;
     }
@@ -1403,11 +2020,16 @@
     }
 
     networkGroup.setAttribute("display", networkIsVisible ? "inline" : "none");
+
     // With every line switched off there is no network that could be off
-    // screen, and the notice would be answering a question nobody asked.
-    setNetworkState(
-      networkIsVisible || !linePaths.length ? "visible" : "outside"
-    );
+    // screen, and the notice would be answering a question nobody asked. A
+    // city whose geometry has not landed has no lines either, and there the
+    // notice is in the middle of saying so — the loop has nothing to add.
+    if (networkData) {
+      setNetworkState(
+        networkIsVisible || !linePaths.length ? "visible" : "outside"
+      );
+    }
 
     if (networkIsVisible) {
       const cullLeft = visibleLeft - STATION_CULL_MARGIN;
@@ -1532,11 +2154,23 @@
     map = undefined;
     overlay = undefined;
     networkGroup = undefined;
+    haloGroup = undefined;
+    lineGroup = undefined;
+    stationGroup = undefined;
+    drawnFrom = undefined;
     attribution = undefined;
     mapTools = undefined;
     networkStatus = undefined;
     networkStatusText = undefined;
-    cityShortcuts = undefined;
+    networkStatusAction = undefined;
+    cityPicker = undefined;
+    cityPickerButton = undefined;
+    cityPickerName = undefined;
+    cityPickerPanel = undefined;
+    linePicker = undefined;
+    linePickerButton = undefined;
+    linePickerCount = undefined;
+    linePickerPanel = undefined;
     networkState = undefined;
     customPanel = undefined;
     customPointGroup = undefined;
@@ -1714,7 +2348,9 @@
 
     // The strip has no Leaflet DOM to hang off, so it comes and goes on its
     // own rather than with the interactive map the listing hides behind it.
-    if (!wantsStrip || !networkData) detachStrip();
+    // Asked before anything has been fetched, because on a listing page with
+    // no map open it is the only thing that knows which city to fetch.
+    if (!wantsStrip) detachStrip();
     else syncStrip();
 
     if (!nextMap) {
@@ -1743,17 +2379,24 @@
       return;
     }
 
-    if (!networkData) {
-      // A failed data load leaves nothing else to retrigger it, so stay
-      // connected until the network data is actually in hand.
-      connectPageObserver();
-      loadNetworkData();
-      return;
-    }
-
+    // The map is in hand, so there is nothing left for the document-wide
+    // observer to hunt for: the overlay watches its own corner of the page
+    // from here, and the geometry announces itself by scheduling a sync when
+    // it lands.
     disconnectPageObserver();
 
+    // The overlay goes up with the map rather than with the geometry. A city
+    // still on its way is something the notice has to be able to say, and it
+    // cannot say it from a column that is not on the map yet — which is what
+    // made a slow or failed load look like nothing was going to happen.
+    if (!networkData) loadNetworkData();
+
     if (nextMap !== map || !overlayIsIntact()) attach(nextMap);
+    // An overlay that is up is not the same thing as one that is current: the
+    // fetch that was out when it went up has landed, or the map has moved into
+    // another city since. Either way the shell stays and the drawing is made
+    // again inside it.
+    else if (drawnFrom !== networkData) redrawNetwork();
   }
 
   let syncRequest;
@@ -1769,6 +2412,10 @@
   function scheduleRouteSync() {
     if (location.pathname === observedPathname) return;
     observedPathname = location.pathname;
+    // A new page is a fair reason to ask again for a city whose geometry did
+    // not arrive on the last one. Without this, a load that failed with the
+    // notice switched off would have nothing left to clear it.
+    networkFailure = undefined;
     scheduleSync();
   }
 
@@ -1880,17 +2527,53 @@
     disconnectPageObserver();
   }
 
+  // What the column of tools and the overlay around the drawing are built out
+  // of, and the language they are built in. A change to any of these is a
+  // rebuild; a change to which lines are drawn is not, and rebuilding for one
+  // of those is what would shut the city panel in the face of someone who was
+  // in the middle of using it.
+  const STM_SHELL_KEYS = [
+    "cityPicker",
+    "interactiveMaps",
+    "language",
+    "linePicker",
+    "listingPreview",
+    "networkStatus",
+    "pointsTool",
+    "settingsShortcut",
+    "sites"
+  ];
+
+  function shellSignature(value) {
+    return JSON.stringify(STM_SHELL_KEYS.map((key) => value[key]));
+  }
+
   function applySettings(stored) {
+    const previous = settings;
     settings = stmMergeSettings(stored);
+    // Called for what it does rather than for what it answers: the language is
+    // one of the shell keys, so a new one is a rebuild either way.
     stmUseLanguage(settings.language);
+
     if (enabled) paintDetectAttributes();
-    // The geometry is filtered by the line switches on the way in, and the
-    // overlay is built once from what comes out, so both are thrown away and
-    // the next sync puts them back the way the new settings ask for. That is
-    // also what puts the map's own controls back in a newly picked language.
+
+    // The geometry is filtered by the line switches on the way in, so it is
+    // thrown away and made again from the same data whatever else happens.
+    // The strip is simply built again by the next sync.
     networkGeometry = undefined;
-    detach();
     detachStrip();
+
+    if (shellSignature(settings) !== shellSignature(previous)) detach();
+    else if (overlay) {
+      // Nothing the column is built out of has changed, so it stays where it
+      // is: a city switched off from the panel on the map must not take that
+      // panel down with it.
+      redrawNetwork();
+      renderCityPicker();
+      renderLinePicker();
+      paintNetworkState();
+    }
+
     scheduleSync();
   }
 
@@ -1927,15 +2610,31 @@
       if (changes[STM_ENABLED_KEY]) {
         setEnabled(changes[STM_ENABLED_KEY].newValue ?? true);
       }
+
+      // STM_ACTIVE_CITY_KEY is deliberately not listened for. Every map writes
+      // it as it goes, and a tab that followed another tab's would be swapping
+      // its network to wherever someone else's map had drifted.
     });
 
     customPointsReady = chrome.storage.local
-      .get([STM_CUSTOM_POINTS_KEY, STM_ENABLED_KEY, STM_SETTINGS_KEY])
+      .get([
+        STM_ACTIVE_CITY_KEY,
+        STM_CUSTOM_POINTS_KEY,
+        STM_ENABLED_KEY,
+        STM_SETTINGS_KEY
+      ])
       .then((stored) => {
         // Settings first: the refresh below and everything activate() starts
         // read them, and the defaults are only a stand-in until this lands.
         settings = stmMergeSettings(stored[STM_SETTINGS_KEY]);
         stmUseLanguage(settings.language);
+        // Wherever the last map to say so was looking, which is a far better
+        // opening guess than the first city in the registry: without it, a
+        // browser that lives in Paris fetches Montréal, draws it, and throws
+        // it away again on the first frame it can project. A stale guess costs
+        // nothing, because the map corrects it as soon as it is found.
+        activeCity =
+          stmCityById(stored[STM_ACTIVE_CITY_KEY]) ?? activeCity;
         customPoints = stored[STM_CUSTOM_POINTS_KEY] ?? [];
         refreshCustomPoints();
         setEnabled(stored[STM_ENABLED_KEY] ?? true);

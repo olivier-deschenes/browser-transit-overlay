@@ -86,6 +86,51 @@ function stmParseGoogleTile(source) {
   };
 }
 
+// Marketplace lays a search out as its map and its listings side by side in
+// one row, and names neither: the class names it ships are generated, and
+// change from one release to the next. The shape does not. Walking up from the
+// map, the first box with anything laid out beside it is the column the map
+// sits in, and what is beside it is the listings.
+//
+// Only a row with nothing in it but that column and what lies to its right is
+// taken for one, and the walk never leaves the page's main region, so the
+// filters down the left of the page can never be mistaken for the listings. A
+// layout that does not fit is answered with nothing, and the listings are left
+// where the site put them rather than hidden on a guess.
+function stmColumnBesideMap(map) {
+  const main = map.closest('[role="main"]');
+
+  if (!main) return undefined;
+
+  for (let column = map; column !== main; column = column.parentElement) {
+    const row = column.parentElement;
+    // Controls pinned over the map are not beside it, and a box with no size
+    // is not laid out anywhere. Neither says anything about the row.
+    const beside = [...row.children].filter((child) => {
+      if (child === column) return false;
+
+      const { position } = getComputedStyle(child);
+
+      if (position === "absolute" || position === "fixed") return false;
+
+      const rect = child.getBoundingClientRect();
+
+      return rect.width > 0 && rect.height > 0;
+    });
+
+    if (!beside.length) continue;
+
+    const edge = column.getBoundingClientRect().right;
+    const allToTheRight = beside.every(
+      (child) => child.getBoundingClientRect().left >= edge - 1
+    );
+
+    return allToTheRight ? { column, row } : undefined;
+  }
+
+  return undefined;
+}
+
 const STM_FACEBOOK_RENTAL_ROUTE =
   /^\/marketplace\/(?:[^/]+\/)?(propertyrentals|apartments-for-rent|condos-for-rent|houses-for-rent|townhouses-for-rent)(?=\/|$)/;
 const STM_FACEBOOK_ITEM_ROUTE = /^\/marketplace\/item\/\d+/;
@@ -179,6 +224,15 @@ const STM_SITE_ADAPTERS = [
         zoom
       };
     },
+
+    // The listings a search lays out beside its map, which the button on the
+    // map's edge hides to give the map their width. The map on a listing opens
+    // over the page with nothing laid out beside it, so only a search is
+    // looked at.
+    listingsBeside: (map) =>
+      STM_FACEBOOK_RENTAL_ROUTE.test(location.pathname)
+        ? stmColumnBesideMap(map)
+        : undefined,
 
     // Marketplace names the city in its category path, so the way to send
     // someone to the network they are looking at is to rewrite that one

@@ -61,6 +61,11 @@
             label: stmText("options.linePicker")
           },
           {
+            hint: stmText("options.listingsToggle.hint"),
+            key: "listingsToggle",
+            label: stmText("options.listingsToggle")
+          },
+          {
             hint: stmText("options.settingsShortcut.hint"),
             key: "settingsShortcut",
             label: stmText("options.settingsShortcut")

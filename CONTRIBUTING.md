@@ -46,9 +46,10 @@ Automated tests cover parsing, site selection, resources, translations, and pack
 3. Panning, zooming, resizing, and navigating between listings without a full reload.
 4. A map in each city the registry declares, and the swap when a search moves from one city to another.
 5. Toolbar enable/disable and the site, line, station, and label switches.
-6. Each language, and the browser's language, on the settings page, the map controls, and the toolbar button's tooltip, including switching languages while a map is open.
-7. Adding, editing, and deleting a synthetic landmark; rejecting invalid coordinates and short links.
-8. Reloading the browser and confirming preferences persist, while reset preserves landmarks.
-9. Visible transit attribution and no errors in extension or page consoles.
+6. Hiding the listings beside a Marketplace search: the map takes their width with tiles all the way across, a new search opens the same way, and the listings come back when the button or the extension is switched off.
+7. Each language, and the browser's language, on the settings page, the map controls, and the toolbar button's tooltip, including switching languages while a map is open.
+8. Adding, editing, and deleting a synthetic landmark; rejecting invalid coordinates and short links.
+9. Reloading the browser and confirming preferences persist, while reset preserves landmarks.
+10. Visible transit attribution and no errors in extension or page consoles.
 
 Use a test browser profile and non-personal landmarks. Include the checks you actually performed in the pull request.

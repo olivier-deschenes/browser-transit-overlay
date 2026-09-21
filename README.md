@@ -14,6 +14,7 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 - A panel on the map naming the city being drawn and listing the rest by country, where clicking a city switches its network on or off and switching one on switches the others off — the map draws a single city. On Marketplace, the arrow beside a city jumps the search to it with its network switched on.
 - A second panel under it for the lines of the city being drawn, as the bullets their own networks print them on, with a switch per operator and one pair of buttons for all of them at once. Only one of the two panels is open at a time.
 - Networks swapped as the map moves between cities, without a reload: the panel says which one is loading, keeps each city once it has been fetched, and offers to try again if one does not arrive.
+- On a Marketplace search, a button on the map's right edge that hides the listings beside it so the map takes the whole width, and brings them back. The next search opens the way the last one was left.
 
 This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, the City of Toronto, or any of the French transit authorities and operators whose data it uses. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
 
@@ -28,7 +29,7 @@ No build, API key, or developer account is needed to load the extension. Click i
 
 ## Privacy and permissions
 
-The extension uses `chrome.storage.local` for settings, landmarks, and the name of the last supported city a map showed the network for — one of the eight names in the registry, never a position. It loads its transit data from the installed extension and has no analytics or developer backend. Google Maps links are parsed locally; shortened links must first be opened by the user to obtain a full link containing coordinates.
+The extension uses `chrome.storage.local` for settings, landmarks, whether the listings beside a Marketplace search were last left hidden, and the name of the last supported city a map showed the network for — one of the eight names in the registry, never a position. It loads its transit data from the installed extension and has no analytics or developer backend. Google Maps links are parsed locally; shortened links must first be opened by the user to obtain a full link containing coordinates.
 
 The only declared API permission is `storage`. Content scripts run on Marketplace, Centris, and the Local Logic frame used by Centris listings. The Local Logic adapter checks that Centris embedded the frame. Its page-world bridge reads the map's camera so the overlay follows it.
 

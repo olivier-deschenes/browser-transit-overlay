@@ -8,6 +8,13 @@
   // the two share nothing but the DOM they are written on.
   const ANCHOR_ATTRIBUTE = "data-stm-anchor";
   const CAMERA_ATTRIBUTE = "data-stm-camera";
+  // The two boxes of the site's own that the listings button takes hold of:
+  // the column the map sits in, and the row it shares with the listings. They
+  // are marked rather than styled, and content.css does the hiding, so that a
+  // listings column the site swaps in under the same row is hidden as well —
+  // it is everything in the row but the map's own column.
+  const MAP_COLUMN_ATTRIBUTE = "data-stm-map-column";
+  const HIDE_LISTINGS_ATTRIBUTE = "data-stm-hide-listings";
   const MAP_DETECT_ANIMATION = "stm-map-detect";
   const STATION_CULL_MARGIN = 140;
   const LABEL_MIN_ZOOM = 13;
@@ -67,6 +74,15 @@
   // settings, and a settings change that took the panel down with it would
   // shut it in the face of whoever was using it.
   let openPicker;
+  let listingsToggle;
+  // The map's column and the row it shares with the listings, as the adapter
+  // found them beside this map.
+  let listingsLayout;
+  // Whether the listings are hidden. Kept out here for the same reason as
+  // openPicker: the overlay is rebuilt under it whenever the site redraws the
+  // map, and listings that came back every time it did would be the button
+  // forgetting what it was just asked. Storage carries it on to the next page.
+  let listingsHidden = false;
   let customPanel;
   let customPointGroup;
   let customPointList;
@@ -740,6 +756,90 @@
     mapTools.append(button);
   }
 
+  // The listings beside a search, hidden and shown again from a button on the
+  // edge of the map they are laid out against. Hiding them is all it takes to
+  // give the map their width: the site sizes the map's column to whatever the
+  // row has left over, so the listings only have to leave the row.
+  function buildListingsToggle() {
+    listingsLayout = site.listingsBeside?.(map);
+
+    // A site that lays nothing out beside its maps, or a layout the adapter
+    // does not recognise. Either way there is nothing to hide.
+    if (!listingsLayout) return;
+
+    listingsToggle = document.createElement("button");
+    listingsToggle.type = "button";
+    listingsToggle.id = "stm-listings-toggle";
+
+    // Which way the map's edge is about to move. The label says the same
+    // thing in words.
+    const chevron = document.createElement("span");
+    chevron.className = "stm-tool-chevron";
+    chevron.setAttribute("aria-hidden", "true");
+
+    listingsToggle.append(chevron);
+    listingsToggle.addEventListener("click", () => {
+      listingsHidden = !listingsHidden;
+      paintListings();
+
+      // Where the next search in this browser starts. Nothing reads it back
+      // until then: a tab left open elsewhere keeps its listings rather than
+      // having them vanish from under whoever is reading them.
+      chrome.storage.local
+        .set({ [STM_LISTINGS_HIDDEN_KEY]: listingsHidden })
+        .catch(() => {});
+    });
+
+    // A press on the button is not a press on the map. These are the events
+    // Leaflet keeps its own controls out of the map with: a double press would
+    // zoom it, and a press that wanders off the button would drag it.
+    for (const eventName of [
+      "click",
+      "dblclick",
+      "mousedown",
+      "pointerdown",
+      "touchstart",
+      "wheel"
+    ]) {
+      listingsToggle.addEventListener(eventName, (event) => {
+        event.stopPropagation();
+      });
+    }
+
+    listingsLayout.column.setAttribute(MAP_COLUMN_ATTRIBUTE, "");
+    map.append(listingsToggle);
+    paintListings();
+  }
+
+  // The button and the row agree with the one piece of state, whether the
+  // button was just built or a press has moved it.
+  function paintListings() {
+    if (!listingsToggle) return;
+
+    const label = listingsHidden
+      ? stmText("map.showListings")
+      : stmText("map.hideListings");
+
+    listingsToggle.dataset.stmState = listingsHidden ? "hidden" : "shown";
+    listingsToggle.title = label;
+    listingsToggle.setAttribute("aria-label", label);
+    setListingsRow(listingsHidden);
+  }
+
+  // Leaflet measures its box when the window is resized and not otherwise,
+  // so a map that has just been handed the listings' width is told the way it
+  // would be told about any other resize. Marketplace notices the change on
+  // its own today; the event costs one redraw, and without it a map that
+  // stopped noticing would load tiles only as far as it used to reach.
+  function setListingsRow(hidden) {
+    const { row } = listingsLayout;
+
+    if (row.hasAttribute(HIDE_LISTINGS_ATTRIBUTE) === hidden) return;
+
+    row.toggleAttribute(HIDE_LISTINGS_ATTRIBUTE, hidden);
+    dispatchEvent(new Event("resize"));
+  }
+
   function buildMapTools() {
     // The container goes up whatever ends up inside it: sync() reads a
     // missing one as a wiped one, and an empty flex column paints nothing.
@@ -1164,6 +1264,7 @@
 
     if (settings.pointsTool) buildCustomPointPanel();
     if (settings.settingsShortcut) buildSettingsShortcut();
+    if (settings.listingsToggle) buildListingsToggle();
   }
 
   function tileCoordinatesFor(element) {
@@ -2149,18 +2250,21 @@
     return Boolean(
       overlay?.contains(node) ||
         mapTools?.contains(node) ||
-        attribution?.contains(node)
+        attribution?.contains(node) ||
+        listingsToggle?.contains(node)
     );
   }
 
   // Everything we hang off the map, and whether it is all still hanging
   // there. The attribution only goes up when there is network data to credit,
-  // so an absent one is not the same thing as a wiped one.
+  // and the listings button only beside listings, so an absent one is not the
+  // same thing as a wiped one.
   function overlayIsIntact() {
     return Boolean(
       overlay?.isConnected &&
       mapTools?.isConnected &&
-      (!attribution || attribution.isConnected)
+      (!attribution || attribution.isConnected) &&
+      (!listingsToggle || listingsToggle.isConnected)
     );
   }
 
@@ -2174,6 +2278,15 @@
     overlay?.remove();
     attribution?.remove();
     mapTools?.remove();
+    listingsToggle?.remove();
+
+    // The listings come back with the button rather than staying hidden with
+    // nothing left on the page to bring them back. Whether they were hidden
+    // is kept: a button built on the next map puts them away again.
+    if (listingsLayout) {
+      setListingsRow(false);
+      listingsLayout.column.removeAttribute(MAP_COLUMN_ATTRIBUTE);
+    }
 
     map = undefined;
     overlay = undefined;
@@ -2195,6 +2308,8 @@
     linePickerButton = undefined;
     linePickerCount = undefined;
     linePickerPanel = undefined;
+    listingsToggle = undefined;
+    listingsLayout = undefined;
     networkState = undefined;
     customPanel = undefined;
     customPointGroup = undefined;
@@ -2562,6 +2677,7 @@
     "language",
     "linePicker",
     "listingPreview",
+    "listingsToggle",
     "networkStatus",
     "pointsTool",
     "settingsShortcut",
@@ -2645,6 +2761,7 @@
         STM_ACTIVE_CITY_KEY,
         STM_CUSTOM_POINTS_KEY,
         STM_ENABLED_KEY,
+        STM_LISTINGS_HIDDEN_KEY,
         STM_SETTINGS_KEY
       ])
       .then((stored) => {
@@ -2659,6 +2776,9 @@
         // nothing, because the map corrects it as soon as it is found.
         activeCity =
           stmCityById(stored[STM_ACTIVE_CITY_KEY]) ?? activeCity;
+        // How the last search left its listings, read before anything is
+        // attached so that the first map this page finds already knows.
+        listingsHidden = stored[STM_LISTINGS_HIDDEN_KEY] === true;
         customPoints = stored[STM_CUSTOM_POINTS_KEY] ?? [];
         refreshCustomPoints();
         setEnabled(stored[STM_ENABLED_KEY] ?? true);

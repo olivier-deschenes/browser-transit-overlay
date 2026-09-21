@@ -13,6 +13,12 @@ const STM_CUSTOM_POINTS_KEY = "customPoints";
 // at the first city in the registry. A map corrects it within a frame or two
 // of being found, so a stale one costs nothing.
 const STM_ACTIVE_CITY_KEY = "activeCity";
+// Whether the listings beside a Marketplace search were hidden when the button
+// on the map's edge was last pressed. Not a setting either: it is how a search
+// was left rather than how the extension is set up, and the next search opens
+// the same way. Resetting the settings leaves it alone; the button is the way
+// to bring the listings back.
+const STM_LISTINGS_HIDDEN_KEY = "listingsHidden";
 const STM_OPEN_OPTIONS_MESSAGE = "stm-open-options";
 
 // The sites the overlay knows how to draw on. The adapter that actually does
@@ -48,6 +54,7 @@ const STM_DEFAULT_SETTINGS = {
   linePicker: true,
   lines: Object.fromEntries(STM_LINES.map(({ id }) => [id, true])),
   listingPreview: true,
+  listingsToggle: true,
   networkStatus: true,
   points: true,
   pointsTool: true,

@@ -44,6 +44,11 @@ function Privacy() {
           d’abord. C’est le nom d’une des villes prises en charge par
           l’extension, jamais une position.
         </li>
+        <li>
+          Si vous avez masqué les annonces à côté de la carte d’une recherche
+          Marketplace, pour que la recherche suivante s’ouvre de la même façon.
+          C’est un simple oui ou non, jamais le contenu d’une annonce.
+        </li>
       </ul>
       <p>
         Les liens Google Maps que vous collez sont lus localement pour en

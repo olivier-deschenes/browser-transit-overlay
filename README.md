@@ -11,7 +11,7 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 - Custom landmarks from coordinates or full Google Maps links, with editable names and colours.
 - A toolbar switch to enable or disable the overlay without losing your settings.
 - An English and French interface, in the browser's language by default, with a language picker in the settings.
-- A panel on the map naming the city being drawn and listing the rest by country, where picking one switches the others off — the map draws a single city — and on Marketplace the name also jumps the search to it.
+- A panel on the map naming the city being drawn and listing the rest by country, where clicking a city switches its network on or off and switching one on switches the others off — the map draws a single city. On Marketplace, the arrow beside a city jumps the search to it with its network switched on.
 - A second panel under it for the lines of the city being drawn, as the bullets their own networks print them on, with a switch per operator and one pair of buttons for all of them at once. Only one of the two panels is open at a time.
 - Networks swapped as the map moves between cities, without a reload: the panel says which one is loading, keeps each city once it has been fetched, and offers to try again if one does not arrive.
 

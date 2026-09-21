@@ -272,43 +272,77 @@
 
 .stm-city-row {
   align-items: center;
+  border-radius: 3px;
   display: flex;
-  gap: 6px;
-  padding: 2px 2px 2px 8px;
+  gap: 2px;
 }
 
 .stm-city-row[data-stm-current] {
   background: #f1f3f4;
-  border-radius: 3px;
 }
 
 /*
- * A name with somewhere to go is a button and a name without one is not, so
- * the two have to be told apart at a glance rather than by hovering. Both are
- * laid out the same way, because the switch beside them must line up down the
- * column either way.
+ * Everything in the row but the button at the end of it is the switch's label,
+ * so the padding is the label's rather than the row's: a click in the gutter
+ * beside the box is a click on the city as well.
  */
 .stm-city-label {
-  background: none;
-  border: 0;
-  color: #202124;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
   flex: 1;
-  font: inherit;
+  gap: 6px;
+  min-width: 0;
+  padding: 2px 2px 2px 8px;
+  user-select: none;
+}
+
+/*
+ * Centris styles every bare label as a caption over a form field, with a
+ * margin under it and a navy of its own, and both labels in the column are
+ * rows instead.
+ */
+.stm-city-label,
+.stm-line-system-head {
+  color: #202124;
+  margin: 0;
+}
+
+/* Translucent, so it reads the same over the grey of the current city's row
+   as over the white of the rest. */
+.stm-city-label:hover,
+.stm-city-go:hover {
+  background: rgb(0 0 0 / 5%);
+}
+
+.stm-city-name {
+  flex: 1;
   min-width: 0;
   overflow: hidden;
-  padding: 0;
-  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-button.stm-city-label {
+/*
+ * The way to the city's own search, where the site has one: a click on the
+ * name is a click on the switch, so going there is a button of its own, blue
+ * like the other links in the column.
+ */
+.stm-city-go {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: 3px;
   color: #0866ff;
   cursor: pointer;
-}
-
-button.stm-city-label:hover {
-  text-decoration: underline;
+  display: flex;
+  flex: none;
+  font: inherit;
+  height: 20px;
+  justify-content: center;
+  padding: 0;
+  width: 20px;
 }
 
 .stm-city-here {

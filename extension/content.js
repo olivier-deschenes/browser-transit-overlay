@@ -347,15 +347,20 @@
   }
 
   // One row per city, under the country it is in. The switch is the same one
-  // the settings page shows, written to the same place; the name beside it is
-  // a button wherever the site's own routing names the city and can therefore
-  // be rewritten, and plain text everywhere else — a Centris search is an
-  // opaque payload with no city in it to swap.
+  // the settings page shows, written to the same place, and the row around it
+  // is its label: the city's name is what anyone reaches for, and the box
+  // beside it is a dozen pixels square.
   //
   // The switches are a choice between cities rather than a row of independent
   // ones: the map draws a single city, so the one switched on is the one that
   // draws and the rest go off with it. Unchecking the one that is on is still
   // allowed, and leaves a map with no network drawn on it at all.
+  //
+  // Wherever the site's own routing names the city and can therefore be
+  // rewritten, the row ends in a button that goes there, kept outside the
+  // label as the one part of the row where a click is not the switch. A
+  // Centris search is an opaque payload with no city in it to swap, and there
+  // the row is the switch and nothing more.
   function cityPickerRow(city) {
     const name = stmText(`city.${city.id}.name`);
     const current = city === activeCity;
@@ -364,6 +369,9 @@
     row.className = "stm-city-row";
 
     if (current) row.dataset.stmCurrent = "";
+
+    const label = document.createElement("label");
+    label.className = "stm-city-label";
 
     const toggle = document.createElement("input");
     toggle.type = "checkbox";
@@ -376,25 +384,41 @@
       });
     });
 
-    const jumps = !current && Boolean(site.shortcut?.applies(city));
-    const label = document.createElement(jumps ? "button" : "span");
-    label.className = "stm-city-label";
-    label.textContent = name;
+    const cityName = document.createElement("span");
+    cityName.className = "stm-city-name";
+    cityName.textContent = name;
 
-    if (jumps) {
-      label.type = "button";
-      label.dataset.stmKey = `go:${city.id}`;
-      label.title = stmText("map.goTo", { city: name });
-      label.addEventListener("click", () => site.shortcut.run(city));
-    }
-
-    row.append(toggle, label);
+    label.append(toggle, cityName);
 
     if (current) {
       const here = document.createElement("span");
       here.className = "stm-city-here";
       here.textContent = stmText("map.here");
-      row.append(here);
+      label.append(here);
+    }
+
+    row.append(label);
+
+    if (!current && site.shortcut?.applies(city)) {
+      const go = document.createElement("button");
+      go.type = "button";
+      go.className = "stm-city-go";
+      go.dataset.stmKey = `go:${city.id}`;
+      go.textContent = "→";
+      go.title = stmText("map.goTo", { city: name });
+      go.setAttribute("aria-label", stmText("map.goTo", { city: name }));
+      go.addEventListener("click", async () => {
+        // The map at the other end draws only the city that is switched on,
+        // so going there switches it on: a search sent to Toronto that lands
+        // with Montréal still picked is a Toronto map with nothing on it. The
+        // write is waited on because this page is about to be thrown away.
+        try {
+          await saveSettings({ cities: stmOnlyCity(city.id) });
+        } finally {
+          site.shortcut.run(city);
+        }
+      });
+      row.append(go);
     }
 
     return row;

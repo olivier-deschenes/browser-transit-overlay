@@ -24,6 +24,12 @@
   const LABEL_FONT_FAMILY = "Arial, sans-serif";
   const LABEL_FONT_SIZE = 11;
   const LABEL_FONT_WEIGHT = 600;
+  // How long the zoom has to hold still before the station names are laid out
+  // properly again. Until then they only stay put or go: see labels.js. Timed
+  // off the scale rather than off the sites' own events, because a pinch on
+  // Marketplace announces nothing and the other two maps never say they have
+  // stopped.
+  const LABEL_SETTLE_MS = 150;
   // Panning slides tiles and the overlay pane together, so the projection
   // that comes back out of the arithmetic is the same one to within float
   // noise. Anything under a hundredth of a pixel is that noise, not a move.
@@ -153,8 +159,10 @@
   let stationLabelGroup;
   let stationLabelsVisible;
   // The zoom scale the station names were last laid out at. Which names fit
-  // depends on nothing else, so the layout stands until this changes.
+  // depends on nothing else, so the layout stands until this changes. Nothing
+  // here means the next layout starts afresh rather than from the last one.
   let stationLabelScale;
+  let stationLabelSettle;
   // How wide each station name is, measured once for the life of the page on
   // a canvas that is never shown. The svg could only say once the name was
   // laid out and showing, and the layout has to know before either.
@@ -1216,6 +1224,7 @@
     renderedScale = undefined;
     stationLabelsVisible = undefined;
     stationLabelScale = undefined;
+    clearTimeout(stationLabelSettle);
     stationLabelGroup.setAttribute("display", "none");
     networkGroup.setAttribute("display", "none");
 
@@ -2149,9 +2158,13 @@
       );
 
       // Labels skip their coordinates while the group is hidden, so they all
-      // need one placement pass before they can be shown again.
+      // need one placement pass before they can be shown again. Where they
+      // were before they went is no place to keep them, so the layout that
+      // brings them back starts afresh.
       if (labelsVisible) {
         for (const station of stationMarkers) station.placed = false;
+
+        stationLabelScale = undefined;
       }
     }
 
@@ -2159,15 +2172,31 @@
     // apart the zoom has put the stations and on nothing else. The layout is
     // made again when the zoom changes and never while the map is only being
     // panned, so a drag cannot shuffle the names around under the pointer.
+    //
+    // A change of zoom straight after a layout is a zoom under way, and the
+    // names only hold their places or go until it has stopped. Once the scale
+    // has held still for a moment, the settle clears the last scale and the
+    // names are laid out afresh, exactly as a map opened at that zoom would be.
     if (labelsVisible && stationLabelScale !== geometryScale) {
+      const moving = stationLabelScale !== undefined;
+
       stationLabelScale = geometryScale;
 
-      const slots = stmPlaceStationLabels(stationMarkers);
+      const slots = stmPlaceStationLabels(stationMarkers, moving);
 
       stationMarkers.forEach((station, index) => {
         station.slot = slots[index];
         station.placed = false;
       });
+
+      clearTimeout(stationLabelSettle);
+
+      if (moving) {
+        stationLabelSettle = setTimeout(() => {
+          stationLabelScale = undefined;
+          scheduleRender();
+        }, LABEL_SETTLE_MS);
+      }
     }
 
     const visibleLeft = mapRect.left - paneRect.left;
@@ -2396,6 +2425,7 @@
     stationLabelGroup = undefined;
     stationLabelsVisible = undefined;
     stationLabelScale = undefined;
+    clearTimeout(stationLabelSettle);
   }
 
   function attach(nextMap) {

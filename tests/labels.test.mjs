@@ -92,40 +92,115 @@ test('a name with nowhere to go is left off rather than written over other stati
   assert.ok(others.some(Boolean));
 });
 
+test('while the map is moving, a name keeps its place or goes, and none appears', () => {
+  const lone = { name: 'Berri-UQAM', nameWidth: 62, rank: 3, x: 120, y: 80 };
+
+  // Room on every side, and still the name stays below its dot, where the
+  // last layout put it, until the map has stopped.
+  assert.equal(stmPlaceStationLabels([{ ...lone, slot: STM_LABEL_SLOTS[2] }], true)[0], STM_LABEL_SLOTS[2]);
+  assert.equal(stmPlaceStationLabels([{ ...lone, slot: STM_LABEL_SLOTS[2] }])[0], STM_LABEL_SLOTS[0]);
+
+  // A station that was not named is not named until then either.
+  assert.equal(stmPlaceStationLabels([lone], true)[0], undefined);
+
+  // A neighbour's dot lands on the name's place, and the name goes rather
+  // than moving round to the free side it takes once the map is still.
+  const crowded = [
+    { ...lone, slot: STM_LABEL_SLOTS[0] },
+    { name: 'Neighbour', nameWidth: 50, rank: 1, x: 150, y: 76 }
+  ];
+  assert.equal(stmPlaceStationLabels(crowded, true)[0], undefined);
+  assert.equal(stmPlaceStationLabels(crowded)[0], STM_LABEL_SLOTS[1]);
+});
+
 // The bundled networks at every zoom names are shown at, Paris's five hundred
 // stations included. There is no canvas here to measure names with, so each
 // letter is taken to be about as wide as 11px bold Arial makes it.
-test('on every network, names never cover one another or another station', () => {
-  for (const file of readdirSync(new URL('networks/', root))) {
-    const { stations } = JSON.parse(read(`networks/${file}`));
+const networks = readdirSync(new URL('networks/', root)).map((file) => ({
+  file,
+  stations: JSON.parse(read(`networks/${file}`)).stations.map(({ coordinates, lines, name }) => ({
+    coordinates,
+    name,
+    nameWidth: name.length * 6.5,
+    rank: lines.length
+  }))
+}));
 
-    for (const zoom of [13, 14, 15, 16, 17, 18]) {
-      const placed = stations.map(({ coordinates, lines, name }) => {
-        const [x, y] = project(coordinates, zoom);
-        return { name, nameWidth: name.length * 6.5, rank: lines.length, x, y };
-      });
-      const boxes = [];
+function atZoom(stations, zoom) {
+  for (const station of stations) [station.x, station.y] = project(station.coordinates, zoom);
+  return stations;
+}
 
-      stmPlaceStationLabels(placed).forEach((slot, index) => {
-        if (!slot) return;
-        const { nameWidth, x, y } = placed[index];
-        boxes.push({ ...stmLabelBox(slot, x, y, nameWidth), index });
-      });
+function assertClear(placed, slots, where) {
+  const boxes = [];
 
-      assert.ok(boxes.length > 0, `${file} at zoom ${zoom}`);
+  slots.forEach((slot, index) => {
+    if (!slot) return;
+    const { nameWidth, x, y } = placed[index];
+    boxes.push({ ...stmLabelBox(slot, x, y, nameWidth), index });
+  });
 
-      for (const [position, box] of boxes.entries()) {
-        const { name } = placed[box.index];
+  // Hundreds of thousands of pairs on Paris, so a message is only written for
+  // the one that fails.
+  const dots = placed.map(dot);
 
-        for (const other of boxes.slice(position + 1)) {
-          assert.ok(!overlaps(box, other), `${file} at zoom ${zoom}: ${name} over ${placed[other.index].name}`);
-        }
+  for (const [position, box] of boxes.entries()) {
+    const { name } = placed[box.index];
 
-        for (const [index, station] of placed.entries()) {
-          if (index === box.index) continue;
-          assert.ok(!overlaps(box, dot(station)), `${file} at zoom ${zoom}: ${name} over the dot of ${station.name}`);
-        }
-      }
+    for (const other of boxes.slice(position + 1)) {
+      if (overlaps(box, other)) assert.fail(`${where}: ${name} over ${placed[other.index].name}`);
     }
+
+    for (const [index, station] of placed.entries()) {
+      if (index !== box.index && overlaps(box, dots[index])) assert.fail(`${where}: ${name} over the dot of ${station.name}`);
+    }
+  }
+
+  return boxes.length;
+}
+
+test('on every network, names never cover one another or another station', () => {
+  for (const { file, stations } of networks) {
+    for (const zoom of [13, 14, 15, 16, 17, 18]) {
+      const placed = atZoom(stations, zoom);
+      assert.ok(assertClear(placed, stmPlaceStationLabels(placed), `${file} at zoom ${zoom}`) > 0, `${file} at zoom ${zoom}`);
+    }
+  }
+});
+
+// A whole level of zoom in each direction, in the steps an animated zoom is
+// drawn in. Every step only keeps or drops what the step before had, never
+// covers anything, and the map at rest is the map a fresh layout would draw.
+test('on every network, a zoom only takes names away until it stops', () => {
+  for (const { file, stations } of networks) {
+    for (const [from, to] of [
+      [14, 13],
+      [13, 14],
+      [16, 15]
+    ]) {
+      stmPlaceStationLabels(atZoom(stations, from)).forEach((slot, index) => {
+        stations[index].slot = slot;
+      });
+
+      for (let step = 1; step <= 12; step++) {
+        const zoom = from + ((to - from) * step) / 12;
+        const placed = atZoom(stations, zoom);
+        const slots = stmPlaceStationLabels(placed, true);
+        const where = `${file} from zoom ${from} to ${to}, at ${zoom.toFixed(2)}`;
+
+        slots.forEach((slot, index) => {
+          if (slot && slot !== placed[index].slot) assert.fail(`${where}: ${placed[index].name} moved`);
+        });
+        assertClear(placed, slots, where);
+        placed.forEach((station, index) => {
+          station.slot = slots[index];
+        });
+      }
+
+      const settled = stmPlaceStationLabels(stations);
+      assert.deepEqual(settled, stmPlaceStationLabels(stations.map(({ slot, ...station }) => station)), file);
+    }
+
+    for (const station of stations) delete station.slot;
   }
 });

@@ -10,6 +10,12 @@
 // pixels at the zoom being drawn, and how wide each name is, then draws what
 // comes back. The same stations at the same zoom always come back the same
 // way, which is what keeps a map being panned from reshuffling its names.
+//
+// A zoom is the exception, and only while it lasts. Laid out afresh on every
+// frame of one, names that barely moved could land on a different side of
+// their dots each time, and the whole map shimmered until the zoom ended.
+// While the map is moving, a name either stays exactly where it is or goes,
+// and the layout proper waits until the zoom has come to rest.
 
 // A station's dot out to the edge of its outline: content.js draws a circle
 // of radius 4.5 with a 2px stroke. No name is written over a dot, its own or
@@ -63,12 +69,18 @@ function stmLabelBox({ anchor, dx, dy }, x, y, width) {
   };
 }
 
-// The stations come in as { name, nameWidth, rank, x, y }, where rank is how
-// many of the lines drawn stop there and x and y are pixels at the current
-// zoom, measured from any origin. What goes back is, for each station in the
-// same order, the slot its name is written in, or nothing where there is no
-// room for it.
-function stmPlaceStationLabels(stations) {
+// The stations come in as { name, nameWidth, rank, slot, x, y }, where rank is
+// how many of the lines drawn stop there, slot is where the name was written
+// by the layout before this one, if anywhere, and x and y are pixels at the
+// current zoom, measured from any origin. What goes back is, for each station
+// in the same order, the slot its name is written in, or nothing where there
+// is no room for it.
+//
+// A map that is moving keeps each name in the slot it already has, for as
+// long as that slot stays clear, and takes it off the map once it does not.
+// No name moves or appears until the map is still again, so a zoom can only
+// ever take names away, and each one at most once.
+function stmPlaceStationLabels(stations, moving = false) {
   const cells = new Map();
 
   // The cells a box reaches into. Keys are numbers rather than strings, which
@@ -145,7 +157,7 @@ function stmPlaceStationLabels(stations) {
   const slots = stations.map(() => undefined);
 
   for (const index of order) {
-    const { name, nameWidth, x, y } = stations[index];
+    const { name, nameWidth, slot: kept, x, y } = stations[index];
     const namesakes = written.get(name) ?? [];
 
     // Two stations of one name a few steps apart, like the métro and the REM
@@ -159,7 +171,9 @@ function stmPlaceStationLabels(stations) {
       continue;
     }
 
-    for (const slot of STM_LABEL_SLOTS) {
+    const offered = moving ? (kept ? [kept] : []) : STM_LABEL_SLOTS;
+
+    for (const slot of offered) {
       const box = stmLabelBox(slot, x, y, nameWidth);
 
       if (!isFree(box, index)) continue;

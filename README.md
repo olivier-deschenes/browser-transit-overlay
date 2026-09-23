@@ -8,7 +8,7 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 
 - Transit overlays on supported search maps, listing maps, and Marketplace map previews.
 - Individual switches for sites, transit operators and their lines, stations, labels, and map controls.
-- Station names that never overlap one another or a station's dot. Where they don't all fit, the stations with the most lines are named first, and the rest appear as the map zooms in.
+- Station names that never overlap one another or a station's dot. Where they don't all fit, the stations with the most lines are named first, and the rest appear as the map zooms in. While a zoom is under way the names hold their places, and they are laid out again once it stops.
 - Custom landmarks from coordinates or full Google Maps links, with editable names and colours.
 - A toolbar switch to enable or disable the overlay without losing your settings.
 - An English and French interface, in the browser's language by default, with a language picker in the settings.

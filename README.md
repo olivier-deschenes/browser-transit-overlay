@@ -8,12 +8,14 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 
 - Transit overlays on supported search maps, listing maps, and Marketplace map previews.
 - Individual switches for sites, transit operators and their lines, stations, labels, and map controls.
+- Station names that never overlap one another or a station's dot. Where they don't all fit, the stations with the most lines are named first, and the rest appear as the map zooms in. While a zoom is under way the names hold their places, and they are laid out again once it stops.
 - Custom landmarks from coordinates or full Google Maps links, with editable names and colours.
 - A toolbar switch to enable or disable the overlay without losing your settings.
 - An English and French interface, in the browser's language by default, with a language picker in the settings.
-- A panel on the map naming the city being drawn and listing the rest by country, where picking one switches the others off — the map draws a single city — and on Marketplace the name also jumps the search to it.
+- A panel on the map naming the city being drawn and listing the rest by country, where clicking a city switches its network on or off and switching one on switches the others off — the map draws a single city. On Marketplace, the arrow beside a city jumps the search to it with its network switched on.
 - A second panel under it for the lines of the city being drawn, as the bullets their own networks print them on, with a switch per operator and one pair of buttons for all of them at once. Only one of the two panels is open at a time.
 - Networks swapped as the map moves between cities, without a reload: the panel says which one is loading, keeps each city once it has been fetched, and offers to try again if one does not arrive.
+- On a Marketplace search, a button on the map's right edge that hides the listings beside it so the map takes the whole width, and brings them back. The next search opens the way the last one was left.
 
 This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, the City of Toronto, or any of the French transit authorities and operators whose data it uses. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
 
@@ -28,7 +30,7 @@ No build, API key, or developer account is needed to load the extension. Click i
 
 ## Privacy and permissions
 
-The extension uses `chrome.storage.local` for settings, landmarks, and the name of the last supported city a map showed the network for — one of the eight names in the registry, never a position. It loads its transit data from the installed extension and has no analytics or developer backend. Google Maps links are parsed locally; shortened links must first be opened by the user to obtain a full link containing coordinates.
+The extension uses `chrome.storage.local` for settings, landmarks, whether the listings beside a Marketplace search were last left hidden, and the name of the last supported city a map showed the network for — one of the eight names in the registry, never a position. It loads its transit data from the installed extension and has no analytics or developer backend. Google Maps links are parsed locally; shortened links must first be opened by the user to obtain a full link containing coordinates.
 
 The only declared API permission is `storage`. Content scripts run on Marketplace, Centris, and the Local Logic frame used by Centris listings. The Local Logic adapter checks that Centris embedded the frame. Its page-world bridge reads the map's camera so the overlay follows it.
 
@@ -114,12 +116,12 @@ Adding a message works the same way. Add it to every block, and write the key ou
 
 | Path | Purpose |
 | --- | --- |
-| [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [languages](extension/i18n.js), [settings](extension/settings.js), [site adapters](extension/sites.js), and [bundled geometry](extension/networks/) |
+| [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [languages](extension/i18n.js), [settings](extension/settings.js), [site adapters](extension/sites.js), [station name placement](extension/labels.js), and [bundled geometry](extension/networks/) |
 | [`web/`](web/) | TanStack Start / React / Tailwind support and privacy website ([guide](web/README.md)) |
 | [`data/`](data/) | STM, TTC and French source files and the [per-city network generators](data/scripts/cities/) ([guide](data/README.md)) |
 | [`rem_data/`](rem_data/) | REM GTFS source subset and original licence |
 | [`scripts/`](scripts/) | Reproducible [extension packaging](scripts/package_extension.py) |
-| [`tests/`](tests/) | Extension behaviour, [network registry](tests/networks.test.mjs), [translations](tests/i18n.test.mjs), and resource checks |
+| [`tests/`](tests/) | Extension behaviour, [network registry](tests/networks.test.mjs), [translations](tests/i18n.test.mjs), [station name placement](tests/labels.test.mjs), and resource checks |
 | [`docs/`](docs/) | Screenshot and [release instructions](docs/RELEASING.md) |
 
 ## Contributing and releases

@@ -53,6 +53,8 @@ const STM_LOCALES = {
       "map.lineCount": "{on}/{all}",
       "map.lineAllOn": "Show all",
       "map.lineAllOff": "Hide all",
+      "map.hideListings": "Hide listings",
+      "map.showListings": "Show listings",
       "map.creditTitle":
         "{operators} data, adapted for this unofficial extension.",
 
@@ -96,7 +98,8 @@ const STM_LOCALES = {
       "options.shown.title": "What to show",
       "options.stations": "Stations",
       "options.stationLabels": "Station names",
-      "options.stationLabels.hint": "Shown only past a certain zoom level.",
+      "options.stationLabels.hint":
+        "Shown past a certain zoom level, where they have room. Stations with the most lines are named first.",
       "options.points": "Landmarks",
       "options.points.hint":
         "Your landmarks appear on maps and in listing previews.",
@@ -112,6 +115,9 @@ const STM_LOCALES = {
       "options.linePicker": "Line panel",
       "options.linePicker.hint":
         "Switches the lines of the city being drawn on or off from the map, without opening this page.",
+      "options.listingsToggle": "Listings button",
+      "options.listingsToggle.hint":
+        "The button on the map’s right edge that hides the listings beside it, so the map takes their place. Marketplace searches only.",
       "options.settingsShortcut": "Settings button",
       "options.settingsShortcut.hint":
         "The gear that opens this page from the map.",
@@ -285,6 +291,8 @@ const STM_LOCALES = {
       "map.lineCount": "{on}/{all}",
       "map.lineAllOn": "Tout afficher",
       "map.lineAllOff": "Tout masquer",
+      "map.hideListings": "Masquer les annonces",
+      "map.showListings": "Afficher les annonces",
       "map.creditTitle":
         "Données {operators}, adaptées pour cette extension non officielle.",
 
@@ -329,7 +337,7 @@ const STM_LOCALES = {
       "options.stations": "Stations",
       "options.stationLabels": "Noms des stations",
       "options.stationLabels.hint":
-        "Affichés à partir d’un certain niveau de zoom seulement.",
+        "Affichés à partir d’un certain niveau de zoom, là où ils ont la place. Les stations desservies par le plus de lignes sont nommées en premier.",
       "options.points": "Points de repère",
       "options.points.hint":
         "Vos points apparaissent sur les cartes et dans l’aperçu des annonces.",
@@ -345,6 +353,9 @@ const STM_LOCALES = {
       "options.linePicker": "Panneau des lignes",
       "options.linePicker.hint":
         "Active ou désactive les lignes de la ville dessinée depuis la carte, sans ouvrir cette page.",
+      "options.listingsToggle": "Bouton des annonces",
+      "options.listingsToggle.hint":
+        "Le bouton au bord droit de la carte qui masque les annonces à côté, pour que la carte prenne leur place. Recherches Marketplace seulement.",
       "options.settingsShortcut": "Bouton de réglages",
       "options.settingsShortcut.hint":
         "L’engrenage qui ouvre cette page depuis la carte.",

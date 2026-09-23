@@ -8,9 +8,28 @@
   // the two share nothing but the DOM they are written on.
   const ANCHOR_ATTRIBUTE = "data-stm-anchor";
   const CAMERA_ATTRIBUTE = "data-stm-camera";
+  // The two boxes of the site's own that the listings button takes hold of:
+  // the column the map sits in, and the row it shares with the listings. They
+  // are marked rather than styled, and content.css does the hiding, so that a
+  // listings column the site swaps in under the same row is hidden as well —
+  // it is everything in the row but the map's own column.
+  const MAP_COLUMN_ATTRIBUTE = "data-stm-map-column";
+  const HIDE_LISTINGS_ATTRIBUTE = "data-stm-hide-listings";
   const MAP_DETECT_ANIMATION = "stm-map-detect";
   const STATION_CULL_MARGIN = 140;
   const LABEL_MIN_ZOOM = 13;
+  // What station names are set in. labels.js has to know how wide a name is
+  // before it can say where the name fits, so the names are measured in this
+  // font as well as drawn in it.
+  const LABEL_FONT_FAMILY = "Arial, sans-serif";
+  const LABEL_FONT_SIZE = 11;
+  const LABEL_FONT_WEIGHT = 600;
+  // How long the zoom has to hold still before the station names are laid out
+  // properly again. Until then they only stay put or go: see labels.js. Timed
+  // off the scale rather than off the sites' own events, because a pinch on
+  // Marketplace announces nothing and the other two maps never say they have
+  // stopped.
+  const LABEL_SETTLE_MS = 150;
   // Panning slides tiles and the overlay pane together, so the projection
   // that comes back out of the arithmetic is the same one to within float
   // noise. Anything under a hundredth of a pixel is that noise, not a move.
@@ -67,6 +86,15 @@
   // settings, and a settings change that took the panel down with it would
   // shut it in the face of whoever was using it.
   let openPicker;
+  let listingsToggle;
+  // The map's column and the row it shares with the listings, as the adapter
+  // found them beside this map.
+  let listingsLayout;
+  // Whether the listings are hidden. Kept out here for the same reason as
+  // openPicker: the overlay is rebuilt under it whenever the site redraws the
+  // map, and listings that came back every time it did would be the button
+  // forgetting what it was just asked. Storage carries it on to the next page.
+  let listingsHidden = false;
   let customPanel;
   let customPointGroup;
   let customPointList;
@@ -130,6 +158,16 @@
   let stationMarkers = [];
   let stationLabelGroup;
   let stationLabelsVisible;
+  // The zoom scale the station names were last laid out at. Which names fit
+  // depends on nothing else, so the layout stands until this changes. Nothing
+  // here means the next layout starts afresh rather than from the last one.
+  let stationLabelScale;
+  let stationLabelSettle;
+  // How wide each station name is, measured once for the life of the page on
+  // a canvas that is never shown. The svg could only say once the name was
+  // laid out and showing, and the layout has to know before either.
+  const labelWidths = new Map();
+  let labelMeasure;
   let strip;
   let stripOverlay;
   let stripLineGroup;
@@ -347,15 +385,20 @@
   }
 
   // One row per city, under the country it is in. The switch is the same one
-  // the settings page shows, written to the same place; the name beside it is
-  // a button wherever the site's own routing names the city and can therefore
-  // be rewritten, and plain text everywhere else — a Centris search is an
-  // opaque payload with no city in it to swap.
+  // the settings page shows, written to the same place, and the row around it
+  // is its label: the city's name is what anyone reaches for, and the box
+  // beside it is a dozen pixels square.
   //
   // The switches are a choice between cities rather than a row of independent
   // ones: the map draws a single city, so the one switched on is the one that
   // draws and the rest go off with it. Unchecking the one that is on is still
   // allowed, and leaves a map with no network drawn on it at all.
+  //
+  // Wherever the site's own routing names the city and can therefore be
+  // rewritten, the row ends in a button that goes there, kept outside the
+  // label as the one part of the row where a click is not the switch. A
+  // Centris search is an opaque payload with no city in it to swap, and there
+  // the row is the switch and nothing more.
   function cityPickerRow(city) {
     const name = stmText(`city.${city.id}.name`);
     const current = city === activeCity;
@@ -364,6 +407,9 @@
     row.className = "stm-city-row";
 
     if (current) row.dataset.stmCurrent = "";
+
+    const label = document.createElement("label");
+    label.className = "stm-city-label";
 
     const toggle = document.createElement("input");
     toggle.type = "checkbox";
@@ -376,25 +422,41 @@
       });
     });
 
-    const jumps = !current && Boolean(site.shortcut?.applies(city));
-    const label = document.createElement(jumps ? "button" : "span");
-    label.className = "stm-city-label";
-    label.textContent = name;
+    const cityName = document.createElement("span");
+    cityName.className = "stm-city-name";
+    cityName.textContent = name;
 
-    if (jumps) {
-      label.type = "button";
-      label.dataset.stmKey = `go:${city.id}`;
-      label.title = stmText("map.goTo", { city: name });
-      label.addEventListener("click", () => site.shortcut.run(city));
-    }
-
-    row.append(toggle, label);
+    label.append(toggle, cityName);
 
     if (current) {
       const here = document.createElement("span");
       here.className = "stm-city-here";
       here.textContent = stmText("map.here");
-      row.append(here);
+      label.append(here);
+    }
+
+    row.append(label);
+
+    if (!current && site.shortcut?.applies(city)) {
+      const go = document.createElement("button");
+      go.type = "button";
+      go.className = "stm-city-go";
+      go.dataset.stmKey = `go:${city.id}`;
+      go.textContent = "→";
+      go.title = stmText("map.goTo", { city: name });
+      go.setAttribute("aria-label", stmText("map.goTo", { city: name }));
+      go.addEventListener("click", async () => {
+        // The map at the other end draws only the city that is switched on,
+        // so going there switches it on: a search sent to Toronto that lands
+        // with Montréal still picked is a Toronto map with nothing on it. The
+        // write is waited on because this page is about to be thrown away.
+        try {
+          await saveSettings({ cities: stmOnlyCity(city.id) });
+        } finally {
+          site.shortcut.run(city);
+        }
+      });
+      row.append(go);
     }
 
     return row;
@@ -716,6 +778,90 @@
     mapTools.append(button);
   }
 
+  // The listings beside a search, hidden and shown again from a button on the
+  // edge of the map they are laid out against. Hiding them is all it takes to
+  // give the map their width: the site sizes the map's column to whatever the
+  // row has left over, so the listings only have to leave the row.
+  function buildListingsToggle() {
+    listingsLayout = site.listingsBeside?.(map);
+
+    // A site that lays nothing out beside its maps, or a layout the adapter
+    // does not recognise. Either way there is nothing to hide.
+    if (!listingsLayout) return;
+
+    listingsToggle = document.createElement("button");
+    listingsToggle.type = "button";
+    listingsToggle.id = "stm-listings-toggle";
+
+    // Which way the map's edge is about to move. The label says the same
+    // thing in words.
+    const chevron = document.createElement("span");
+    chevron.className = "stm-tool-chevron";
+    chevron.setAttribute("aria-hidden", "true");
+
+    listingsToggle.append(chevron);
+    listingsToggle.addEventListener("click", () => {
+      listingsHidden = !listingsHidden;
+      paintListings();
+
+      // Where the next search in this browser starts. Nothing reads it back
+      // until then: a tab left open elsewhere keeps its listings rather than
+      // having them vanish from under whoever is reading them.
+      chrome.storage.local
+        .set({ [STM_LISTINGS_HIDDEN_KEY]: listingsHidden })
+        .catch(() => {});
+    });
+
+    // A press on the button is not a press on the map. These are the events
+    // Leaflet keeps its own controls out of the map with: a double press would
+    // zoom it, and a press that wanders off the button would drag it.
+    for (const eventName of [
+      "click",
+      "dblclick",
+      "mousedown",
+      "pointerdown",
+      "touchstart",
+      "wheel"
+    ]) {
+      listingsToggle.addEventListener(eventName, (event) => {
+        event.stopPropagation();
+      });
+    }
+
+    listingsLayout.column.setAttribute(MAP_COLUMN_ATTRIBUTE, "");
+    map.append(listingsToggle);
+    paintListings();
+  }
+
+  // The button and the row agree with the one piece of state, whether the
+  // button was just built or a press has moved it.
+  function paintListings() {
+    if (!listingsToggle) return;
+
+    const label = listingsHidden
+      ? stmText("map.showListings")
+      : stmText("map.hideListings");
+
+    listingsToggle.dataset.stmState = listingsHidden ? "hidden" : "shown";
+    listingsToggle.title = label;
+    listingsToggle.setAttribute("aria-label", label);
+    setListingsRow(listingsHidden);
+  }
+
+  // Leaflet measures its box when the window is resized and not otherwise,
+  // so a map that has just been handed the listings' width is told the way it
+  // would be told about any other resize. Marketplace notices the change on
+  // its own today; the event costs one redraw, and without it a map that
+  // stopped noticing would load tiles only as far as it used to reach.
+  function setListingsRow(hidden) {
+    const { row } = listingsLayout;
+
+    if (row.hasAttribute(HIDE_LISTINGS_ATTRIBUTE) === hidden) return;
+
+    row.toggleAttribute(HIDE_LISTINGS_ATTRIBUTE, hidden);
+    dispatchEvent(new Event("resize"));
+  }
+
   function buildMapTools() {
     // The container goes up whatever ends up inside it: sync() reads a
     // missing one as a wiped one, and an empty flex column paints nothing.
@@ -958,9 +1104,9 @@
     });
     stationLabelGroup = createSvgElement("g", {
       fill: "#202124",
-      "font-family": "Arial, sans-serif",
-      "font-size": "11",
-      "font-weight": "600",
+      "font-family": LABEL_FONT_FAMILY,
+      "font-size": LABEL_FONT_SIZE,
+      "font-weight": LABEL_FONT_WEIGHT,
       "paint-order": "stroke",
       stroke: "#ffffff",
       "stroke-linejoin": "round",
@@ -998,6 +1144,22 @@
     buildOverlayTools();
     drawNetwork();
     refreshCustomPoints();
+  }
+
+  function labelWidth(name) {
+    let width = labelWidths.get(name);
+
+    if (width === undefined) {
+      if (!labelMeasure) {
+        labelMeasure = document.createElement("canvas").getContext("2d");
+        labelMeasure.font = `${LABEL_FONT_WEIGHT} ${LABEL_FONT_SIZE}px ${LABEL_FONT_FAMILY}`;
+      }
+
+      width = labelMeasure.measureText(name).width;
+      labelWidths.set(name, width);
+    }
+
+    return width;
   }
 
   // Everything in the overlay that is made out of geometry, which is
@@ -1045,7 +1207,10 @@
       stationMarkers.push({
         label,
         marker,
+        name: station.name,
+        nameWidth: label ? labelWidth(station.name) : 0,
         point: station.point,
+        rank: station.rank,
         visible: true
       });
     }
@@ -1058,6 +1223,8 @@
     renderedOriginY = undefined;
     renderedScale = undefined;
     stationLabelsVisible = undefined;
+    stationLabelScale = undefined;
+    clearTimeout(stationLabelSettle);
     stationLabelGroup.setAttribute("display", "none");
     networkGroup.setAttribute("display", "none");
 
@@ -1140,6 +1307,7 @@
 
     if (settings.pointsTool) buildCustomPointPanel();
     if (settings.settingsShortcut) buildSettingsShortcut();
+    if (settings.listingsToggle) buildListingsToggle();
   }
 
   function tileCoordinatesFor(element) {
@@ -1591,7 +1759,10 @@
       paths,
       stations: stations.map((station) => ({
         name: station.name,
-        point: localPoint(station.coordinates)
+        point: localPoint(station.coordinates),
+        // How many of the lines being drawn stop here, which decides whose
+        // name goes on the map first where not all of them fit.
+        rank: station.lines.filter((id) => drawnLine(id)).length
       }))
     };
 
@@ -1987,9 +2158,44 @@
       );
 
       // Labels skip their coordinates while the group is hidden, so they all
-      // need one placement pass before they can be shown again.
+      // need one placement pass before they can be shown again. Where they
+      // were before they went is no place to keep them, so the layout that
+      // brings them back starts afresh.
       if (labelsVisible) {
         for (const station of stationMarkers) station.placed = false;
+
+        stationLabelScale = undefined;
+      }
+    }
+
+    // Which names fit, and on which side of their dots, depends on how far
+    // apart the zoom has put the stations and on nothing else. The layout is
+    // made again when the zoom changes and never while the map is only being
+    // panned, so a drag cannot shuffle the names around under the pointer.
+    //
+    // A change of zoom straight after a layout is a zoom under way, and the
+    // names only hold their places or go until it has stopped. Once the scale
+    // has held still for a moment, the settle clears the last scale and the
+    // names are laid out afresh, exactly as a map opened at that zoom would be.
+    if (labelsVisible && stationLabelScale !== geometryScale) {
+      const moving = stationLabelScale !== undefined;
+
+      stationLabelScale = geometryScale;
+
+      const slots = stmPlaceStationLabels(stationMarkers, moving);
+
+      stationMarkers.forEach((station, index) => {
+        station.slot = slots[index];
+        station.placed = false;
+      });
+
+      clearTimeout(stationLabelSettle);
+
+      if (moving) {
+        stationLabelSettle = setTimeout(() => {
+          stationLabelScale = undefined;
+          scheduleRender();
+        }, LABEL_SETTLE_MS);
       }
     }
 
@@ -2045,11 +2251,16 @@
 
         if (visible !== station.visible) {
           station.visible = visible;
+          station.marker.setAttribute("display", visible ? "inline" : "none");
+        }
 
-          const display = visible ? "inline" : "none";
+        // A name shows with its station, and only where the layout found it
+        // room.
+        const named = visible && Boolean(station.slot);
 
-          station.marker.setAttribute("display", display);
-          station.label?.setAttribute("display", display);
+        if (station.label && named !== station.named) {
+          station.named = named;
+          station.label.setAttribute("display", named ? "inline" : "none");
         }
 
         // Coordinates live in the translated group, so they only go stale
@@ -2062,9 +2273,12 @@
         station.marker.setAttribute("cx", station.x.toFixed(1));
         station.marker.setAttribute("cy", station.y.toFixed(1));
 
-        if (labelsVisible) {
-          station.label.setAttribute("x", (station.x + 8).toFixed(1));
-          station.label.setAttribute("y", (station.y - 8).toFixed(1));
+        if (labelsVisible && station.slot) {
+          const { anchor, dx, dy } = station.slot;
+
+          station.label.setAttribute("x", (station.x + dx).toFixed(1));
+          station.label.setAttribute("y", (station.y + dy).toFixed(1));
+          station.label.setAttribute("text-anchor", anchor);
         }
       }
     }
@@ -2125,18 +2339,21 @@
     return Boolean(
       overlay?.contains(node) ||
         mapTools?.contains(node) ||
-        attribution?.contains(node)
+        attribution?.contains(node) ||
+        listingsToggle?.contains(node)
     );
   }
 
   // Everything we hang off the map, and whether it is all still hanging
   // there. The attribution only goes up when there is network data to credit,
-  // so an absent one is not the same thing as a wiped one.
+  // and the listings button only beside listings, so an absent one is not the
+  // same thing as a wiped one.
   function overlayIsIntact() {
     return Boolean(
       overlay?.isConnected &&
       mapTools?.isConnected &&
-      (!attribution || attribution.isConnected)
+      (!attribution || attribution.isConnected) &&
+      (!listingsToggle || listingsToggle.isConnected)
     );
   }
 
@@ -2150,6 +2367,15 @@
     overlay?.remove();
     attribution?.remove();
     mapTools?.remove();
+    listingsToggle?.remove();
+
+    // The listings come back with the button rather than staying hidden with
+    // nothing left on the page to bring them back. Whether they were hidden
+    // is kept: a button built on the next map puts them away again.
+    if (listingsLayout) {
+      setListingsRow(false);
+      listingsLayout.column.removeAttribute(MAP_COLUMN_ATTRIBUTE);
+    }
 
     map = undefined;
     overlay = undefined;
@@ -2171,6 +2397,8 @@
     linePickerButton = undefined;
     linePickerCount = undefined;
     linePickerPanel = undefined;
+    listingsToggle = undefined;
+    listingsLayout = undefined;
     networkState = undefined;
     customPanel = undefined;
     customPointGroup = undefined;
@@ -2196,6 +2424,8 @@
     stationMarkers = [];
     stationLabelGroup = undefined;
     stationLabelsVisible = undefined;
+    stationLabelScale = undefined;
+    clearTimeout(stationLabelSettle);
   }
 
   function attach(nextMap) {
@@ -2538,6 +2768,7 @@
     "language",
     "linePicker",
     "listingPreview",
+    "listingsToggle",
     "networkStatus",
     "pointsTool",
     "settingsShortcut",
@@ -2621,6 +2852,7 @@
         STM_ACTIVE_CITY_KEY,
         STM_CUSTOM_POINTS_KEY,
         STM_ENABLED_KEY,
+        STM_LISTINGS_HIDDEN_KEY,
         STM_SETTINGS_KEY
       ])
       .then((stored) => {
@@ -2635,6 +2867,9 @@
         // nothing, because the map corrects it as soon as it is found.
         activeCity =
           stmCityById(stored[STM_ACTIVE_CITY_KEY]) ?? activeCity;
+        // How the last search left its listings, read before anything is
+        // attached so that the first map this page finds already knows.
+        listingsHidden = stored[STM_LISTINGS_HIDDEN_KEY] === true;
         customPoints = stored[STM_CUSTOM_POINTS_KEY] ?? [];
         refreshCustomPoints();
         setEnabled(stored[STM_ENABLED_KEY] ?? true);

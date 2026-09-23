@@ -272,43 +272,77 @@
 
 .stm-city-row {
   align-items: center;
+  border-radius: 3px;
   display: flex;
-  gap: 6px;
-  padding: 2px 2px 2px 8px;
+  gap: 2px;
 }
 
 .stm-city-row[data-stm-current] {
   background: #f1f3f4;
-  border-radius: 3px;
 }
 
 /*
- * A name with somewhere to go is a button and a name without one is not, so
- * the two have to be told apart at a glance rather than by hovering. Both are
- * laid out the same way, because the switch beside them must line up down the
- * column either way.
+ * Everything in the row but the button at the end of it is the switch's label,
+ * so the padding is the label's rather than the row's: a click in the gutter
+ * beside the box is a click on the city as well.
  */
 .stm-city-label {
-  background: none;
-  border: 0;
-  color: #202124;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
   flex: 1;
-  font: inherit;
+  gap: 6px;
+  min-width: 0;
+  padding: 2px 2px 2px 8px;
+  user-select: none;
+}
+
+/*
+ * Centris styles every bare label as a caption over a form field, with a
+ * margin under it and a navy of its own, and both labels in the column are
+ * rows instead.
+ */
+.stm-city-label,
+.stm-line-system-head {
+  color: #202124;
+  margin: 0;
+}
+
+/* Translucent, so it reads the same over the grey of the current city's row
+   as over the white of the rest. */
+.stm-city-label:hover,
+.stm-city-go:hover {
+  background: rgb(0 0 0 / 5%);
+}
+
+.stm-city-name {
+  flex: 1;
   min-width: 0;
   overflow: hidden;
-  padding: 0;
-  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-button.stm-city-label {
+/*
+ * The way to the city's own search, where the site has one: a click on the
+ * name is a click on the switch, so going there is a button of its own, blue
+ * like the other links in the column.
+ */
+.stm-city-go {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: 3px;
   color: #0866ff;
   cursor: pointer;
-}
-
-button.stm-city-label:hover {
-  text-decoration: underline;
+  display: flex;
+  flex: none;
+  font: inherit;
+  height: 20px;
+  justify-content: center;
+  padding: 0;
+  width: 20px;
 }
 
 .stm-city-here {
@@ -483,6 +517,69 @@ button.stm-city-label:hover {
   justify-content: center;
   padding: 0;
   width: 28px;
+}
+
+/*
+ * The button that hides the listings beside a Marketplace search, on the edge
+ * of the map they are laid out against. It sits under the column of tools, so
+ * a panel opened over it on a short map covers it rather than the other way
+ * round.
+ */
+#stm-listings-toggle {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #b9b9b9;
+  border-radius: 4px 0 0 4px;
+  border-right: 0;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 48px;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  width: 24px;
+  z-index: 800;
+}
+
+#stm-listings-toggle:hover {
+  background: #f1f3f4;
+}
+
+/* The map clips whatever is drawn past its edge, so the ring goes inside. */
+#stm-listings-toggle:focus-visible {
+  outline: 2px solid #0866ff;
+  outline-offset: -2px;
+}
+
+/*
+ * The chevron points the way the map's edge is about to move: out over the
+ * listings, or back to let them in. The margin centres its point rather than
+ * the box it is drawn from.
+ */
+#stm-listings-toggle .stm-tool-chevron {
+  margin: 0 2px 0 0;
+  rotate: -45deg;
+}
+
+#stm-listings-toggle[data-stm-state="hidden"] .stm-tool-chevron {
+  margin: 0 0 0 2px;
+  rotate: 135deg;
+}
+
+/*
+ * The listings themselves, taken out of the row they share with the map. The
+ * site sizes the map's column to whatever the row has left over, so the map
+ * takes their width without being told to. Everything in the row but the
+ * map's own column goes, so that listings the site swaps in under the same
+ * row go with them.
+ */
+[data-stm-hide-listings] > :not([data-stm-map-column]) {
+  display: none !important;
 }
 
 #stm-custom-points {

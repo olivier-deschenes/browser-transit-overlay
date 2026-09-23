@@ -8,6 +8,7 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 
 - Transit overlays on supported search maps, listing maps, and Marketplace map previews.
 - Individual switches for sites, transit operators and their lines, stations, labels, and map controls.
+- Station names that never overlap one another or a station's dot. Where they don't all fit, the stations with the most lines are named first, and the rest appear as the map zooms in.
 - Custom landmarks from coordinates or full Google Maps links, with editable names and colours.
 - A toolbar switch to enable or disable the overlay without losing your settings.
 - An English and French interface, in the browser's language by default, with a language picker in the settings.
@@ -115,12 +116,12 @@ Adding a message works the same way. Add it to every block, and write the key ou
 
 | Path | Purpose |
 | --- | --- |
-| [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [languages](extension/i18n.js), [settings](extension/settings.js), [site adapters](extension/sites.js), and [bundled geometry](extension/networks/) |
+| [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [languages](extension/i18n.js), [settings](extension/settings.js), [site adapters](extension/sites.js), [station name placement](extension/labels.js), and [bundled geometry](extension/networks/) |
 | [`web/`](web/) | TanStack Start / React / Tailwind support and privacy website ([guide](web/README.md)) |
 | [`data/`](data/) | STM, TTC and French source files and the [per-city network generators](data/scripts/cities/) ([guide](data/README.md)) |
 | [`rem_data/`](rem_data/) | REM GTFS source subset and original licence |
 | [`scripts/`](scripts/) | Reproducible [extension packaging](scripts/package_extension.py) |
-| [`tests/`](tests/) | Extension behaviour, [network registry](tests/networks.test.mjs), [translations](tests/i18n.test.mjs), and resource checks |
+| [`tests/`](tests/) | Extension behaviour, [network registry](tests/networks.test.mjs), [translations](tests/i18n.test.mjs), [station name placement](tests/labels.test.mjs), and resource checks |
 | [`docs/`](docs/) | Screenshot and [release instructions](docs/RELEASING.md) |
 
 ## Contributing and releases

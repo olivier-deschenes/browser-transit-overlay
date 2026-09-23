@@ -98,7 +98,8 @@ const STM_LOCALES = {
       "options.shown.title": "What to show",
       "options.stations": "Stations",
       "options.stationLabels": "Station names",
-      "options.stationLabels.hint": "Shown only past a certain zoom level.",
+      "options.stationLabels.hint":
+        "Shown past a certain zoom level, where they have room. Stations with the most lines are named first.",
       "options.points": "Landmarks",
       "options.points.hint":
         "Your landmarks appear on maps and in listing previews.",
@@ -336,7 +337,7 @@ const STM_LOCALES = {
       "options.stations": "Stations",
       "options.stationLabels": "Noms des stations",
       "options.stationLabels.hint":
-        "Affichés à partir d’un certain niveau de zoom seulement.",
+        "Affichés à partir d’un certain niveau de zoom, là où ils ont la place. Les stations desservies par le plus de lignes sont nommées en premier.",
       "options.points": "Points de repère",
       "options.points.hint":
         "Vos points apparaissent sur les cartes et dans l’aperçu des annonces.",

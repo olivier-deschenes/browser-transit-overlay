@@ -39,13 +39,13 @@ npm audit
 
 ## Manual extension checks
 
-Automated tests cover parsing, site selection, resources, translations, and packaging. They cannot establish compatibility with the live websites. Before releasing, check:
+Automated tests cover parsing, site selection, station name placement, resources, translations, and packaging. They cannot establish compatibility with the live websites. Before releasing, check:
 
 1. Marketplace rental search maps, listing map previews, and expanded listing maps.
 2. Centris search maps and the Local Logic map in a listing.
 3. Panning, zooming, resizing, and navigating between listings without a full reload.
 4. A map in each city the registry declares, and the swap when a search moves from one city to another.
-5. Toolbar enable/disable and the site, line, station, and label switches.
+5. Toolbar enable/disable and the site, line, station, and label switches. In central Paris from zoom 13 up, no station name overlaps another or a station's dot, and zooming in names more of them.
 6. Hiding the listings beside a Marketplace search: the map takes their width with tiles all the way across, a new search opens the same way, and the listings come back when the button or the extension is switched off.
 7. Each language, and the browser's language, on the settings page, the map controls, and the toolbar button's tooltip, including switching languages while a map is open.
 8. Adding, editing, and deleting a synthetic landmark; rejecting invalid coordinates and short links.

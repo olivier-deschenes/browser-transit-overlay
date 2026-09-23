@@ -18,6 +18,12 @@
   const MAP_DETECT_ANIMATION = "stm-map-detect";
   const STATION_CULL_MARGIN = 140;
   const LABEL_MIN_ZOOM = 13;
+  // What station names are set in. labels.js has to know how wide a name is
+  // before it can say where the name fits, so the names are measured in this
+  // font as well as drawn in it.
+  const LABEL_FONT_FAMILY = "Arial, sans-serif";
+  const LABEL_FONT_SIZE = 11;
+  const LABEL_FONT_WEIGHT = 600;
   // Panning slides tiles and the overlay pane together, so the projection
   // that comes back out of the arithmetic is the same one to within float
   // noise. Anything under a hundredth of a pixel is that noise, not a move.
@@ -146,6 +152,14 @@
   let stationMarkers = [];
   let stationLabelGroup;
   let stationLabelsVisible;
+  // The zoom scale the station names were last laid out at. Which names fit
+  // depends on nothing else, so the layout stands until this changes.
+  let stationLabelScale;
+  // How wide each station name is, measured once for the life of the page on
+  // a canvas that is never shown. The svg could only say once the name was
+  // laid out and showing, and the layout has to know before either.
+  const labelWidths = new Map();
+  let labelMeasure;
   let strip;
   let stripOverlay;
   let stripLineGroup;
@@ -1082,9 +1096,9 @@
     });
     stationLabelGroup = createSvgElement("g", {
       fill: "#202124",
-      "font-family": "Arial, sans-serif",
-      "font-size": "11",
-      "font-weight": "600",
+      "font-family": LABEL_FONT_FAMILY,
+      "font-size": LABEL_FONT_SIZE,
+      "font-weight": LABEL_FONT_WEIGHT,
       "paint-order": "stroke",
       stroke: "#ffffff",
       "stroke-linejoin": "round",
@@ -1122,6 +1136,22 @@
     buildOverlayTools();
     drawNetwork();
     refreshCustomPoints();
+  }
+
+  function labelWidth(name) {
+    let width = labelWidths.get(name);
+
+    if (width === undefined) {
+      if (!labelMeasure) {
+        labelMeasure = document.createElement("canvas").getContext("2d");
+        labelMeasure.font = `${LABEL_FONT_WEIGHT} ${LABEL_FONT_SIZE}px ${LABEL_FONT_FAMILY}`;
+      }
+
+      width = labelMeasure.measureText(name).width;
+      labelWidths.set(name, width);
+    }
+
+    return width;
   }
 
   // Everything in the overlay that is made out of geometry, which is
@@ -1169,7 +1199,10 @@
       stationMarkers.push({
         label,
         marker,
+        name: station.name,
+        nameWidth: label ? labelWidth(station.name) : 0,
         point: station.point,
+        rank: station.rank,
         visible: true
       });
     }
@@ -1182,6 +1215,7 @@
     renderedOriginY = undefined;
     renderedScale = undefined;
     stationLabelsVisible = undefined;
+    stationLabelScale = undefined;
     stationLabelGroup.setAttribute("display", "none");
     networkGroup.setAttribute("display", "none");
 
@@ -1716,7 +1750,10 @@
       paths,
       stations: stations.map((station) => ({
         name: station.name,
-        point: localPoint(station.coordinates)
+        point: localPoint(station.coordinates),
+        // How many of the lines being drawn stop here, which decides whose
+        // name goes on the map first where not all of them fit.
+        rank: station.lines.filter((id) => drawnLine(id)).length
       }))
     };
 
@@ -2118,6 +2155,21 @@
       }
     }
 
+    // Which names fit, and on which side of their dots, depends on how far
+    // apart the zoom has put the stations and on nothing else. The layout is
+    // made again when the zoom changes and never while the map is only being
+    // panned, so a drag cannot shuffle the names around under the pointer.
+    if (labelsVisible && stationLabelScale !== geometryScale) {
+      stationLabelScale = geometryScale;
+
+      const slots = stmPlaceStationLabels(stationMarkers);
+
+      stationMarkers.forEach((station, index) => {
+        station.slot = slots[index];
+        station.placed = false;
+      });
+    }
+
     const visibleLeft = mapRect.left - paneRect.left;
     const visibleTop = mapRect.top - paneRect.top;
     const visibleRight = mapRect.right - paneRect.left;
@@ -2170,11 +2222,16 @@
 
         if (visible !== station.visible) {
           station.visible = visible;
+          station.marker.setAttribute("display", visible ? "inline" : "none");
+        }
 
-          const display = visible ? "inline" : "none";
+        // A name shows with its station, and only where the layout found it
+        // room.
+        const named = visible && Boolean(station.slot);
 
-          station.marker.setAttribute("display", display);
-          station.label?.setAttribute("display", display);
+        if (station.label && named !== station.named) {
+          station.named = named;
+          station.label.setAttribute("display", named ? "inline" : "none");
         }
 
         // Coordinates live in the translated group, so they only go stale
@@ -2187,9 +2244,12 @@
         station.marker.setAttribute("cx", station.x.toFixed(1));
         station.marker.setAttribute("cy", station.y.toFixed(1));
 
-        if (labelsVisible) {
-          station.label.setAttribute("x", (station.x + 8).toFixed(1));
-          station.label.setAttribute("y", (station.y - 8).toFixed(1));
+        if (labelsVisible && station.slot) {
+          const { anchor, dx, dy } = station.slot;
+
+          station.label.setAttribute("x", (station.x + dx).toFixed(1));
+          station.label.setAttribute("y", (station.y + dy).toFixed(1));
+          station.label.setAttribute("text-anchor", anchor);
         }
       }
     }
@@ -2335,6 +2395,7 @@
     stationMarkers = [];
     stationLabelGroup = undefined;
     stationLabelsVisible = undefined;
+    stationLabelScale = undefined;
   }
 
   function attach(nextMap) {

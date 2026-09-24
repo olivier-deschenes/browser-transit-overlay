@@ -1,0 +1,3 @@
+https://opendata.dc.gov/datasets/DCGIS::metro-lines-regional/about
+https://opendata.dc.gov/datasets/DCGIS::metro-stations-regional/about
+https://creativecommons.org/licenses/by/4.0/

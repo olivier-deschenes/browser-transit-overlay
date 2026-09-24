@@ -1,0 +1,226 @@
+stop_id,stop_code,stop_name,stop_desc,stop_lat,stop_lon,stop_url,location_type,parent_station,tpis_name
+80101,80101,Downtown Long Beach Station,,33.768071,-118.192921,,0,80101S,Long Bch
+80101S,80101S,Downtown Long Beach Station,,33.768071,-118.192921,,1,,
+80102,80102,Pacific Ave Station,,33.772258,-118.1937,,0,80102S,Pacific
+80102S,80102S,Pacific Ave Station,,33.772258,-118.1937,,1,,
+80105,80105,Anaheim Street Station,,33.78183,-118.189384,,0,80105S,Anaheim
+80105S,80105S,Anaheim Street Station,,33.78183,-118.189384,,1,,
+80106,80106,Pacific Coast Hwy Station,,33.78909,-118.189382,,0,80106S,PCH
+80106S,80106S,Pacific Coast Hwy Station,,33.78909,-118.189382,,1,,
+80107,80107,Willow Street Station,,33.807079,-118.189834,,0,80107S,Willow
+80107S,80107S,Willow Street Station,,33.807079,-118.189834,,1,,
+80108,80108,Wardlow Station,,33.819865,-118.19609,,0,80108S,Wardlow
+80108S,80108S,Wardlow Station,,33.819865,-118.19609,,1,,
+80109,80109,Del Amo Station,,33.848222,-118.211017,,0,80109S,Del Amo
+80109S,80109S,Del Amo Station,,33.848222,-118.211017,,1,,
+80110,80110,Artesia Station,,33.876082,-118.222503,,0,80110S,Artesia
+80110S,80110S,Artesia Station,,33.876082,-118.222503,,1,,
+80111,80111,Compton Station,,33.89749,-118.224249,,0,80111S,Compton
+80111S,80111S,Compton Station,,33.89749,-118.224249,,1,,
+80112,80112,Willowbrook - Rosa Parks Station - Metro A-Line,,33.928048,-118.237555,,0,80112S,Willwbrk
+80112S,80112S,Willowbrook - Rosa Parks Station,,33.928048,-118.237555,,1,,
+80113,80113,103rd Street / Watts Towers  Station,,33.94222,-118.243159,,0,80113S,103rd
+80113S,80113S,103rd Street / Watts Towers Station,,33.94222,-118.243159,,1,,
+80114,80114,Firestone Station,,33.959611,-118.243205,,0,80114S,Firestne
+80114S,80114S,Firestone Station,,33.959611,-118.243205,,1,,
+80115,80115,Florence Station,,33.97374,-118.243271,,0,80115S,Florence
+80115S,80115S,Florence Station,,33.97374,-118.243271,,1,,
+80116,80116,Slauson Station,,33.98876,-118.243398,,0,80116S,Slauson
+80116S,80116S,Slauson Station,,33.98876,-118.243398,,1,,
+80117,80117,Vernon Station,,34.00292,-118.243303,,0,80117S,Vernon
+80117S,80117S,Vernon Station,,34.00292,-118.243303,,1,,
+80118,80118,Washington Station,,34.01965,-118.243084,,0,80118S,Washngtn
+80118S,80118S,Washington Station,,34.01965,-118.243084,,1,,
+80119,80119,San Pedro Street Station,,34.026807,-118.255505,,0,80119S,S Pedro
+80119S,80119S,San Pedro Street Station,,34.026807,-118.255505,,1,,
+80120,80120,Grand / LATTC Station,,34.033155,-118.269333,,0,80120S,Grand
+80120S,80120S,Grand / LATTC Station,,34.033155,-118.269333,,1,,
+80121,80121,Pico Station,,34.040735,-118.266118,,0,80121S,Pico
+80121S,80121S,Pico Station,,34.040735,-118.266118,,1,,
+80122,80122,7th Street / Metro Center Station - Metro A & E Lines,,34.04861,-118.258822,,0,80122S,7MC
+80122S,80122S,7th Street / Metro Center Station,,34.04861,-118.258822,,1,,
+80123,80123,LATTC / Ortho Institute Station,,34.029112,-118.273603,,0,80123S,LATTC
+80123S,80123S,LATTC / Ortho Institute Station,,34.029112,-118.273603,,1,,
+80124,80124,Jefferson / USC Station,,34.022123,-118.278118,,0,80124S,Jeff/USC
+80124S,80124S,Jefferson / USC Station,,34.022123,-118.278118,,1,,
+80125,80125,Expo Park / USC Station,,34.018227,-118.285734,,0,80125S,Expo Pk
+80125S,80125S,Expo Park / USC Station,,34.018227,-118.285734,,1,,
+80126,80126,Expo / Vermont Station,,34.018245,-118.29154,,0,80126S,Ex/Vrmnt
+80126S,80126S,Expo / Vermont Station,,34.018245,-118.29154,,1,,
+80127,80127,Expo / Western Station,,34.018331,-118.30891,,0,80127S,Ex/Wstrn
+80127S,80127S,Expo / Western Station,,34.018331,-118.30891,,1,,
+80128,80128,Expo / Crenshaw E-Line Station,,34.022526,-118.335078,,0,80128S,Ex/Crnshw
+80128S,80128S,Expo / Crenshaw E-Line Station,,34.022526,-118.335078,,1,,
+80129,80129,Farmdale Station,,34.023981,-118.346095,,0,80129S,Farmdale
+80129S,80129S,Farmdale Station,,34.023981,-118.346095,,1,,
+80130,80130,Expo / La Brea / Ethel Bradley Station,,34.024803,-118.355159,,0,80130S,Ex/LBrea
+80130S,80130S,Expo / La Brea / Ethel Bradley Station,,34.024803,-118.355159,,1,,
+80131,80131,La Cienega / Jefferson Station,,34.026355,-118.37212,,0,80131S,LCienega
+80131S,80131S,La Cienega / Jefferson Station,,34.026355,-118.37212,,1,,
+80132,80132,Culver City Station,,34.027896,-118.388986,,0,80132S,CulvrCty
+80132S,80132S,Culver City Station,,34.027896,-118.388986,,1,,
+80133,80133,Palms Station,,34.029323,-118.404255,,0,80133S,Palms
+80133S,80133S,Palms Station,,34.029323,-118.404255,,1,,
+80134,80134,Westwood / Rancho Park Station,,34.036816,-118.424576,,0,80134S,Westwood
+80134S,80134S,Westwood / Rancho Park Station,,34.036816,-118.424576,,1,,
+80135,80135,Expo / Sepulveda Station,,34.035408,-118.434234,,0,80135S,Sepulveda
+80135S,80135S,Expo / Sepulveda Station,,34.035408,-118.434234,,1,,
+80136,80136,Expo / Bundy Station,,34.031705,-118.452896,,0,80136S,Bundy
+80136S,80136S,Expo / Bundy Station,,34.031705,-118.452896,,1,,
+80137,80137,26th Street / Bergamot Station,,34.027995,-118.46912,,0,80137S,26th
+80137S,80137S,26th Street / Bergamot Station,,34.027995,-118.46912,,1,,
+80138,80138,17th Street / SMC Station,,34.023155,-118.480372,,0,80138S,17th/SMC
+80138S,80138S,17th Street / SMC Station,,34.023155,-118.480372,,1,,
+80139,80139,Downtown Santa Monica Station,,34.01401,-118.491384,,0,80139S,S Monica
+80139S,80139S,Downtown Santa Monica Station,,34.01401,-118.491384,,1,,
+80153,80153,1st Street Station,,33.76874,-118.189362,,0,80153S,1st St
+80153S,80153S,1st Street Station,,33.76874,-118.189362,,1,,
+80154,80154,5th Street Station,,33.773598,-118.189412,,0,80154S,5th St
+80154S,80154S,5th Street Station,,33.773598,-118.189412,,1,,
+801100,801100,Glendora Station,,34.1319,-117.8663,,0,801100S,Glendora
+801100S,801100S,Glendora Station,,34.1319,-117.8663,,1,,
+801101,801101,San Dimas Station,,34.1052,-117.8058,,0,801101S,San Dimas
+801101S,801101S,San Dimas Station,,34.1052,-117.8058,,1,,
+801102,801102,La Verne / Fairplex Station,,34.0972,-117.7681,,0,801102S,La Verne
+801102S,801102S,La Verne / Fairplex Station,,34.0972,-117.7681,,1,,
+801103,801103,Pomona North Station,,34.094,-117.7522,,0,801103S,Pomona
+801103S,801103S,Pomona North Station,,34.094,-117.7522,,1,,
+80201,80201,North Hollywood Station,,34.168504,-118.376808,,0,80201S,North Hollywood
+80201S,80201S,North Hollywood Station,,34.168504,-118.376808,,1,,
+80202,80202,Universal / Studio City Station,,34.140002,-118.362699,,0,80202S,Universal City
+80202S,80202S,Universal / Studio City Station,,34.140002,-118.362699,,1,,
+80203,80203,Hollywood / Highland Station,,34.101547,-118.338549,,0,80203S,Hollywood/Highland
+80203S,80203S,Hollywood / Highland Station,,34.101547,-118.338549,,1,,
+80204,80204,Hollywood / Vine Station,,34.10163,-118.32518,,0,80204S,Hollywood/Vine
+80204S,80204S,Hollywood / Vine Station,,34.10163,-118.32518,,1,,
+80205,80205,Hollywood / Western Station,,34.101737,-118.308117,,0,80205S,Hollywood/Western
+80205S,80205S,Hollywood / Western Station,,34.101737,-118.308117,,1,,
+80206,80206,Vermont / Sunset Station,,34.097708,-118.291756,,0,80206S,Vermont/Sunset
+80206S,80206S,Vermont / Sunset Station,,34.097708,-118.291756,,1,,
+80207,80207,Vermont / Santa Monica Station,,34.08991,-118.29173,,0,80207S,Vermont/Santa Monica
+80207S,80207S,Vermont / Santa Monica Station,,34.08991,-118.29173,,1,,
+80208,80208,Vermont / Beverly Station,,34.076526,-118.291686,,0,80208S,Vermont/Beverly
+80208S,80208S,Vermont / Beverly Station,,34.076526,-118.291686,,1,,
+80209,80209,Wilshire / Vermont Station,,34.062701,-118.290082,,0,80209S,Wilshire/Vermont
+80209S,80209S,Wilshire / Vermont Station,,34.062701,-118.290082,,1,,
+80210,80210,Westlake / MacArthur Park Station,,34.056368,-118.274879,,0,80210S,Westlake/MacArthur Park
+80210S,80210S,Westlake / MacArthur Park Station,,34.056368,-118.274879,,1,,
+80211,80211,7th Street / Metro Center Station - Metro B & D Lines,,34.048634,-118.258682,,0,80122S,7th St/Metro Center
+80212,80212,Pershing Square Station,,34.049316,-118.251259,,0,80212S,Pershing Square
+80212S,80212S,Pershing Square Station,,34.049316,-118.251259,,1,,
+80213,80213,Civic Center / Grand Park Station,,34.0549,-118.246057,,0,80213S,Civic Ctr/Grand Pk
+80213S,80213S,Civic Center / Grand Park Station,,34.0549,-118.246057,,1,,
+80214,80214,Union Station - Metro B & D Lines,,34.056197,-118.234249,,0,80214S,Union Station
+80214S,80214S,Union Station,,34.056197,-118.234249,,1,,
+80215,80215,Wilshire / Normandie Station,,34.061753,-118.301458,,0,80215S,Wilshire/Normandie
+80215S,80215S,Wilshire / Normandie Station,,34.061753,-118.301458,,1,,
+80216,80216,Wilshire / Western Station,,34.061689,-118.308756,,0,80216S,Wilshire/Western
+80216S,80216S,Wilshire / Western Station,,34.061689,-118.308756,,1,,
+80229,80229,Wilshire / La Brea Station,,34.06221475,-118.3434467,,0,80229S,Wilshire/La Brea
+80229S,80229S,Wilshire / La Brea Station,,34.06221475,-118.3434467,,1,,
+80230,80230,Wilshire / Fairfax Station,,34.06296708,-118.3611657,,0,80230S,Wilshire/Fairfax
+80230S,80230S,Wilshire / Fairfax Station,,34.06296708,-118.3611657,,1,,
+80231,80231,Wilshire / La Cienega Station,,34.06483444,-118.3747009,,0,80231S,Wilshire/La Cienega
+80231S,80231S,Wilshire / La Cienega Station,,34.06483444,-118.3747009,,1,,
+80301,80301,Redondo Beach Station,,33.89464,-118.369196,,0,80301S,Redondo
+80301S,80301S,Redondo Beach Station,,33.89464,-118.369196,,1,,
+80302,80302,Douglas Station,,33.905299,-118.383113,,0,80302S,Douglas
+80302S,80302S,Douglas Station,,33.905299,-118.383113,,1,,
+80303,80303,El Segundo Station,,33.916063,-118.386539,,0,80303S,El Sgndo
+80303S,80303S,El Segundo Station,,33.916063,-118.386539,,1,,
+80304,80304,Mariposa Station,,33.9232,-118.387572,,0,80304S,Mariposa
+80304S,80304S,Mariposa Station,,33.9232,-118.387572,,1,,
+80305,80305,Aviation / Imperial Station,,33.929621,-118.377134,,0,80305S,Avtn/Imp
+80305S,80305S,Aviation / Imperial Station,,33.929621,-118.377134,,1,,
+80306,80306,Hawthorne / Lennox Station,,33.933408,-118.351602,,0,80306S,Haw/Lenx
+80306S,80306S,Hawthorne / Lennox Station,,33.933408,-118.351602,,1,,
+80307,80307,Crenshaw C-Line Station,,33.925201,-118.32655,,0,80307S,Crenshaw
+80307S,80307S,Crenshaw Station,,33.925201,-118.32655,,1,,
+80308,80308,Vermont / Athens Station,,33.928683,-118.291733,,0,80308S,Ver/Ath
+80308S,80308S,Vermont / Athens Station,,33.928683,-118.291733,,1,,
+80309,80309,Harbor Freeway Station,,33.928714,-118.2811,,0,80309S,Harbor
+80309S,80309S,Harbor Freeway Station,,33.928714,-118.2811,,1,,
+80310,80310,Avalon Station,,33.927465,-118.265217,,0,80310S,Avalon
+80310S,80310S,Avalon Station,,33.927465,-118.265217,,1,,
+80311,80311,Willowbrook - Rosa Parks Station - Metro C-Line,,33.928258,-118.238052,,0,80112S,Willwbrk
+80312,80312,Lynwood Station,,33.92488,-118.209945,,0,80312S,Lynwood
+80312S,80312S,Lynwood Station,,33.92488,-118.209945,,1,,
+80313,80313,Lakewood Blvd Station,,33.91307,-118.1406,,0,80313S,Lakewood
+80313S,80313S,Lakewood Blvd Station,,33.91307,-118.1406,,1,,
+80314,80314,Norwalk Station,,33.914033,-118.104717,,0,80314S,Norwalk
+80314S,80314S,Norwalk Station,,33.914033,-118.104717,,1,,
+80401,80401,Atlantic Station,,34.033398,-118.154469,,0,80401S,East LA
+80401S,80401S,Atlantic Station,,34.033398,-118.154469,,1,,
+80402,80402,East LA Civic Center Station,,34.033364,-118.161206,,0,80402S,ELACC
+80402S,80402S,East LA Civic Center Station,,34.033364,-118.161206,,1,,
+80403,80403,Maravilla Station,,34.033319,-118.16814,,0,80403S,Mravilla
+80403S,80403S,Maravilla Station,,34.033319,-118.16814,,1,,
+80404,80404,Indiana Station,,34.0343,-118.192182,,0,80404S,Indiana
+80404S,80404S,Indiana Station,,34.0343,-118.192182,,1,,
+80405,80405,Soto Station,,34.043747,-118.210061,,0,80405S,Soto
+80405S,80405S,Soto Station,,34.043747,-118.210061,,1,,
+80406,80406,Mariachi Plaza / Boyle Heights Station,,34.047215,-118.219648,,0,80406S,Mariachi
+80406S,80406S,Mariachi Plaza / Boyle Heights Station,,34.047215,-118.219648,,1,,
+80407,80407,Pico / Aliso Station,,34.047634,-118.22594,,0,80407S,Pi/Aliso
+80407S,80407S,Pico / Aliso Station,,34.047634,-118.22594,,1,,
+80409,80409,Union Station - Metro A-Line,,34.056061,-118.234759,,0,80214S,UnionSta
+80410,80410,Chinatown Station,,34.063861,-118.23584,,0,80410S,Chinatwn
+80410S,80410S,Chinatown Station,,34.063861,-118.23584,,1,,
+80411,80411,Lincoln Heights / Cypress Park Station,,34.080949,-118.220429,,0,80411S,Linc/Cyp
+80411S,80411S,Lincoln Heights / Cypress Park Station,,34.080949,-118.220429,,1,,
+80412,80412,Heritage Square / Arroyo Station,,34.087227,-118.213213,,0,80412S,Hrtge Sq
+80412S,80412S,Heritage Square / Arroyo Station,,34.087227,-118.213213,,1,,
+80413,80413,Southwest Museum Station,,34.098243,-118.206712,,0,80413S,SW Mus
+80413S,80413S,Southwest Museum Station,,34.098243,-118.206712,,1,,
+80414,80414,Highland Park Station,,34.111179,-118.192606,,0,80414S,Highl Pk
+80414S,80414S,Highland Park Station,,34.111179,-118.192606,,1,,
+80415,80415,South Pasadena Station,,34.115186,-118.157886,,0,80415S,So Pas
+80415S,80415S,South Pasadena Station,,34.115186,-118.157886,,1,,
+80416,80416,Fillmore Station,,34.133521,-118.148126,,0,80416S,Fillmore
+80416S,80416S,Fillmore Station,,34.133521,-118.148126,,1,,
+80417,80417,Del Mar Station,,34.14191,-118.148214,,0,80417S,Del Mar
+80417S,80417S,Del Mar Station,,34.14191,-118.148214,,1,,
+80418,80418,Memorial Park Station,,34.148356,-118.147512,,0,80418S,Mem Pk
+80418S,80418S,Memorial Park Station,,34.148356,-118.147512,,1,,
+80419,80419,Lake Station,,34.151806,-118.13139,,0,80419S,Lake
+80419S,80419S,Lake Station,,34.151806,-118.13139,,1,,
+80420,80420,Allen Station,,34.152417,-118.114348,,0,80420S,Allen
+80420S,80420S,Allen Station,,34.152417,-118.114348,,1,,
+80421,80421,Sierra Madre Villa Station,,34.147752,-118.081212,,0,80421S,Pasadena
+80421S,80421S,Sierra Madre Villa Station,,34.147752,-118.081212,,1,,
+80422,80422,Arcadia Station,,34.14286,-118.029199,,0,80422S,Arcadia
+80422S,80422S,Arcadia Station,,34.14286,-118.029199,,1,,
+80423,80423,Monrovia Station,,34.133155,-118.003473,,0,80423S,Monrovia
+80423S,80423S,Monrovia Station,,34.133155,-118.003473,,1,,
+80424,80424,Duarte / City of Hope Station,,34.132518,-117.96768,,0,80424S,Duarte
+80424S,80424S,Duarte / City of Hope Station,,34.132518,-117.96768,,1,,
+80425,80425,Irwindale Station,,34.129048,-117.932506,,0,80425S,Irwndale
+80425S,80425S,Irwindale Station,,34.129048,-117.932506,,1,,
+80426,80426,Azusa Downtown Station,,34.135863,-117.906631,,0,80426S,Azusa DT
+80426S,80426S,Azusa Downtown Station,,34.135863,-117.906631,,1,,
+80427,80427,APU / Citrus College Station,,34.136814,-117.891636,,0,80427S,Azusa
+80427S,80427S,APU / Citrus College Station,,34.136814,-117.891636,,1,,
+80701,80701,Aviation / Century Station,,33.94557205,-118.378683,,0,80701S,Avtn/Cen
+80701S,80701S,Aviation / Century Station,,33.94557205,-118.378683,,1,,
+80702,80702,LAX / Metro Transit Center,,33.9500753,-118.37866,,0,80702S,AMC
+80702S,80702S,LAX / Metro Transit Center,,33.9500753,-118.37866,,1,,
+80703,80703,Westchester / Veterans Station,,33.96203144,-118.374378,,0,80703S,West/Vet
+80703S,80703S,Westchester / Veterans Station,,33.96203144,-118.374378,,1,,
+80704,80704,Downtown Inglewood Station,,33.96715635,-118.3514966,,0,80704S,Inglewood
+80704S,80704S,Downtown Inglewood Station,,33.96715635,-118.3514966,,1,,
+80705,80705,Fairview Heights Station,,33.97525155,-118.3360716,,0,80705S,Fairview
+80705S,80705S,Fairview Heights Station,,33.97525155,-118.3360716,,1,,
+80706,80706,Hyde Park Station,,33.98818653,-118.3308158,,0,80706S,Hyde Park
+80706S,80706S,Hyde Park Station,,33.98818653,-118.3308158,,1,,
+80707,80707,Leimert Park Station,,34.00390927,-118.3320162,,0,80707S,Leimert
+80707S,80707S,Leimert Park Station,,34.00390927,-118.3320162,,1,,
+80708,80708,Martin Luther King Jr Station,,34.00956339,-118.3353594,,0,80708S,MLK
+80708S,80708S,Martin Luther King Jr Station,,34.00956339,-118.3353594,,1,,
+80709,80709,Expo / Crenshaw K-Line Station,,34.02215554,-118.3348508,,0,80709S,Crnshw/Ex
+80709S,80709S,Expo / Crenshaw K-Line Station,,34.02215554,-118.3348508,,1,,
+81401,81401,Grand Ave Arts / Bunker Hill Station,,34.05472448,-118.2515307,,0,81401S,GrandAve
+81401S,81401S,Grand Ave Arts / Bunker Hill Station,,34.05472448,-118.2515307,,1,,
+81402,81402,Historic Broadway Station,,34.05215607,-118.2463211,,0,81402S,Broadway
+81402S,81402S,Historic Broadway Station,,34.05215607,-118.2463211,,1,,
+81403,81403,Little Tokyo / Arts District Station,,34.04884524,-118.2387567,,0,81403S,L Tokyo
+81403S,81403S,Little Tokyo / Arts District Station,,34.04884524,-118.2387567,,1,,

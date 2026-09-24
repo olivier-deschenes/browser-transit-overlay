@@ -1,0 +1,2 @@
+https://www.mbta.com/developers/gtfs
+https://cdn.mbta.com/sites/default/files/2023-08/mbta-massdot-develop-license-agreement.pdf

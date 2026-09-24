@@ -1,0 +1,5 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+29226,MARTA,BLUE,BLUE,,1,https://itsmarta.com/ride/routes/blue?pattern=seS1lg,0075B2,000000
+29227,MARTA,GOLD,GOLD,,1,https://itsmarta.com/ride/routes/gold?pattern=O9GULg,D4A723,000000
+29228,MARTA,GREEN,GREEN,,1,https://itsmarta.com/ride/routes/green?pattern=LsOKhQ,009D4B,000000
+29229,MARTA,RED,RED,,1,https://itsmarta.com/ride/routes/red?pattern=lYXsUQ,CE242B,000000

@@ -1,6 +1,6 @@
 # Transport en commun pour Marketplace et Centris
 
-A Chrome extension that overlays rapid transit lines and stations on housing maps in Facebook Marketplace and Centris: Montréal's métro and the REM, Toronto's TTC subway and light rail, and the six French métros — Paris, with the RER alongside it, plus Lyon, Marseille, Lille, Toulouse and Rennes. The interface is in English and French: it follows the browser's language unless another is chosen in the settings.
+A Chrome extension that overlays rapid transit lines and stations on housing maps in Facebook Marketplace and Centris: Montréal's métro and the REM, Toronto's TTC subway and light rail, the six French métros — Paris, with the RER alongside it, plus Lyon, Marseille, Lille, Toulouse and Rennes — and the subways of ten American cities: New York, with the Staten Island Railway and PATH, Washington, Chicago, Boston, the San Francisco Bay Area's BART, Philadelphia, Los Angeles, Atlanta, Miami and Baltimore. The interface is in English and French: it follows the browser's language unless another is chosen in the settings.
 
 ![Montréal transit lines overlaid on a Marketplace map](docs/images/marketplace-map.png)
 
@@ -17,7 +17,7 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 - Networks swapped as the map moves between cities, without a reload: the panel says which one is loading, keeps each city once it has been fetched, and offers to try again if one does not arrive.
 - On a Marketplace search, a button on the map's right edge that hides the listings beside it so the map takes the whole width, and brings them back. The next search opens the way the last one was left.
 
-This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, the City of Toronto, or any of the French transit authorities and operators whose data it uses. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
+This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, the City of Toronto, or any of the French or American transit authorities, operators and governments whose data it uses. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
 
 ## Install from source
 
@@ -30,7 +30,7 @@ No build, API key, or developer account is needed to load the extension. Click i
 
 ## Privacy and permissions
 
-The extension uses `chrome.storage.local` for settings, landmarks, whether the listings beside a Marketplace search were last left hidden, and the name of the last supported city a map showed the network for — one of the eight names in the registry, never a position. It loads its transit data from the installed extension and has no analytics or developer backend. Google Maps links are parsed locally; shortened links must first be opened by the user to obtain a full link containing coordinates.
+The extension uses `chrome.storage.local` for settings, landmarks, whether the listings beside a Marketplace search were last left hidden, and the name of the last supported city a map showed the network for — one of the eighteen names in the registry, never a position. It loads its transit data from the installed extension and has no analytics or developer backend. Google Maps links are parsed locally; shortened links must first be opened by the user to obtain a full link containing coordinates.
 
 The only declared API permission is `storage`. Content scripts run on Marketplace, Centris, and the Local Logic frame used by Centris listings. The Local Logic adapter checks that Centris embedded the frame. Its page-world bridge reads the map's camera so the overlay follows it.
 
@@ -66,7 +66,12 @@ data/stm_sig/, rem_data/,           source shapefiles, GTFS and map layers
 data/ttc_gtfs/, data/idfm_gtfs/,
 data/tcl_sytral/, data/rtm_gtfs/,
 data/ilevia_gtfs/, data/tisseo_gtfs/,
-data/star_gtfs/
+data/star_gtfs/, data/mta_gtfs/,
+data/path_gtfs/, data/wmata_dcgis/,
+data/cta_gtfs/, data/mbta_gtfs/,
+data/bart_gtfs/, data/septa_gtfs/,
+data/lametro_gtfs/, data/marta_gtfs/,
+data/miamidade_gtfs/, data/mdotmta_gtfs/
         │
 data/scripts/cities/<city>.py       maps feed routes to public line ids
         │  data/scripts/build_networks.py
@@ -86,7 +91,7 @@ extension/i18n.js                   every word shown, per language, including wh
                                     of service is called
 ```
 
-- **[`data/scripts/cities/`](data/scripts/cities/)** is the only place where GTFS route ids or shapefile route ids appear. [`montreal.py`](data/scripts/cities/montreal.py) combines the STM métro and the REM into one city; [`toronto.py`](data/scripts/cities/toronto.py) takes the TTC's subway and light rail out of one city-wide feed; [`paris.py`](data/scripts/cities/paris.py) takes the métro and the RER out of Île-de-France Mobilités' feed for the whole region; [`lyon.py`](data/scripts/cities/lyon.py) is built from SYTRAL's map layers rather than its feed, which draws no métro at all.
+- **[`data/scripts/cities/`](data/scripts/cities/)** is the only place where GTFS route ids or shapefile route ids appear. [`montreal.py`](data/scripts/cities/montreal.py) combines the STM métro and the REM into one city; [`toronto.py`](data/scripts/cities/toronto.py) takes the TTC's subway and light rail out of one city-wide feed; [`paris.py`](data/scripts/cities/paris.py) takes the métro and the RER out of Île-de-France Mobilités' feed for the whole region; [`lyon.py`](data/scripts/cities/lyon.py) is built from SYTRAL's map layers rather than its feed, which draws no métro at all. [`new_york.py`](data/scripts/cities/new_york.py) combines the MTA's feed with PATH's; [`washington.py`](data/scripts/cities/washington.py) is built from the District of Columbia's map layers, since WMATA's own feed is behind a developer key; [`miami.py`](data/scripts/cities/miami.py) splits the one route Miami-Dade publishes for Metrorail into its two lines.
 - **[`data/scripts/build_networks.py`](data/scripts/build_networks.py)** writes one file per city in [`CITIES`](data/scripts/cities/__init__.py) to [`extension/networks/`](extension/networks/). Shared simplification, deduplication, and rounding live in [`transit_geometry.py`](data/scripts/transit_geometry.py), and what every GTFS city needs done to its feed lives in [`gtfs_network.py`](data/scripts/gtfs_network.py).
 - **[`extension/networks.js`](extension/networks.js)** declares each city's operators, lines, colours, map bounds, data file, and the licence each operator's data was published under. Geometry files never repeat this information. A city also names the country it is in and an operator the kind of service it runs — métro, regional rail, light rail — which a line may override for itself; neither is a level of id, and nothing is stored against them.
 - **[`extension/settings.js`](extension/settings.js)** gets its defaults from the registry, so a new operator or line is switched on without a settings migration; the cities are the exception, since exactly one of them is on at a time and a new one ships off until it is picked. [`options.js`](extension/options.js) builds the settings page from the same registry: the lines are shown as a card per city, over a search and filters for country and kind of service, and whatever the filters leave standing is what the page's buttons switch on or off together. The panel on the map writes the same switches for the one city being drawn, so the two forms are two views of one set of settings rather than two sets.
@@ -130,4 +135,4 @@ Bug reports and contributions are welcome in English or French. See [CONTRIBUTIN
 
 ## Licence and attribution
 
-Original code and documentation are under the [MIT licence](LICENSE). The bundled transit data keeps the terms it was published under, and those differ by operator: STM and REM data are **CC BY 4.0**; the TTC feed comes from the City of Toronto under the **Open Government Licence – Toronto**; Paris and Lyon are under the **Licence Mobilités** and the **Licence Ouverte 2.0** respectively, as are Marseille and Lille; and Toulouse and Rennes are under the **ODbL 1.0**, whose share-alike condition travels with anything derived from them. The derived geometry in `extension/networks/` carries the same terms as the data it came from. Third-party branding and map imagery are not covered by the code licence. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for sources and modifications.
+Original code and documentation are under the [MIT licence](LICENSE). The bundled transit data keeps the terms it was published under, and those differ by operator: STM and REM data are **CC BY 4.0**; the TTC feed comes from the City of Toronto under the **Open Government Licence – Toronto**; Paris and Lyon are under the **Licence Mobilités** and the **Licence Ouverte 2.0** respectively, as are Marseille and Lille; and Toulouse and Rennes are under the **ODbL 1.0**, whose share-alike condition travels with anything derived from them. Of the American networks, Washington's comes from the District of Columbia's open data portal under **CC BY 4.0**; the MTA, the CTA, MassDOT for the MBTA, BART, SEPTA and LA Metro each publish under a developer agreement or terms of their own, and PATH, MARTA, Miami-Dade and MDOT MTA publish their feeds without a licence. The derived geometry in `extension/networks/` carries the same terms as the data it came from. Third-party branding and map imagery are not covered by the code licence. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for sources and modifications.

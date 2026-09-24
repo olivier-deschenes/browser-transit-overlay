@@ -192,8 +192,17 @@ test('every line has a bullet whose ink stays readable on its colour', () => {
     return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
   };
 
+  // Unless the line spells its bullet out itself, because its network prints
+  // it in capitals a lowercase id cannot carry.
+  assert.equal(stmLineBadge({ badge: 'SIR', id: 'new-york:sir:sir' }), 'SIR');
+
   for (const line of STM_LINES) {
-    assert.equal(stmLineBadge(line), line.id.slice(line.id.lastIndexOf(':') + 1).replace(/^./, (first) => first.toUpperCase()), line.id);
+    const derived = line.id.slice(line.id.lastIndexOf(':') + 1).replace(/^./, (first) => first.toUpperCase());
+    assert.equal(stmLineBadge(line), line.badge ?? derived, line.id);
+    if (line.badge !== undefined) {
+      assert.notEqual(line.badge, derived, `${line.id} spells out the bullet its id already gives`);
+      assert.equal(line.badge.toLowerCase().replaceAll('–', '-'), line.id.slice(line.id.lastIndexOf(':') + 1), `${line.id} ${line.badge}`);
+    }
 
     const ink = stmLineInk(line.color);
     assert.ok(ink === '#000000' || ink === '#ffffff', `${line.id} ${ink}`);

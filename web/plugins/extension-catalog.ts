@@ -61,12 +61,12 @@ interface Registry {
       id: string
       systems: Array<{
         id: string
-        lines: Array<{ color: string; id: string }>
+        lines: Array<{ badge?: string; color: string; id: string }>
       }>
     }>
   >
   STM_LOCALES: Record<string, { messages: Record<string, string> } | undefined>
-  stmLineBadge: (line: { id: string }) => string
+  stmLineBadge: (line: { badge?: string; id: string }) => string
   stmLineInk: (color: string) => string
 }
 
@@ -133,7 +133,7 @@ function catalogIn(registry: Registry, locale: string): Catalog {
 
               return {
                 id: lineId,
-                badge: registry.stmLineBadge({ id: lineId }),
+                badge: registry.stmLineBadge({ ...line, id: lineId }),
                 color: line.color,
                 ink: registry.stmLineInk(line.color),
                 name: name(`line.${lineId}.name`),

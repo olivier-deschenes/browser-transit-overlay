@@ -56,7 +56,8 @@ Ids are three levels deep: `montreal:stm:1` is a city, an operator, and that ope
    - [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md): a section for the source, the city's attribution line under "Adaptations and redistribution", its download date, the operator among the names at the end, and, for ODbL data, the paragraph on share-alike.
    - `extDescription` in every `extension/_locales/*/messages.json`, which counts the cities and must stay within 132 characters.
    - The [README](../README.md): the networks in its opening paragraph, the number of city names under "Privacy and permissions", the sources in "How transit networks fit together", and the licence paragraph at the end.
-   - The website's description of the extension, in `web/src/routes/`.
+
+   The website needs no change: it builds its list of cities and lines from the same registry and names.
 
 Settings need no migration. A new operator or line is absent from stored settings and therefore ships switched on. A new city ships switched off, because exactly one city is on at a time and the one that is on is the one somebody chose; it is on once it is picked.
 

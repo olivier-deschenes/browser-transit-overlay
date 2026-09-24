@@ -12,8 +12,9 @@ import {
 } from './style'
 
 // One city's lines and stations on the map, from the moment its geometry
-// arrives. Lines go under the basemap's names, so that streets and districts
-// stay legible across them; stations and their names go over everything.
+// arrives. Lines go over the basemap's roads and railways and under the names
+// of its places, so that districts stay legible across them; stations and
+// their names go over everything.
 export function CityNetwork({
   cityId,
   data,
@@ -48,12 +49,16 @@ export function CityNetwork({
       attribution: credit(cityId, locale),
     })
 
-    const underNames = map
+    // Found by what the layer names rather than by its being the first label:
+    // OpenFreeMap's dark style names its water before it draws a single road,
+    // and lines put under that went under the roads and under the basemap's
+    // own railways, which cut them into dashes wherever they share a track.
+    const underPlaces = map
       .getLayersOrder()
-      .find((id) => map.getLayer(id)?.type === 'symbol')
+      .find((id) => map.getLayer(id)?.sourceLayer === 'place')
 
-    map.addLayer(specs.lines, underNames)
-    map.addLayer(specs.hit, underNames)
+    map.addLayer(specs.lines, underPlaces)
+    map.addLayer(specs.hit, underPlaces)
     map.addLayer(specs.stations)
     map.addLayer(specs.names)
 

@@ -23,9 +23,11 @@ function Home() {
       />
       <h1>Transport en commun pour Marketplace et Centris</h1>
       <p>
-        Extension Chrome qui affiche les lignes et les stations du métro de
-        Montréal, du REM et du réseau de la TTC à Toronto sur les cartes de
-        logements de Facebook Marketplace.
+        Extension Chrome qui affiche les lignes et les stations du transport en
+        commun rapide sur les cartes de logements de Facebook Marketplace et de
+        Centris : le métro de Montréal et le REM, le métro et le train léger de
+        la TTC à Toronto, ainsi que les six métros français (Paris et son RER,
+        Lyon, Marseille, Lille, Toulouse et Rennes).
       </p>
 
       <hr />

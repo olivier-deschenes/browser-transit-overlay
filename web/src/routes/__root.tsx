@@ -18,7 +18,7 @@ export const Route = createRootRoute({
       {
         name: 'description',
         content:
-          'Une extension Chrome qui affiche le métro de Montréal, le REM et le réseau de la TTC sur les cartes de logements de Facebook Marketplace.',
+          'Une extension Chrome qui affiche le métro de Montréal et le REM, la TTC à Toronto, le métro et le RER de Paris ainsi que les métros de Lyon, Marseille, Lille, Toulouse et Rennes sur les cartes de logements de Facebook Marketplace et de Centris.',
       },
     ],
     links: [

@@ -17,6 +17,7 @@ RUNTIME_FILES = (
     "icons/icon-32.png",
     "icons/icon-48.png",
     "icons/icon-128.png",
+    "labels.js",
     "manifest.json",
     "networks.js",
     "options.css",

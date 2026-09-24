@@ -7,6 +7,18 @@
 const STM_ENABLED_KEY = "enabled";
 const STM_SETTINGS_KEY = "settings";
 const STM_CUSTOM_POINTS_KEY = "customPoints";
+// The city the last map to say so was looking at. Not a setting and never
+// shown as one: nothing chooses it, the maps write it as they go, and all it
+// buys is the next page starting its guess where the last one ended instead of
+// at the first city in the registry. A map corrects it within a frame or two
+// of being found, so a stale one costs nothing.
+const STM_ACTIVE_CITY_KEY = "activeCity";
+// Whether the listings beside a Marketplace search were hidden when the button
+// on the map's edge was last pressed. Not a setting either: it is how a search
+// was left rather than how the extension is set up, and the next search opens
+// the same way. Resetting the settings leaves it alone; the button is the way
+// to bring the listings back.
+const STM_LISTINGS_HIDDEN_KEY = "listingsHidden";
 const STM_OPEN_OPTIONS_MESSAGE = "stm-open-options";
 
 // The sites the overlay knows how to draw on. The adapter that actually does
@@ -18,18 +30,31 @@ const STM_SITES = [
   { id: "centris", name: "Centris.ca" }
 ];
 
+// One city at a time, and which one. The map only ever draws the city its
+// viewport is over — it swaps its network on the way out of one city's bounds
+// and into the next — so a second city left switched on could never show
+// anything anyway. Making that the rule rather than an accident of where the
+// map happens to be looking is what lets both forms be read as a choice
+// between cities instead of a row of switches that mostly do nothing. Picking
+// one writes every city at once, so a write can never leave two standing.
+function stmOnlyCity(cityId) {
+  return Object.fromEntries(STM_CITIES.map(({ id }) => [id, id === cityId]));
+}
+
 // The three levels of networks.js each keep a map of their own, keyed by the
 // same ids the registry hands out. A line draws when all three are on, so a
 // system is one switch over every line it owns without any of those lines
 // having to be written to.
 const STM_DEFAULT_SETTINGS = {
-  cities: Object.fromEntries(STM_CITIES.map(({ id }) => [id, true])),
-  cityShortcut: true,
+  cities: stmOnlyCity(STM_DEFAULT_CITY_ID),
+  cityPicker: true,
   interactiveMaps: true,
   // A language code from i18n.js, or the browser's choice until one is picked.
   language: STM_AUTO_LANGUAGE,
+  linePicker: true,
   lines: Object.fromEntries(STM_LINES.map(({ id }) => [id, true])),
   listingPreview: true,
+  listingsToggle: true,
   networkStatus: true,
   points: true,
   pointsTool: true,
@@ -40,15 +65,34 @@ const STM_DEFAULT_SETTINGS = {
   systems: Object.fromEntries(STM_SYSTEMS.map(({ id }) => [id, true]))
 };
 
+// The one map in the settings that is not merged over its default, because
+// merging it would answer the wrong question: a default city switched on
+// would outrank a stored city switched on, and the pick would never move off
+// the default. Whatever storage has to say about the cities is followed
+// instead — the city it names as on, or no city at all where it names none —
+// and only storage with nothing to say about them falls through to the
+// default. Storage written before the cities became a choice between them
+// names every one of them at once; the first of those, in the registry's
+// order, is what such a map is read as, since a form showing the rule being
+// broken would be worse than one that quietly picks.
+function stmSingleCity(stored) {
+  const named = STM_CITIES.filter(({ id }) => Object.hasOwn(stored ?? {}, id));
+
+  if (named.length === 0) return { ...STM_DEFAULT_SETTINGS.cities };
+
+  return stmOnlyCity(named.find(({ id }) => stored[id] !== false)?.id);
+}
+
 // Stored settings are merged over the defaults rather than read as they come,
 // so a build that adds a switch needs no migration: whatever is missing from
-// storage simply keeps shipping its default. A city added to the registry
-// therefore ships switched on while being absent from storage entirely.
+// storage simply keeps shipping its default. A city added to the registry is
+// the exception and ships switched off, because the city that is on is the
+// one somebody chose.
 function stmMergeSettings(stored) {
   return {
     ...STM_DEFAULT_SETTINGS,
     ...stored,
-    cities: { ...STM_DEFAULT_SETTINGS.cities, ...stored?.cities },
+    cities: stmSingleCity(stored?.cities),
     lines: { ...STM_DEFAULT_SETTINGS.lines, ...stored?.lines },
     sites: { ...STM_DEFAULT_SETTINGS.sites, ...stored?.sites },
     systems: { ...STM_DEFAULT_SETTINGS.systems, ...stored?.systems }

@@ -8,7 +8,7 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8');
 
 const context = vm.createContext({});
 vm.runInContext(read('networks.js'), context);
-const registry = vm.runInContext('({ STM_CITIES, STM_COUNTRIES, STM_DEFAULT_CITY_ID, STM_LINES, STM_MODES, STM_SYSTEMS, stmCityAt, stmCityById, stmLineById })', context);
+const registry = vm.runInContext('({ STM_CITIES, STM_CITIES_BY_COUNTRY, STM_COUNTRIES, STM_DEFAULT_CITY_ID, STM_LINES, STM_MODES, STM_SYSTEMS, stmCityAt, stmCityById, stmLineBadge, stmLineById, stmLineInk })', context);
 const { STM_CITIES, STM_COUNTRIES, STM_LINES, STM_MODES, STM_SYSTEMS } = registry;
 // The registry is evaluated in its own realm, so anything it maps or filters
 // comes back as that realm's array. Sorted copies made here are this one's.
@@ -72,6 +72,22 @@ test('every line has a colour, and every operator somebody to credit', () => {
     assert.match(system.attribution.terms, /^https:\/\//, system.id);
     assert.ok(system.attribution.license.label.trim(), system.id);
     assert.match(system.attribution.license.url, /^https:\/\//, system.id);
+  }
+});
+
+// The city panel on the map offers the catalogue a country at a time and never
+// walks it to find out what is in one, so the grouping has to hold every city
+// exactly once. A city missing from it is a city with no way to be reached.
+test('the catalogue grouped by country is the catalogue', () => {
+  const grouped = [...registry.STM_CITIES_BY_COUNTRY];
+  const listed = grouped.flatMap(([, cities]) => cities);
+
+  assert.deepEqual(grouped.map(([country]) => country), [...STM_COUNTRIES]);
+  assert.equal(listed.length, STM_CITIES.length);
+  assert.deepEqual(sorted(listed.map(({ id }) => id)), sorted(STM_CITIES.map(({ id }) => id)));
+
+  for (const [country, cities] of grouped) {
+    for (const city of cities) assert.equal(city.country, country, city.id);
   }
 });
 
@@ -153,4 +169,39 @@ test('a viewport resolves to one city, or to none at all', () => {
     }
   }
   assert.equal(registry.stmCityAt([0, 0]), undefined);
+});
+
+// The bullet a line is known by is drawn twice over — as a grid per city on
+// the settings page, and for the city being drawn in the panel on the map — so
+// what goes on one is the registry's answer rather than either form's. The ink
+// is the half of that answer that can be got wrong quietly: a catalogue that
+// runs from the Toulouse yellow to the Paris purple has no one ink, and a
+// colour picked for a new line is the moment the wrong one would ship.
+test('every line has a bullet whose ink stays readable on its colour', () => {
+  const { stmLineBadge, stmLineInk } = registry;
+
+  // The operator's own printed name for the line, raised at the first
+  // character only: 3bis is not 3BIS.
+  assert.equal(stmLineBadge({ id: 'montreal:stm:1' }), '1');
+  assert.equal(stmLineBadge({ id: 'montreal:rem:a' }), 'A');
+  assert.equal(stmLineBadge({ id: 'paris:metro:3bis' }), '3bis');
+
+  const channel = (value) => value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  const luminance = (color) => {
+    const [red, green, blue] = [1, 3, 5].map((offset) => channel(parseInt(color.slice(offset, offset + 2), 16) / 255));
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  };
+
+  for (const line of STM_LINES) {
+    assert.equal(stmLineBadge(line), line.id.slice(line.id.lastIndexOf(':') + 1).replace(/^./, (first) => first.toUpperCase()), line.id);
+
+    const ink = stmLineInk(line.color);
+    assert.ok(ink === '#000000' || ink === '#ffffff', `${line.id} ${ink}`);
+
+    // What the ink actually buys, against the 4.5:1 that 10px bold text has
+    // to clear. Whichever of the two is chosen, the other would be worse.
+    const [lighter, darker] = [luminance(ink), luminance(line.color)].sort((a, b) => b - a);
+    const contrast = (lighter + 0.05) / (darker + 0.05);
+    assert.ok(contrast >= 4.5, `${line.id} ${line.color} on ${ink}: ${contrast.toFixed(2)}:1`);
+  }
 });

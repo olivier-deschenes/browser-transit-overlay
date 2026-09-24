@@ -51,10 +51,19 @@
             label: stmText("options.networkStatus")
           },
           {
-            hint: stmText("options.cityShortcut.hint"),
-            key: "cityShortcut",
-            label: stmText("options.cityShortcut"),
-            parent: "networkStatus"
+            hint: stmText("options.cityPicker.hint"),
+            key: "cityPicker",
+            label: stmText("options.cityPicker")
+          },
+          {
+            hint: stmText("options.linePicker.hint"),
+            key: "linePicker",
+            label: stmText("options.linePicker")
+          },
+          {
+            hint: stmText("options.listingsToggle.hint"),
+            key: "listingsToggle",
+            label: stmText("options.listingsToggle")
           },
           {
             hint: stmText("options.settingsShortcut.hint"),
@@ -219,41 +228,17 @@
     );
   }
 
-  // A line's own short name, the way its network prints it on a bullet: 1,
-  // 3bis, A, M1. Only the first character is raised, which is what keeps
-  // Paris's 3bis from shouting.
-  function lineBadge({ id }) {
-    const short = id.slice(id.lastIndexOf(":") + 1);
-
-    return short.charAt(0).toUpperCase() + short.slice(1);
-  }
-
-  // Which ink a line's colour can carry, by whichever of black and white
-  // stands further from it. The catalogue runs from the Toulouse yellow to the
-  // Paris purple, and one ink for both would be unreadable on one of them.
-  // 0.179 is where the two contrast ratios meet, both at 4.58:1.
-  function inkFor(color) {
-    const channel = (offset) => {
-      const value = parseInt(color.slice(offset, offset + 2), 16) / 255;
-
-      return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
-    };
-
-    const luminance =
-      0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
-
-    return luminance > 0.179 ? "#000000" : "#ffffff";
-  }
-
   // The bullet a line is known by: its colour, carrying its short name. Drawn
   // both in the strip a closed city shows and on the button that switches the
   // line, because it is the one part of a line anybody recognises at a glance.
+  // What goes on it is the registry's to say, since the panel on the map draws
+  // the same bullet from the same entry.
   function createBullet(line) {
     const bullet = document.createElement("span");
     bullet.className = "stm-bullet";
     bullet.style.setProperty("--stm-swatch", line.color);
-    bullet.style.setProperty("--stm-ink", inkFor(line.color));
-    bullet.textContent = lineBadge(line);
+    bullet.style.setProperty("--stm-ink", stmLineInk(line.color));
+    bullet.textContent = stmLineBadge(line);
 
     return bullet;
   }
@@ -549,10 +534,26 @@
         // say they are on. Switching them off needs only the lines: holding
         // their parents off as well would leave a card of dimmed bullets with
         // nothing in it left to click.
+        //
+        // The cities are the exception, because only one of them can be on.
+        // The one already picked is left alone wherever the list still has
+        // something of its own in it, and only a list with nothing of the
+        // picked city in it moves the pick — to the first city shown, which
+        // is the only one of them this could have meant.
         if (value) {
-          for (const { cityId, systemId } of shownLines) {
-            settings.cities[cityId] = true;
+          for (const { systemId } of shownLines) {
             settings.systems[systemId] = true;
+          }
+
+          const picked = STM_CITIES.find(
+            ({ id }) => settings.cities[id] !== false
+          );
+
+          if (
+            shownLines.length > 0 &&
+            !shownLines.some(({ cityId }) => cityId === picked?.id)
+          ) {
+            settings.cities = stmOnlyCity(shownLines[0].cityId);
           }
         }
 
@@ -593,6 +594,11 @@
     // checkbox because the bullet and the name are the control here, and
     // there is no room beside them for a switch as well; role="switch" is
     // what says it is still one of those.
+    //
+    // A switch is named by its author and by nothing else, so the name is
+    // written out rather than left to the span inside the button: without it
+    // every chip in the catalogue answers to whatever its tooltip says, and a
+    // city's worth of them all say "Métro".
     const createLineChip = (line, parent, drawn) => {
       const key = `lines.${line.id}`;
 
@@ -600,6 +606,7 @@
       chip.type = "button";
       chip.className = "stm-line";
       chip.setAttribute("role", "switch");
+      chip.setAttribute("aria-label", stmText(`line.${line.id}.name`));
       chip.title = stmText(`line.${line.id}.detail`);
 
       const name = document.createElement("span");
@@ -691,8 +698,12 @@
       const control = createSwitch();
       const cityKey = `cities.${city.id}`;
 
+      // A city is picked rather than switched on: the map draws one city at a
+      // time, so every other city goes off with this one coming on. The whole
+      // map is written, never the one name in it, which is what keeps this
+      // and the panel on the map from disagreeing about how many can be on.
       control.addEventListener("change", async () => {
-        writeSetting(cityKey, control.checked);
+        settings.cities = stmOnlyCity(control.checked ? city.id : undefined);
         await saveSettings();
         syncInputs();
       });

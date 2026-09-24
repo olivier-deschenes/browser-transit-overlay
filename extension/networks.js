@@ -469,6 +469,18 @@ const STM_COUNTRIES = [...new Set(STM_CITIES.map(({ country }) => country))];
 
 const STM_MODES = [...new Set(STM_LINES.map(({ mode }) => mode))];
 
+// The catalogue the way someone picking a city out of it reads it: by country
+// first, each one's cities in the order the registry lists them. The picker on
+// the map walks this rather than the flat list, so that a catalogue of this
+// size arrives already sorted into the two questions a reader actually has —
+// which country, then which city in it.
+const STM_CITIES_BY_COUNTRY = new Map(
+  STM_COUNTRIES.map((country) => [
+    country,
+    STM_CITIES.filter((city) => city.country === country)
+  ])
+);
+
 const STM_LINES_BY_ID = new Map(STM_LINES.map((line) => [line.id, line]));
 const STM_CITIES_BY_ID = new Map(STM_CITIES.map((city) => [city.id, city]));
 
@@ -478,6 +490,34 @@ function stmLineById(id) {
 
 function stmCityById(id) {
   return STM_CITIES_BY_ID.get(id);
+}
+
+// A line's own short name, the way its network prints it on a bullet: 1, 3bis,
+// A, M1. Only the first character is raised, which is what keeps Paris's 3bis
+// from shouting. Both forms draw that bullet — the settings page as a grid of
+// them per city, the panel on the map for the one city being drawn — so what
+// is on it is settled here, beside the id it is read off.
+function stmLineBadge({ id }) {
+  const short = id.slice(id.lastIndexOf(":") + 1);
+
+  return short.charAt(0).toUpperCase() + short.slice(1);
+}
+
+// Which ink a line's colour can carry, by whichever of black and white stands
+// further from it. The catalogue runs from the Toulouse yellow to the Paris
+// purple, and one ink for both would be unreadable on one of them. 0.179 is
+// where the two contrast ratios meet, both at 4.58:1.
+function stmLineInk(color) {
+  const channel = (offset) => {
+    const value = parseInt(color.slice(offset, offset + 2), 16) / 255;
+
+    return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  };
+
+  const luminance =
+    0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
+
+  return luminance > 0.179 ? "#000000" : "#ffffff";
 }
 
 // Where the overlay starts before anything has said where the map is looking.

@@ -1,0 +1,187 @@
+trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type,route_code,destination_code,timepoint
+64143525,04:48:00,04:48:00,80101,1,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,04:49:00,04:49:00,80102,2,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,04:53:00,04:53:00,80105,3,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,04:55:00,04:55:00,80106,4,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:00:00,05:00:00,80107,5,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:02:00,05:02:00,80108,6,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:05:00,05:05:00,80109,7,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:08:00,05:08:00,80110,8,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:11:00,05:11:00,80111,9,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:15:00,05:15:00,80112,10,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:17:00,05:17:00,80113,11,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:20:00,05:20:00,80114,12,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:22:00,05:22:00,80115,13,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:25:00,05:25:00,80116,14,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:28:00,05:28:00,80117,15,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:31:00,05:31:00,80118,16,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:35:00,05:35:00,80119,17,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:40:00,05:40:00,80120,18,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:43:00,05:43:00,80121,19,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:45:00,05:45:00,80122,20,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:47:00,05:47:00,81401,21,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:49:00,05:49:00,81402,22,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:50:00,05:50:00,81403,23,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:54:00,05:54:00,80409,24,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:56:00,05:56:00,80410,25,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,05:59:00,05:59:00,80411,26,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:01:00,06:01:00,80412,27,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:03:00,06:03:00,80413,28,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:07:00,06:07:00,80414,29,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:10:00,06:10:00,80415,30,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:14:00,06:14:00,80416,31,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:17:00,06:17:00,80417,32,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:18:00,06:18:00,80418,33,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:20:00,06:20:00,80419,34,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:22:00,06:22:00,80420,35,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:25:00,06:25:00,80421,36,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:30:00,06:30:00,80422,37,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:33:00,06:33:00,80423,38,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:37:00,06:37:00,80424,39,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:41:00,06:41:00,80425,40,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:43:00,06:43:00,80426,41,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:45:00,06:45:00,80427,42,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:48:00,06:48:00,801100,43,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:54:00,06:54:00,801101,44,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,06:58:00,06:58:00,801102,45,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143525,07:00:00,07:00:00,801103,46,Metro A Line - Pomona Station,0,0,Metro A Line,Pomona Station,1
+64143529,08:37:00,08:37:00,801103,1,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,08:39:00,08:39:00,801102,2,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,08:43:00,08:43:00,801101,3,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,08:49:00,08:49:00,801100,4,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,08:52:00,08:52:00,80427,5,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,08:54:00,08:54:00,80426,6,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,08:56:00,08:56:00,80425,7,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,08:59:00,08:59:00,80424,8,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:03:00,09:03:00,80423,9,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:06:00,09:06:00,80422,10,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:11:00,09:11:00,80421,11,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:14:00,09:14:00,80420,12,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:16:00,09:16:00,80419,13,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:18:00,09:18:00,80418,14,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:19:00,09:19:00,80417,15,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:21:00,09:21:00,80416,16,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:24:00,09:24:00,80415,17,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:28:00,09:28:00,80414,18,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:31:00,09:31:00,80413,19,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:33:00,09:33:00,80412,20,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:35:00,09:35:00,80411,21,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:40:00,09:40:00,80410,22,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:43:00,09:43:00,80409,23,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:45:00,09:45:00,81403,24,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:47:00,09:47:00,81402,25,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:48:00,09:48:00,81401,26,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:50:00,09:50:00,80122,27,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:52:00,09:52:00,80121,28,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,09:56:00,09:56:00,80120,29,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:00:00,10:00:00,80119,30,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:04:00,10:04:00,80118,31,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:07:00,10:07:00,80117,32,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:09:00,10:09:00,80116,33,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:11:00,10:11:00,80115,34,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:13:00,10:13:00,80114,35,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:15:00,10:15:00,80113,36,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:17:00,10:17:00,80112,37,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:21:00,10:21:00,80111,38,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:24:00,10:24:00,80110,39,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:29:00,10:29:00,80109,40,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:33:00,10:33:00,80108,41,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:35:00,10:35:00,80107,42,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:39:00,10:39:00,80106,43,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:42:00,10:42:00,80105,44,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:45:00,10:45:00,80154,45,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:47:00,10:47:00,80153,46,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64143529,10:49:00,10:49:00,80101,47,Metro A Line - Downtown Long Beach Station,0,0,Metro A Line,Downtown Long Beach Station,1
+64187012,23:03:00,23:03:00,80201,1,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:08:00,23:08:00,80202,2,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:12:00,23:12:00,80203,3,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:14:00,23:14:00,80204,4,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:16:00,23:16:00,80205,5,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:18:00,23:18:00,80206,6,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:20:00,23:20:00,80207,7,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:22:00,23:22:00,80208,8,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:25:00,23:25:00,80209,9,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:27:00,23:27:00,80210,10,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:29:00,23:29:00,80211,11,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:30:00,23:30:00,80212,12,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:31:00,23:31:00,80213,13,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187012,23:37:00,23:37:00,80214,14,Metro B Line - Union Station,0,0,Metro B Line,Union Station,1
+64187016,21:22:00,21:22:00,80214,1,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:25:00,21:25:00,80213,2,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:26:00,21:26:00,80212,3,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:28:00,21:28:00,80211,4,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:30:00,21:30:00,80210,5,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:32:00,21:32:00,80209,6,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:34:00,21:34:00,80208,7,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:36:00,21:36:00,80207,8,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:38:00,21:38:00,80206,9,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:40:00,21:40:00,80205,10,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:43:00,21:43:00,80204,11,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:45:00,21:45:00,80203,12,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:49:00,21:49:00,80202,13,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187016,21:54:00,21:54:00,80201,14,Metro B Line - North Hollywood Station,0,0,Metro B Line,North Hollywood Station,1
+64187026,22:04:00,22:04:00,80231,1,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:06:00,22:06:00,80230,2,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:08:00,22:08:00,80229,3,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:11:00,22:11:00,80216,4,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:13:00,22:13:00,80215,5,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:15:00,22:15:00,80209,6,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:17:00,22:17:00,80210,7,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:19:00,22:19:00,80211,8,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:20:00,22:20:00,80212,9,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:21:00,22:21:00,80213,10,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64187026,22:27:00,22:27:00,80214,11,Metro D Line - Union Station,0,0,Metro D Line,Union Station,1
+64204710,16:24:00,16:24:00,80314,1,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:27:00,16:27:00,80313,2,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:33:00,16:33:00,80312,3,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:35:00,16:35:00,80311,4,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:37:00,16:37:00,80310,5,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:39:00,16:39:00,80309,6,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:41:00,16:41:00,80308,7,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:44:00,16:44:00,80307,8,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:47:00,16:47:00,80306,9,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:49:00,16:49:00,80305,10,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:52:00,16:52:00,80701,11,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204710,16:54:00,16:54:00,80702,12,Metro C Line - LAX / Metro Transit Center,0,0,Metro C Line,LAX / Metro Transit Center,1
+64204876,05:30:00,05:30:00,80709,1,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:33:00,05:33:00,80708,2,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:34:00,05:34:00,80707,3,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:38:00,05:38:00,80706,4,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:41:00,05:41:00,80705,5,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:43:00,05:43:00,80704,6,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:46:00,05:46:00,80703,7,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:49:00,05:49:00,80702,8,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:51:00,05:51:00,80701,9,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:55:00,05:55:00,80304,10,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:57:00,05:57:00,80303,11,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,05:59:00,05:59:00,80302,12,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64204876,06:02:00,06:02:00,80301,13,Metro K Line - Redondo Beach Station,0,0,Metro K Line,Redondo Beach Station,1
+64334586,11:49:00,11:49:00,80139,1,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,11:52:00,11:52:00,80138,2,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,11:55:00,11:55:00,80137,3,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,11:58:00,11:58:00,80136,4,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:01:00,12:01:00,80135,5,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:03:00,12:03:00,80134,6,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:06:00,12:06:00,80133,7,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:08:00,12:08:00,80132,8,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:10:00,12:10:00,80131,9,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:12:00,12:12:00,80130,10,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:14:00,12:14:00,80129,11,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:16:00,12:16:00,80128,12,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:19:00,12:19:00,80127,13,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:21:00,12:21:00,80126,14,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:23:00,12:23:00,80125,15,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:25:00,12:25:00,80124,16,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:27:00,12:27:00,80123,17,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:32:00,12:32:00,80121,18,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:34:00,12:34:00,80122,19,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:36:00,12:36:00,81401,20,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:38:00,12:38:00,81402,21,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:39:00,12:39:00,81403,22,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:42:00,12:42:00,80407,23,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:44:00,12:44:00,80406,24,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:46:00,12:46:00,80405,25,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:48:00,12:48:00,80404,26,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:51:00,12:51:00,80403,27,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:53:00,12:53:00,80402,28,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1
+64334586,12:56:00,12:56:00,80401,29,Metro E Line - Atlantic Station,0,0,Metro E Line,Atlantic Station,1

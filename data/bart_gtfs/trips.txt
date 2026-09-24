@@ -1,0 +1,7 @@
+route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id,trip_load_information,wheelchair_accessible,bikes_allowed
+5,2026_08_10-DX-MVS-Weekday-015,1965486,OAK Airport / SF / Daly City,1,,005A_shp,,1,1
+3,2026_08_10-DX-MVS-Weekday-015,1965366,OAK Airport / Richmond,0,,003C_shp,,1,1
+2,2026_08_10-DX-MVS-Weekday-015,1965241,SFO / SF / Antioch,0,,002A_shp,,1,1
+1,2026_08_10-DX-MVS-Weekday-015,1965220,Millbrae (Caltrain Transfer Platform),1,,001E_shp,,1,1
+8,2026_08_10-DX-MVS-Weekday-015,1965669,SFO / SF / Richmond,0,,008A_shp,,1,1
+11,2026_08_10-DX-MVS-Weekday-015,1965759,OAK Airport / SF / Daly City,1,,011A_shp,,1,1

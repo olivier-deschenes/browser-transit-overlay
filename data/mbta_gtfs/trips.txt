@@ -1,0 +1,11 @@
+route_id,service_id,trip_id,trip_headsign,trip_short_name,direction_id,block_id,shape_id,wheelchair_accessible,trip_route_type,route_pattern_id,bikes_allowed
+Blue,DIV20264-hmb46wt6-Saturday-01,78689047,Wonderland,,1,B946_-4,946_0014,1,,Blue-6-1,0
+Green-B,LRV20264-hlb46016-Saturday-01,77655681,Medford/Tufts,,1,B800-7,8000014,1,,Green-B-816-1,2
+Green-C,LRV20264-hlb46016-Saturday-01,77655683,Medford/Tufts,,1,B800-21,8000016,1,,Green-C-836-1,2
+Green-D,LRV20264-hlb46016-Saturday-01,77656150,Riverside,,0,B800-38,8000008,1,,Green-D-855-0,2
+Green-D,LRV20264-hlb46016-Saturday-01,77656147,Union Square,,1,B800-38,8000009,1,,Green-D-855-1,2
+Green-E,LRV20264-hlb46016-Saturday-01,77656382,Medford/Tufts,,1,B800-50,8000015,1,,Green-E-886-1,2
+Mattapan,FallSaturday,77713981,Mattapan,,0,M899_-1,899_0005,1,,Mattapan-_-0,2
+Orange,RTL20264-hmo46016-Saturday-01,77792084,Oak Grove,,1,O903_-11,903_0029,1,,Orange-3-1,0
+Red,RTL20264-hms46011-Weekday-01,77871256,Alewife,,1,S933_-19,933_0019,1,,Red-3-1,0
+Red,RTL20264-hms46016-Saturday-01,77909634,Alewife,,1,S931_-4,931_0010,1,,Red-1-1,0

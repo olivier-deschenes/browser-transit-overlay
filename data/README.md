@@ -40,7 +40,7 @@ Ids are three levels deep: `montreal:stm:1` is a city, an operator, and that ope
 
 ## Add a city
 
-1. Put the source data under `data/`, in a directory named for its operator and its format (`data/star_gtfs/`, `data/tcl_sytral/`), with a `terms.txt` listing the URL of each dataset used, one per line, and then its licence's. From a GTFS feed keep `routes.txt`, `trips.txt`, `stop_times.txt`, `stops.txt` and, where the feed has one, `shapes.txt`, cut down to the lines being drawn the way [the French slices are cut](#france): their routes, the trips kept for them, those trips' stop times and shapes, and the stops they call at along with the parent stations those stops name. No script does the cutting, so say in the pull request how the slice was made, and add the source, its URL and its download date under [Sources](#sources).
+1. Put the source data under `data/`, in a directory named for its operator and its format (`data/star_gtfs/`, `data/tcl_sytral/`), with a `terms.txt` listing the URL of each dataset used, one per line, and then its licence's, or the page its terms are on where there is no licence. From a GTFS feed keep `routes.txt`, `trips.txt`, `stop_times.txt`, `stops.txt` and, where the feed has one, `shapes.txt`, cut down to the lines being drawn the way [the French slices are cut](#france), or [the American ones](#united-states) where a feed re-samples its shapes: their routes, the trips kept for them, those trips' stop times and shapes, and the stops they call at along with the parent stations those stops name. No script does the cutting, so say in the pull request how the slice was made, and add the source, its URL and its download date under [Sources](#sources).
 2. Write `data/scripts/cities/<city>.py` with an `ID`, a `NOTICE`, a `REFERENCE_LATITUDE`, the route-to-line mapping for its sources, and a `build()` returning `{"notice", "lines", "stations"}`. The `NOTICE` is the attribution the data's licence asks for, word for word where the licence gives one. `REFERENCE_LATITUDE` is roughly the latitude of the city centre: simplification works in metres, and a degree of longitude is worth fewer of them the further a city is from the equator. `transit_geometry.py` has the deduplication, simplification and rounding, and `gtfs_network.py` has everything a GTFS feed needs done to it, so a city on GTFS is its mapping and one call to `gtfs_network.build()` — [`rennes.py`](scripts/cities/rennes.py) is the whole of one. A city drawn from anything else reads its own sources and hands the paths to `transit_geometry.py`, as [`lyon.py`](scripts/cities/lyon.py) does with SYTRAL's map layers. A city module supplies only its sources and its mapping.
 3. Add it to `CITIES` in `data/scripts/cities/__init__.py`.
 4. Declare the city in `extension/networks.js`:
@@ -86,5 +86,27 @@ Two of the six publish no geometry for their métro, and each needed its own ans
 
 - **Lyon.** SYTRAL's GTFS draws its buses and its tramways and leaves every métro trip without a `shape_id`. SYTRAL separately publishes the métro as a map layer, under a clearer licence than the feed, so Lyon is built from that and the feed is not used at all.
 - **Lille.** ilévia's feed has no `shapes.txt`, and the métropole publishes no alignment anywhere else. Lille is therefore the one network here drawn through its stations instead of over its track: right at every station, a chord between them. Replacing it with real geometry means finding a source for the alignment — nothing in `lille.py` needs to change beyond where it reads from.
+
+### United States
+
+Ten networks, all downloaded 24 September 2026 from the publishers' own URLs, listed in each directory's `terms.txt` with the terms that come with them.
+
+- `data/mta_gtfs/`: the New York City Subway and the Staten Island Railway, out of the MTA's regular subway feed (feed version `20260826-X-long-term-supplement-trip-ids`). The MTA's terms allow using some but not all of the data and ask that none of it be modified: every subway coordinate the build keeps is one of the feed's own, at its own six decimals.
+- `data/path_gtfs/`: PATH, from the feed the Port Authority publishes through Trillium. Its last release covers service to 1 June 2026, and no later one exists; the network it draws has not changed since. No licence.
+- `data/wmata_dcgis/`: the Washington Metro, as the District of Columbia's *Metro Lines Regional* and *Metro Stations Regional* layers on Open Data DC rather than WMATA's feed, which needs a developer key. CC BY 4.0.
+- `data/cta_gtfs/`: the CTA's eight 'L' lines. CTA Developer License Agreement.
+- `data/mbta_gtfs/`: the MBTA's Red, Orange, Blue and Green lines and the Mattapan trolley (feed version `Fall 2026, version D`). MassDOT Developers License Agreement.
+- `data/bart_gtfs/`: BART's five lines, without the Oakland Airport connector. BART Developer License Agreement.
+- `data/septa_gtfs/`: SEPTA Metro's L, B and M lines, out of SEPTA's bus and Metro feed (`v202609061`). The trolleys SEPTA Metro also brands are left out: out of the tunnel they stop every block or two. SEPTA License Agreement.
+- `data/lametro_gtfs/`: LA Metro's six rail lines, out of its rail feed. Metro's developer Terms & Conditions, which also ask that the data not be modified; the geometry here is simplified and rounded like every other city's.
+- `data/marta_gtfs/`: MARTA's four rail lines. No licence; MARTA's only condition is that its marks are not used.
+- `data/miamidade_gtfs/`: Metrorail's Green and Orange lines, which the feed runs as a single route. No licence.
+- `data/mdotmta_gtfs/`: Baltimore's Metro SubwayLink, from MDOT MTA's Metro feed. No licence.
+
+The nine GTFS slices keep the French rule with three changes, because several of these feeds publish a shape per variant of a trip that re-samples the same track — PATH's four services come with twenty — and matching segments exactly keeps every one of them:
+
+- A shape counts as covered where it runs within 15 metres of a shape already kept, and it is kept only if it adds more than 100 metres of track that is not. An unbranched line therefore comes to one trip rather than one each way, and the stations are still all reached by the step that adds trips for them.
+- Where a feed's calendar reaches the download date, only trips whose service still runs on it are considered, so a summer extension that ended on 7 September — the Rockaway Park shuttle's to Rockaway Boulevard — is not drawn. BART's and PATH's latest releases both end before it, and are taken whole.
+- A shape run by fewer than four trips is not considered, and PATH's by fewer than ten: those are put-ins and one-off diversions, such as the one R train a weekday that runs down to Bay Parkway.
 
 For an update, obtain new data from the transit publishers, preserve their terms, and record the source URL and download date with the change. Original download dates for the Montréal inputs were not recorded. Review station and line changes before committing both source files and generated JSON. CI regenerates the network and checks for drift.

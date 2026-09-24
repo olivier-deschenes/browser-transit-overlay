@@ -1,0 +1,7 @@
+route_id,service_id,trip_id,trip_headsign,trip_short_name,direction_id,block_id,shape_id,wheelchair_accessible,bikes_allowed
+M1,40,941280,Norristown Transit Center,,0,4004,319628,1,1
+M1,40,941374,69th St Transit Center,,1,4004,319629,1,1
+B1,16,977710,Fern Rock Transit Center,,1,80010,319856,1,1
+B3,16,979179,Fern Rock Transit Center,,1,80047,319885,1,1
+L1,16,980124,69th St Transit Center,,1,70006,319900,1,2
+B2,210134000,974285,NRG,,0,810098,319822,1,1

@@ -1,0 +1,9 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,route_sort_order,route_fare_class,line_id,listed_route,network_id
+Red,1,,Red Line,Rapid Transit,1,https://www.mbta.com/schedules/Red,DA291C,FFFFFF,10010,Rapid Transit,line-Red,,rapid_transit
+Mattapan,1,,Mattapan Line,Rapid Transit,0,https://www.mbta.com/schedules/Mattapan,DA291C,FFFFFF,10011,Rapid Transit,line-Mattapan,,m_rapid_transit
+Orange,1,,Orange Line,Rapid Transit,1,https://www.mbta.com/schedules/Orange,ED8B00,FFFFFF,10020,Rapid Transit,line-Orange,,rapid_transit
+Green-B,1,B,Green Line B,Rapid Transit,0,https://www.mbta.com/schedules/Green-B,00843D,FFFFFF,10032,Rapid Transit,line-Green,,rapid_transit
+Green-C,1,C,Green Line C,Rapid Transit,0,https://www.mbta.com/schedules/Green-C,00843D,FFFFFF,10033,Rapid Transit,line-Green,,rapid_transit
+Green-D,1,D,Green Line D,Rapid Transit,0,https://www.mbta.com/schedules/Green-D,00843D,FFFFFF,10034,Rapid Transit,line-Green,,rapid_transit
+Green-E,1,E,Green Line E,Rapid Transit,0,https://www.mbta.com/schedules/Green-E,00843D,FFFFFF,10035,Rapid Transit,line-Green,,rapid_transit
+Blue,1,,Blue Line,Rapid Transit,1,https://www.mbta.com/schedules/Blue,003DA5,FFFFFF,10040,Rapid Transit,line-Blue,,rapid_transit

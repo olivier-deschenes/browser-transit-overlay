@@ -1,13 +1,13 @@
 """Reading a rapid-transit network out of one GTFS feed.
 
-Six of the cities here arrive as GTFS, and what has to be done to a feed to
+Most of the cities here arrive as GTFS, and what has to be done to a feed to
 get a drawable network out of it is the same every time: keep the routes that
 are the lines being drawn, collect the track those routes run over, and work
 out which station is where and which lines call at it. Only the mapping from
 feed routes to public line ids differs, so only that stays in a city module.
 
-Two things feeds disagree about, and both are handled here rather than in six
-places:
+Three things feeds disagree about, and all three are handled here rather than
+once per city:
 
     Track. Most feeds draw their routes in shapes.txt. Some publish the
     timetable and nothing else — ilévia's does, and SYTRAL's carries shapes
@@ -21,7 +21,15 @@ places:
     case the platforms sharing a name are the station and the station is the
     middle of them. The second only holds while the platforms of a station
     are near each other; where they are not, a city module says so and does
-    its own grouping.
+    its own grouping. A feed can also spell one station more than one way —
+    Miami-Dade's names each platform for the direction it serves, and
+    SEPTA's gives one platform of a station a parent and leaves the other
+    without — and then the city names its stations itself, and the
+    platforms that come out under one name are one station.
+
+    Lines. A route is usually one public line, or one of several routes drawn
+    as one line. Miami-Dade runs both of its lines as a single route, and
+    there the city says which line a trip is from the stations it calls at.
 """
 
 from collections import defaultdict
@@ -98,7 +106,20 @@ def station_of(platform, stops, by_name):
     return tuple(by_name[platform["stop_name"]])
 
 
-def read_places(stops):
+def named_station_of(platform, stops, name):
+    """What a city calls the station a platform belongs to.
+
+    The name of the platform's parent where it has one and its own where it
+    does not, put through the city's own spelling of its stations.
+    """
+    parent = (platform.get("parent_station") or "").strip()
+
+    return name(
+        stops[parent]["stop_name"] if parent in stops else platform["stop_name"]
+    )
+
+
+def read_places(stops, name=None):
     """Where each platform's station is, and what that station is called.
 
     Worked out once and handed to both of the things that need it, because a
@@ -106,7 +127,26 @@ def read_places(stops):
     marks them: a line running over the platforms while the dots sit on the
     parent stations is a line that misses its own stops by the width of the
     concourse.
+
+    A city that names its stations itself has them grouped by those names
+    instead: every stop that comes out under one name is that station, and
+    the station is the middle of them.
     """
+    if name is not None:
+        named = {
+            stop_id: named_station_of(platform, stops, name)
+            for stop_id, platform in stops.items()
+        }
+        by_station = defaultdict(list)
+
+        for stop_id, station in named.items():
+            by_station[station].append(stops[stop_id])
+
+        return {
+            stop_id: (station, station, middle(by_station[station]))
+            for stop_id, station in named.items()
+        }
+
     by_name = defaultdict(list)
 
     for stop in stops.values():
@@ -119,13 +159,17 @@ def read_places(stops):
         places[stop_id] = (
             group[0]["stop_id"],
             group[0]["stop_name"],
-            (
-                fmean(float(stop["stop_lon"]) for stop in group),
-                fmean(float(stop["stop_lat"]) for stop in group),
-            ),
+            middle(group),
         )
 
     return places
+
+
+def middle(group):
+    return (
+        fmean(float(stop["stop_lon"]) for stop in group),
+        fmean(float(stop["stop_lat"]) for stop in group),
+    )
 
 
 def read_paths(source, trips, calls, places):
@@ -163,7 +207,7 @@ def read_paths(source, trips, calls, places):
     return drawn
 
 
-def read_stations(trips, calls, places, name=None):
+def read_stations(trips, calls, places):
     """One entry per station, whatever number of lines call at it.
 
     A feed that names parent stations is taken at its word and the station is
@@ -173,7 +217,6 @@ def read_stations(trips, calls, places, name=None):
     of one métro station, metres apart over a single set of tracks, rather
     than the two ends of a passageway.
     """
-    name = name or (lambda stop_name: stop_name)
     called = defaultdict(set)
     placed = {}
 
@@ -187,7 +230,7 @@ def read_stations(trips, calls, places, name=None):
     return sorted(
         (
             {
-                "name": name(stop_name),
+                "name": stop_name,
                 "lines": sorted(called[key]),
                 "coordinates": round_coordinates(point),
             }
@@ -197,20 +240,37 @@ def read_stations(trips, calls, places, name=None):
     )
 
 
-def build(source, lines, reference_latitude, notice, name=None):
+def build(source, lines, reference_latitude, notice, name=None, line_of=None):
     """The whole of one city's geometry, in the shape build_networks writes.
 
     `lines` maps each public line id to the feed routes drawn as that line,
     and its order is the order the lines come out in, so the file reads the
     same way from one build to the next however the sources are ordered.
+
+    `name`, where a city gives one, turns the name the feed gives a station
+    into the one it is drawn under, and the stops that come out under one
+    name are one station. `line_of`, where a route is more than one line,
+    says which of them a trip is from the names of the stations it calls at.
     """
     route_lines = {
         route: line_id for line_id, routes in lines.items() for route in routes
     }
     stops = {stop["stop_id"]: stop for stop in read_csv(source, "stops.txt")}
-    places = read_places(stops)
+    places = read_places(stops, name)
     trips = read_trips(source, route_lines)
     calls = read_calls(source, trips)
+
+    if line_of is not None:
+        called = {
+            trip_id: [places[stop_id][1] for stop_id in calls.get(trip_id, ())]
+            for trip_id in trips
+        }
+        trips = {
+            trip_id: (line_of(called[trip_id]), shape_id)
+            for trip_id, (_, shape_id) in trips.items()
+        }
+        trips = {trip_id: trip for trip_id, trip in trips.items() if trip[0]}
+
     paths = read_paths(source, trips, calls, places)
 
     return {
@@ -223,5 +283,5 @@ def build(source, lines, reference_latitude, notice, name=None):
             for line_id in lines
             if paths[line_id]
         ],
-        "stations": read_stations(trips, calls, places, name),
+        "stations": read_stations(trips, calls, places),
     }

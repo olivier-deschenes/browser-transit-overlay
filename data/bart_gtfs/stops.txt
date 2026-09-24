@@ -1,0 +1,130 @@
+stop_id,stop_code,stop_name,stop_desc,stop_lat,stop_lon,zone_id,stop_url,location_type,parent_station,platform_code
+A10-2,902102,Lake Merritt,,37.797357,-122.265232,LAKE,,0,LAKE,2
+A20-2,902202,Fruitvale,,37.774873,-122.224067,FTVL,,0,FTVL,2
+A30-2,902302,Coliseum,,37.753604,-122.196698,COLS,,0,COLS,2
+A40-2,902402,San Leandro,,37.721806,-122.160713,SANL,,0,SANL,2
+A50-2,902502,Bay Fair,,37.696938,-122.126431,BAYF,,0,BAYF,2
+A60-2,902602,Hayward,,37.669731,-122.086941,HAYW,,0,HAYW,2
+A70-2,902702,South Hayward,,37.634363,-122.057158,SHAY,,0,SHAY,2
+A80-2,902802,Union City,,37.590765,-122.017230,UCTY,,0,UCTY,2
+A90-2,902902,Fremont,,37.557513,-121.976605,FRMT,,0,FRMT,2
+C10-1,903101,Rockridge,,37.844725,-122.251225,ROCK,,0,ROCK,1
+C10-2,903102,Rockridge,,37.844795,-122.251271,ROCK,,0,ROCK,2
+C20-1,903201,Orinda,,37.878470,-122.183643,ORIN,,0,ORIN,1
+C20-2,903202,Orinda,,37.878503,-122.183717,ORIN,,0,ORIN,2
+C30-1,903301,Lafayette,,37.893155,-122.124621,LAFY,,0,LAFY,1
+C30-2,903302,Lafayette,,37.893220,-122.124644,LAFY,,0,LAFY,2
+C40-1,903401,Walnut Creek,,37.905780,-122.067302,WCRK,,0,WCRK,1
+C40-2,903402,Walnut Creek,,37.905812,-122.067379,WCRK,,0,WCRK,2
+C50-1,903501,Pleasant Hill / Contra Costa Centre,,37.928414,-122.055954,PHIL,,0,PHIL,1
+C50-2,903502,Pleasant Hill / Contra Costa Centre,,37.928463,-122.056015,PHIL,,0,PHIL,2
+C60-1,903601,Concord,,37.973751,-122.029046,CONC,,0,CONC,1
+C60-2,903602,Concord,,37.973773,-122.029126,CONC,,0,CONC,2
+C70-1,903701,North Concord / Martinez,,38.003369,-122.024490,NCON,,0,NCON,1
+C70-2,903702,North Concord / Martinez,,38.003407,-122.024561,NCON,,0,NCON,2
+C80-1,903801,Pittsburg / Bay Point,,38.018881,-121.944249,PITT,,0,PITT,1
+C80-2,903802,Pittsburg / Bay Point,,38.018950,-121.944248,PITT,,0,PITT,2
+E20-1,908201,Pittsburg Center,,38.016805,-121.889039,PCTR,,0,PCTR,1
+E20-2,908202,Pittsburg Center,,38.016873,-121.889011,PCTR,,0,PCTR,2
+E30-2,908302,Antioch,,37.995415,-121.780353,ANTC,,0,ANTC,2
+K10-1,900101,12th Street / Oakland City Center,,37.803463,-122.271596,12TH,,0,12TH,1
+K10-2,900102,12th Street / Oakland City Center,,37.803471,-122.271589,12TH,,0,12TH,2
+K10-3,900103,12th Street / Oakland City Center,,37.803508,-122.271694,12TH,,0,12TH,3
+K20-1,900201,19th Street Oakland,,37.808065,-122.268720,19TH,,0,19TH,1
+K20-2,900202,19th Street Oakland,,37.808060,-122.268722,19TH,,0,19TH,2
+K20-3,900203,19th Street Oakland,,37.808105,-122.268821,19TH,,0,19TH,3
+K30-1,900301,MacArthur,,37.828790,-122.266978,MCAR,,0,MCAR,1
+K30-3,900303,MacArthur,,37.828801,-122.267076,MCAR,,0,MCAR,3
+K30-4,900304,MacArthur,,37.828814,-122.267163,MCAR,,0,MCAR,4
+L10-2,905102,Castro Valley,,37.690776,-122.075615,CAST,,0,CAST,2
+L20-2,905202,West Dublin / Pleasanton,,37.699760,-121.928301,WDUB,,0,WDUB,2
+L30-2,905302,Dublin / Pleasanton,,37.701692,-121.899242,DUBL,,0,DUBL,2
+M10-1,901101,West Oakland,,37.804923,-122.295144,WOAK,,0,WOAK,1
+M10-2,901102,West Oakland,,37.804862,-122.295185,WOAK,,0,WOAK,2
+M16-1,901161,Embarcadero,,37.792789,-122.397080,EMBR,,0,EMBR,1
+M16-2,901162,Embarcadero,,37.792741,-122.397019,EMBR,,0,EMBR,2
+M20-1,901201,Montgomery Street,,37.789213,-122.401642,MONT,,0,MONT,1
+M20-2,901202,Montgomery Street,,37.789143,-122.401558,MONT,,0,MONT,2
+M30-1,901301,Powell Street,,37.784645,-122.407387,POWL,,0,POWL,1
+M30-2,901302,Powell Street,,37.784576,-122.407302,POWL,,0,POWL,2
+M40-1,901401,Civic Center / UN Plaza,,37.779450,-122.413879,CIVC,,0,CIVC,1
+M40-2,901402,Civic Center / UN Plaza,,37.779380,-122.413804,CIVC,,0,CIVC,2
+M50-1,901501,16th Street / Mission,,37.765176,-122.419755,16TH,,0,16TH,1
+M50-2,901502,16th Street / Mission,,37.765180,-122.419679,16TH,,0,16TH,2
+M60-1,901601,24th Street / Mission,,37.752422,-122.418518,24TH,,0,24TH,1
+M60-2,901602,24th Street / Mission,,37.752426,-122.418445,24TH,,0,24TH,2
+M70-1,901701,Glen Park,,37.733269,-122.433557,GLEN,,0,GLEN,1
+M70-2,901702,Glen Park,,37.733212,-122.433498,GLEN,,0,GLEN,2
+M80-1,901801,Balboa Park,,37.721758,-122.447510,BALB,,0,BALB,1
+M80-2,901802,Balboa Park,,37.721748,-122.447433,BALB,,0,BALB,2
+M90-1,901901,Daly City,,37.706263,-122.468922,DALY,,0,DALY,1
+M90-2,901902,Daly City,,37.706227,-122.468851,DALY,,0,DALY,2
+M90-3,901903,Daly City,,37.706304,-122.468994,DALY,,0,DALY,3
+R10-1,904101,Ashby,,37.853069,-122.269750,ASHB,,0,ASHB,1
+R20-1,904201,Downtown Berkeley,,37.870117,-122.268078,DBRK,,0,DBRK,1
+R30-1,904301,North Berkeley,,37.874032,-122.283508,NBRK,,0,NBRK,1
+R40-1,904401,El Cerrito Plaza,,37.902633,-122.298895,PLZA,,0,PLZA,1
+R50-1,904501,El Cerrito Del Norte,,37.925205,-122.316868,DELN,,0,DELN,1
+R60-1,904601,Richmond,,37.936795,-122.353004,RICH,,0,RICH,1
+S20-2,909202,Warm Springs / South Fremont,,37.502307,-121.939358,WARM,,0,WARM,2
+S40-2,909402,Milpitas,,37.409836,-121.890803,MLPT,,0,MLPT,2
+S50-1,909501,Berryessa / North San Jose,,37.368474,-121.874759,BERY,,0,BERY,1
+S50-2,909502,Berryessa / North San Jose,,37.368495,-121.874661,BERY,,0,BERY,2
+W10-1,906101,Colma,,37.684642,-122.466167,COLM,,0,COLM,1
+W10-2,906102,Colma,,37.684691,-122.466115,COLM,,0,COLM,2
+W20-1,906201,South San Francisco,,37.664437,-122.444254,SSAN,,0,SSAN,1
+W20-2,906202,South San Francisco,,37.664497,-122.444193,SSAN,,0,SSAN,2
+W30-1,906301,San Bruno,,37.637720,-122.416384,SBRN,,0,SBRN,1
+W30-2,906302,San Bruno,,37.637751,-122.416292,SBRN,,0,SBRN,2
+W40-3,906403,Millbrae (Caltrain Transfer Platform),,37.600199,-122.386840,MLBR,,0,MLBR,3
+Y10-1,907101,San Francisco International Airport,,37.616189,-122.391960,SFIA,,0,SFIA,1
+Y10-2,907102,San Francisco International Airport,,37.616091,-122.392049,SFIA,,0,SFIA,2
+12TH,900109,12th Street / Oakland City Center,,37.803482,-122.271630,12TH,https://www.bart.gov/stations/12th,1,,
+19TH,900209,19th Street Oakland,,37.808078,-122.268758,19TH,https://www.bart.gov/stations/19th,1,,
+MCAR,900309,MacArthur,,37.828803,-122.267105,MCAR,https://www.bart.gov/stations/mcar,1,,
+WOAK,901109,West Oakland,,37.804888,-122.295151,WOAK,https://www.bart.gov/stations/woak,1,,
+EMBR,901169,Embarcadero,,37.792762,-122.397037,EMBR,https://www.bart.gov/stations/embr,1,,
+MONT,901209,Montgomery Street,,37.789173,-122.401587,MONT,https://www.bart.gov/stations/mont,1,,
+POWL,901309,Powell Street,,37.784606,-122.407331,POWL,https://www.bart.gov/stations/powl,1,,
+CIVC,901409,Civic Center / UN Plaza,,37.779408,-122.413826,CIVC,https://www.bart.gov/stations/civc,1,,
+16TH,901509,16th Street / Mission,,37.765173,-122.419704,16TH,https://www.bart.gov/stations/16th,1,,
+24TH,901609,24th Street / Mission,,37.752419,-122.418468,24TH,https://www.bart.gov/stations/24th,1,,
+GLEN,901709,Glen Park,,37.733235,-122.433515,GLEN,https://www.bart.gov/stations/glen,1,,
+BALB,901809,Balboa Park,,37.721747,-122.447457,BALB,https://www.bart.gov/stations/balb,1,,
+DALY,901909,Daly City,,37.706259,-122.468908,DALY,https://www.bart.gov/stations/daly,1,,
+LAKE,902109,Lake Merritt,,37.797322,-122.265247,LAKE,https://www.bart.gov/stations/lake,1,,
+FTVL,902209,Fruitvale,,37.774841,-122.224081,FTVL,https://www.bart.gov/stations/ftvl,1,,
+COLS,902309,Coliseum,,37.753576,-122.196716,COLS,https://www.bart.gov/stations/cols,1,,
+SANL,902409,San Leandro,,37.721784,-122.160740,SANL,https://www.bart.gov/stations/sanl,1,,
+BAYF,902509,Bay Fair,,37.696908,-122.126446,BAYF,https://www.bart.gov/stations/bayf,1,,
+HAYW,902609,Hayward,,37.669699,-122.086958,HAYW,https://www.bart.gov/stations/hayw,1,,
+SHAY,902709,South Hayward,,37.634340,-122.057182,SHAY,https://www.bart.gov/stations/shay,1,,
+UCTY,902809,Union City,,37.590735,-122.017248,UCTY,https://www.bart.gov/stations/ucty,1,,
+FRMT,902909,Fremont,,37.557480,-121.976619,FRMT,https://www.bart.gov/stations/frmt,1,,
+ROCK,903109,Rockridge,,37.844755,-122.251235,ROCK,https://www.bart.gov/stations/rock,1,,
+ORIN,903209,Orinda,,37.878481,-122.183667,ORIN,https://www.bart.gov/stations/orin,1,,
+LAFY,903309,Lafayette,,37.893183,-122.124620,LAFY,https://www.bart.gov/stations/lafy,1,,
+WCRK,903409,Walnut Creek,,37.905791,-122.067327,WCRK,https://www.bart.gov/stations/wcrk,1,,
+PHIL,903509,Pleasant Hill / Contra Costa Centre,,37.928434,-122.055971,PHIL,https://www.bart.gov/stations/phil,1,,
+CONC,903609,Concord,,37.973757,-122.029072,CONC,https://www.bart.gov/stations/conc,1,,
+NCON,903709,North Concord / Martinez,,38.003383,-122.024512,NCON,https://www.bart.gov/stations/ncon,1,,
+PITT,903809,Pittsburg / Bay Point,,38.018910,-121.944236,PITT,https://www.bart.gov/stations/pitt,1,,
+ASHB,904109,Ashby,,37.853072,-122.269771,ASHB,https://www.bart.gov/stations/ashb,1,,
+DBRK,904209,Downtown Berkeley,,37.870110,-122.268109,DBRK,https://www.bart.gov/stations/dbrk,1,,
+NBRK,904309,North Berkeley,,37.874005,-122.283523,NBRK,https://www.bart.gov/stations/nbrk,1,,
+PLZA,904409,El Cerrito Plaza,,37.902610,-122.298920,PLZA,https://www.bart.gov/stations/plza,1,,
+DELN,904509,El Cerrito Del Norte,,37.925184,-122.316892,DELN,https://www.bart.gov/stations/deln,1,,
+RICH,904609,Richmond,,37.936758,-122.353047,RICH,https://www.bart.gov/stations/rich,1,,
+CAST,905109,Castro Valley,,37.690737,-122.075601,CAST,https://www.bart.gov/stations/cast,1,,
+WDUB,905209,West Dublin / Pleasanton,,37.699721,-121.928277,WDUB,https://www.bart.gov/stations/wdub,1,,
+DUBL,905309,Dublin / Pleasanton,,37.701646,-121.899229,DUBL,https://www.bart.gov/stations/dubl,1,,
+COLM,906109,Colma,,37.684635,-122.466157,COLM,https://www.bart.gov/stations/colm,1,,
+SSAN,906209,South San Francisco,,37.664462,-122.444211,SSAN,https://www.bart.gov/stations/ssan,1,,
+SBRN,906309,San Bruno,,37.637730,-122.416326,SBRN,https://www.bart.gov/stations/sbrn,1,,
+MLBR,906409,Millbrae,,37.600237,-122.386757,MLBR,https://www.bart.gov/stations/mlbr,1,,
+SFIA,907109,San Francisco International Airport,,37.616091,-122.391954,SFIA,https://www.bart.gov/stations/sfia,1,,
+PCTR,908209,Pittsburg Center,,38.016847,-121.889062,PCTR,https://www.bart.gov/stations/pctr,1,,
+ANTC,908309,Antioch,,37.995373,-121.780346,ANTC,https://www.bart.gov/stations/antc,1,,
+WARM,909209,Warm Springs / South Fremont,,37.502285,-121.939395,WARM,https://www.bart.gov/stations/warm,1,,
+MLPT,909409,Milpitas,,37.410277,-121.891081,MLPT,https://www.bart.gov/stations/mlpt,1,,
+BERY,909509,Berryessa / North San Jose,,37.368473,-121.874681,BERY,https://www.bart.gov/stations/bery,1,,

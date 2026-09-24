@@ -1,0 +1,11 @@
+route_id,service_id,trip_id,trip_short_name,trip_headsign,direction_id,block_id,shape_id,bikes_allowed,wheelchair_accessible,trip_type,drt_max_travel_time,drt_avg_travel_time,drt_advance_book_min,drt_pickup_message,drt_drop_off_message,continuous_pickup_message,continuous_drop_off_message,tts_trip_headsign,tts_trip_short_name
+1024,c_24582_b_none_d_0,t_2113634_b_none_tn_1,,Journal Square via Hoboken,0,,p_902146,,,,,,,,,,,,
+1024,c_24582_b_none_d_0,t_2113635_b_none_tn_0,,33rd via Hoboken,1,,p_902145,,,,,,,,,,,,
+1024,c_24582_b_none_d_0,t_2113645_b_none_tn_1,,33rd Street,1,,p_1305101,,,,,,,,,,,,
+1024,c_70362_b_none_d_0,t_5849002_b_none_tn_0,,33rd via Hoboken,1,,p_1436922,,,,,,,,,,,,
+859,c_67314_b_none_d_0,t_5302603_b_none_tn_1,,Hoboken,0,,p_4502,,,,,,,,,,,,
+860,c_67314_b_none_d_0,t_5302287_b_none_tn_0,,Hoboken,0,,p_4507,,,,,,,,,,,,
+860,c_67314_b_none_d_0,t_5302274_b_none_tn_0,,World Trade Center,1,,p_4495,,,,,,,,,,,,
+862,c_67317_b_none_d_0,t_2023635_b_none_tn_1,,World Trade Center,1,,p_4496,,,,,,,,,,,,
+862,c_70208_b_none_d_0,t_5816271_b_none_tn_0,,Newark,0,,p_1436534,,,,,,,,,,,,
+862,c_70362_b_none_d_0,t_5849011_b_none_tn_1,,World Trade Center,1,,p_1436923,,,,,,,,,,,,

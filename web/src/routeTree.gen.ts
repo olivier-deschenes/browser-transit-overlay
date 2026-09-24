@@ -9,86 +9,129 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
-import { Route as AssistanceRouteImport } from './routes/assistance'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
+import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
+import { Route as Char123LocaleChar125ConfidentialiteRouteImport } from './routes/{-$locale}/confidentialite'
+import { Route as Char123LocaleChar125AssistanceRouteImport } from './routes/{-$locale}/assistance'
 
-const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
-  id: '/confidentialite',
-  path: '/confidentialite',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AssistanceRoute = AssistanceRouteImport.update({
-  id: '/assistance',
-  path: '/assistance',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const Char123LocaleChar125RouteRoute =
+  Char123LocaleChar125RouteRouteImport.update({
+    id: '/{-$locale}',
+    path: '/{-$locale}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char123LocaleChar125IndexRoute =
+  Char123LocaleChar125IndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125ConfidentialiteRoute =
+  Char123LocaleChar125ConfidentialiteRouteImport.update({
+    id: '/confidentialite',
+    path: '/confidentialite',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125AssistanceRoute =
+  Char123LocaleChar125AssistanceRouteImport.update({
+    id: '/assistance',
+    path: '/assistance',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/assistance': typeof AssistanceRoute
-  '/confidentialite': typeof ConfidentialiteRoute
+  '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/{-$locale}/assistance': typeof Char123LocaleChar125AssistanceRoute
+  '/{-$locale}/confidentialite': typeof Char123LocaleChar125ConfidentialiteRoute
+  '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/assistance': typeof AssistanceRoute
-  '/confidentialite': typeof ConfidentialiteRoute
+  '/{-$locale}/assistance': typeof Char123LocaleChar125AssistanceRoute
+  '/{-$locale}/confidentialite': typeof Char123LocaleChar125ConfidentialiteRoute
+  '/{-$locale}': typeof Char123LocaleChar125IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/assistance': typeof AssistanceRoute
-  '/confidentialite': typeof ConfidentialiteRoute
+  '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/{-$locale}/assistance': typeof Char123LocaleChar125AssistanceRoute
+  '/{-$locale}/confidentialite': typeof Char123LocaleChar125ConfidentialiteRoute
+  '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assistance' | '/confidentialite'
+  fullPaths:
+    | '/{-$locale}'
+    | '/{-$locale}/assistance'
+    | '/{-$locale}/confidentialite'
+    | '/{-$locale}/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assistance' | '/confidentialite'
-  id: '__root__' | '/' | '/assistance' | '/confidentialite'
+  to: '/{-$locale}/assistance' | '/{-$locale}/confidentialite' | '/{-$locale}'
+  id:
+    | '__root__'
+    | '/{-$locale}'
+    | '/{-$locale}/assistance'
+    | '/{-$locale}/confidentialite'
+    | '/{-$locale}/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AssistanceRoute: typeof AssistanceRoute
-  ConfidentialiteRoute: typeof ConfidentialiteRoute
+  Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/confidentialite': {
-      id: '/confidentialite'
-      path: '/confidentialite'
-      fullPath: '/confidentialite'
-      preLoaderRoute: typeof ConfidentialiteRouteImport
+    '/{-$locale}': {
+      id: '/{-$locale}'
+      path: '/{-$locale}'
+      fullPath: '/{-$locale}'
+      preLoaderRoute: typeof Char123LocaleChar125RouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/assistance': {
-      id: '/assistance'
-      path: '/assistance'
-      fullPath: '/assistance'
-      preLoaderRoute: typeof AssistanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
+    '/{-$locale}/': {
+      id: '/{-$locale}/'
       path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/{-$locale}/'
+      preLoaderRoute: typeof Char123LocaleChar125IndexRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/confidentialite': {
+      id: '/{-$locale}/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/{-$locale}/confidentialite'
+      preLoaderRoute: typeof Char123LocaleChar125ConfidentialiteRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/assistance': {
+      id: '/{-$locale}/assistance'
+      path: '/assistance'
+      fullPath: '/{-$locale}/assistance'
+      preLoaderRoute: typeof Char123LocaleChar125AssistanceRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
     }
   }
 }
 
+interface Char123LocaleChar125RouteRouteChildren {
+  Char123LocaleChar125AssistanceRoute: typeof Char123LocaleChar125AssistanceRoute
+  Char123LocaleChar125ConfidentialiteRoute: typeof Char123LocaleChar125ConfidentialiteRoute
+  Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
+}
+
+const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
+  {
+    Char123LocaleChar125AssistanceRoute: Char123LocaleChar125AssistanceRoute,
+    Char123LocaleChar125ConfidentialiteRoute:
+      Char123LocaleChar125ConfidentialiteRoute,
+    Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
+  }
+
+const Char123LocaleChar125RouteRouteWithChildren =
+  Char123LocaleChar125RouteRoute._addFileChildren(
+    Char123LocaleChar125RouteRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AssistanceRoute: AssistanceRoute,
-  ConfidentialiteRoute: ConfidentialiteRoute,
+  Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

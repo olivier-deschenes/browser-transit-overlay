@@ -44,7 +44,7 @@ Ids are three levels deep: `montreal:stm:1` is a city, an operator, and that ope
 2. Add it to `CITIES` in `data/scripts/cities/__init__.py`.
 3. Declare the city in `extension/networks.js`: the country it is in, the origin its coordinates are measured from, the bounds a viewport must fall inside for this network to be the one drawn, its data file, and its operators and lines. An operator carries the licence its own feed is published under and the kind of service it runs (`mode`), which a line running something else states for itself; two operators on one map need not agree on either.
 4. Name the city, each operator, and each line in every language block of `extension/i18n.js`: `city.<city>.name`, `system.<city>:<operator>.name`, and `line.<city>:<operator>:<line>.name` and `.detail`. A country or a kind of service the catalogue has not carried before needs a name too — `country.<country>.name`, `mode.<mode>.name` — since the settings page offers both as filters.
-5. Run the generator. `npm test` checks that the registry and the generated geometry name the same lines, that a city's bounds contain everything it draws, and that every language names everything the registry declares.
+5. Run the generator. The website's list of cities and lines is built from the same registry and names, so there is nothing to update there. `npm test` checks that the registry and the generated geometry name the same lines, that a city's bounds contain everything it draws, and that every language names everything the registry declares.
 
 Settings need no migration: a new city, operator or line is absent from stored settings and therefore ships switched on.
 

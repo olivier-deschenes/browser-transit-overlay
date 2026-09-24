@@ -171,7 +171,7 @@ Attribution, one line per city, and the line each city's geometry file carries:
 - `miami.json`: **Contains data from Miami-Dade County, modified.**
 - `baltimore.json`: **Contains data from the Maryland Transit Administration, modified.**
 
-`extension/networks.js` holds the source and licence links for each operator, and the extension displays that attribution on its maps and settings page. Keep these notices when redistributing the data. Packaged extensions also include the CC BY 4.0 text as `LICENSE-DATA.txt`; the other licences are linked rather than bundled, which is what they ask for.
+`extension/networks.js` holds the source and licence links for each operator, and the extension displays that attribution on its maps and settings page. The website serves the same geometry to draw its own map: it credits each city's publishers, with their licences, on the map and on the city's page, and prints the city's line above on that page. Keep these notices when redistributing the data. Packaged extensions also include the CC BY 4.0 text as `LICENSE-DATA.txt`; the other licences are linked rather than bundled, which is what they ask for.
 
 `toulouse.json` and `rennes.json` are derived from ODbL databases, so they are themselves offered under the ODbL 1.0: redistributing them, adapted or not, carries that licence and its share-alike condition with them. The other geometry files carry the terms of the data they came from, as listed above.
 

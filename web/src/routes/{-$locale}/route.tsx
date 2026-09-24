@@ -7,7 +7,6 @@ import {
 import { useEffect } from 'react'
 import catalogs from 'virtual:extension-catalog'
 
-import { LanguageSwitcher } from '../../components/language-switcher'
 import {
   DEFAULT_LOCALE,
   browserLocale,
@@ -40,7 +39,7 @@ export const Route = createFileRoute('/{-$locale}')({
 })
 
 // Names whichever cities the extension draws: "Montréal, Toronto, … et
-// Rennes", or "…, and Rennes".
+// Baltimore", or "…, and Baltimore".
 function description(locale: Locale) {
   const names = new Intl.ListFormat(locale, { type: 'conjunction' }).format(
     catalogs[locale].countries.flatMap(({ cities }) =>
@@ -71,15 +70,12 @@ function LocaleLayout() {
           ...previous,
           locale: localeParam(preferred),
         }),
+        search: true,
+        hash: true,
         replace: true,
       })
     }
   }, [locale, navigate])
 
-  return (
-    <>
-      <LanguageSwitcher />
-      <Outlet />
-    </>
-  )
+  return <Outlet />
 }

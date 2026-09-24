@@ -122,7 +122,7 @@ Adding a message works the same way. Add it to every block, and write the key ou
 | Path | Purpose |
 | --- | --- |
 | [`extension/`](extension/) | Manifest V3 extension: [network registry](extension/networks.js), [languages](extension/i18n.js), [settings](extension/settings.js), [site adapters](extension/sites.js), [station name placement](extension/labels.js), and [bundled geometry](extension/networks/) |
-| [`web/`](web/) | TanStack Start / React / Tailwind support and privacy website ([guide](web/README.md)) |
+| [`web/`](web/) | TanStack Start / React / Tailwind website: a map of every supported line, and the support and privacy pages ([guide](web/README.md)) |
 | [`data/`](data/) | STM, TTC and French source files and the [per-city network generators](data/scripts/cities/) ([guide](data/README.md)) |
 | [`rem_data/`](rem_data/) | REM GTFS source subset and original licence |
 | [`scripts/`](scripts/) | Reproducible [extension packaging](scripts/package_extension.py) |

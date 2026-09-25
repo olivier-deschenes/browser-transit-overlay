@@ -1,6 +1,22 @@
-# Support and privacy website
+# Website
 
-The French-language website for the Transport en commun extension uses TanStack Start, TanStack Router, React, and Tailwind CSS. It serves `/`, `/assistance`, and `/confidentialite` and prerenders the pages for deployment to Cloudflare Workers.
+The website for the Transport en commun extension is a map of every line the extension draws. It uses TanStack Start, TanStack Router, TanStack Query, TanStack Pacer, React, Tailwind CSS and shadcn/ui, draws with MapLibre GL JS through mapcn's map component, and prerenders every page for deployment to Cloudflare Workers.
+
+## Pages
+
+| Path                                  | What it shows                                                                                                                                      |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                                   | Every city on the map, and the list of them by country, each with its lines as dots of their colours.                                              |
+| `/?q=berri`                           | The same list narrowed to the cities, lines and stations named like the search, each line and station under its city.                              |
+| `/montreal`, `/paris`, `/new-york`, … | One city's operators and lines, with the stations each calls at, and the city's lines and stations on the map. One page per city in the catalogue. |
+| `/montreal#stm:2`                     | The same page with one line picked out: the map fades the others and the list marks it.                                                            |
+| `/assistance`, `/confidentialite`     | Support and the privacy policy.                                                                                                                    |
+
+Every page also exists in English under `/en`. The map is shared by the home page and the city pages, so going from one to another moves the map rather than loading a new one.
+
+A picked line lives in the fragment rather than the query string: it is part of a city's page rather than a page of its own, and the router only compares fragments once the page runs in the browser, so a prerendered page and its first render in the browser agree.
+
+A search lives in the query string, so that coming back to the list from a city finds it as it was left. The search box only updates it once the reader pauses in their typing, debounced with TanStack Pacer. Like a picked line, the search is only read once the page runs in the browser: the prerendered page lists every city.
 
 ## Local development
 
@@ -21,7 +37,29 @@ npm run build
 npm run preview
 ```
 
+## Languages
+
+The site is written in the extension's two languages and picks between them the way the extension does: the language the reader chose with the switcher at the foot of each page, or else the first their browser prefers, or else English. French keeps the unprefixed URLs, which the Chrome Web Store listing links to; English lives under `/en` (the route segment is TanStack Router's optional `{-$locale}` parameter). A prerendered page is served in the language its URL names, and a reader who prefers the other one is moved to it once the page loads.
+
+Shared words live in `src/i18n.ts` and each page keeps its own, one block per language; every other language is typed after the French block, so a missing string fails `npm run typecheck`. The languages themselves are listed in `src/locales.ts`. The basemap names places in the page's language where OpenStreetMap has a name in it.
+
+## Cities, lines and geometry
+
+The extension's name, and the list of every city, network and line it draws, are not written in the site: `plugins/extension-catalog.ts` runs `extension/networks.js` and `extension/i18n.js` at build time, the way Chrome loads them, reads each city's geometry from `extension/networks/`, and serves the result as the `virtual:extension-catalog` module:
+
+- its default export is the catalogue, in each of the site's languages, in the names the extension itself uses, with each city's and line's extent and station counts;
+- its `networks` export loads one city's lines and stations as GeoJSON. Each city is a chunk of its own, fetched with TanStack Query the first time the map comes near the city or a link to it is pointed at, and kept for the rest of the visit. The server's copy of the module has no geometry, since the server never draws a map.
+- its `stations` export loads the name of every city's stations, with the lines calling at each, for the search on the home page. It is one chunk, fetched the first time the search box is focused, and the server's copy of the module has none of it either.
+
+A city added to the extension's registry therefore appears on the next build, with a page of its own. A city, network or line the extension does not name in one of the site's languages, or does not draw, fails the build rather than publishing an incomplete site. In `npm run dev`, editing the registry, the translations or a city's geometry reloads the page.
+
 `npm run format` formats the website and applies lint fixes. The route tree is generated by TanStack; edit files in `src/routes/` instead of `src/routeTree.gen.ts`. The extension's behaviour tests are run from the repository root with `npm test`.
+
+## Components and the map
+
+Interface components come from shadcn/ui, installed with its CLI into `src/components/ui/` (`npx shadcn@latest add <component>`), and the map component from mapcn's registry the same way (`npx shadcn@latest add @mapcn/map`). They are formatted with the rest of the site but left out of its lint rules, so that the CLI can update them in place. The site's own map layers are in `src/components/map/`.
+
+The basemap is OpenFreeMap's Positron, or its Dark style when the reader's system is set to dark. OpenFreeMap needs no key; the reader's browser fetches its styles, tiles and glyphs from `tiles.openfreemap.org`. MapLibre's worker is bundled with the site rather than fetched from a CDN.
 
 ## Deploy your own copy
 

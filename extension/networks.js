@@ -70,6 +70,62 @@ const STM_ODBL_1 = {
   url: "https://opendatacommons.org/licenses/odbl/1-0/"
 };
 
+// American transit agencies rarely publish under an open licence. Most attach
+// an agreement of their own to the feed, and each is named here by its own
+// title; four publish their feed with no terms at all, and for those what is
+// linked is the page the feed is published from, which is where their
+// disclaimers are. Washington's network comes from the District's open data
+// portal instead of from WMATA, and that is plain CC BY 4.0.
+const STM_MTA_TERMS = {
+  label: "MTA data feed terms",
+  url: "https://www.mta.info/developers/terms-and-conditions"
+};
+
+const STM_CTA_LICENSE = {
+  label: "CTA Developer License Agreement",
+  url: "https://www.transitchicago.com/developers/terms/"
+};
+
+const STM_MASSDOT_LICENSE = {
+  label: "MassDOT Developers License Agreement",
+  url: "https://cdn.mbta.com/sites/default/files/2023-08/mbta-massdot-develop-license-agreement.pdf"
+};
+
+const STM_BART_LICENSE = {
+  label: "BART Developer License Agreement",
+  url: "https://www.bart.gov/schedules/developers/developer-license-agreement"
+};
+
+const STM_SEPTA_LICENSE = {
+  label: "SEPTA License Agreement",
+  url: "https://www.septa.org/license-agreement/"
+};
+
+const STM_LA_METRO_TERMS = {
+  label: "Metro Terms & Conditions",
+  url: "https://developer.metro.net/terms-conditions/"
+};
+
+const STM_PATH_FEED = {
+  label: "PATH GTFS",
+  url: "https://mobilitydatabase.org/feeds/gtfs/mdb-517"
+};
+
+const STM_MARTA_FEED = {
+  label: "MARTA developer resources",
+  url: "https://itsmarta.com/app-developer-resources.aspx"
+};
+
+const STM_MIAMI_DADE_FEED = {
+  label: "Miami-Dade County disclaimer",
+  url: "https://www.miamidade.gov/global/disclaimer/disclaimer.page"
+};
+
+const STM_MDOT_MTA_FEED = {
+  label: "MDOT MTA developer resources",
+  url: "https://www.mta.maryland.gov/developer-resources"
+};
+
 const STM_CITIES = [
   {
     id: "montreal",
@@ -427,6 +483,410 @@ const STM_CITIES = [
         ]
       }
     ]
+  },
+  {
+    id: "new-york",
+    country: "us",
+
+    origin: [-73.98, 40.75],
+
+    // The five boroughs, Hudson County and Newark for PATH, and the first
+    // towns of Westchester and Nassau a search spills into.
+    bounds: [
+      [-74.4, 40.45],
+      [-73.5, 41.1]
+    ],
+
+    data: "networks/new-york.json",
+
+    marketplaceSlug: "nyc",
+
+    systems: [
+      {
+        id: "subway",
+        mode: "metro",
+        attribution: {
+          label: "MTA",
+          license: STM_MTA_TERMS,
+          terms: "https://www.mta.info/developers"
+        },
+        // The colours the MTA's own feed declares, which are the ones on its
+        // current map. A trunk's services share its colour — the 4, 5 and 6
+        // are all Lexington Avenue green — and the shuttles share the L's
+        // grey, as they do on the map.
+        lines: [
+          { color: "#D82233", id: "1" },
+          { color: "#D82233", id: "2" },
+          { color: "#D82233", id: "3" },
+          { color: "#009952", id: "4" },
+          { color: "#009952", id: "5" },
+          { color: "#009952", id: "6" },
+          { color: "#9A38A1", id: "7" },
+          { color: "#0062CF", id: "a" },
+          { color: "#0062CF", id: "c" },
+          { color: "#0062CF", id: "e" },
+          { color: "#EB6800", id: "b" },
+          { color: "#EB6800", id: "d" },
+          { color: "#EB6800", id: "f" },
+          { color: "#EB6800", id: "m" },
+          { color: "#799534", id: "g" },
+          { color: "#8E5C33", id: "j" },
+          { color: "#7C858C", id: "l" },
+          { color: "#F6BC26", id: "n" },
+          { color: "#F6BC26", id: "q" },
+          { color: "#F6BC26", id: "r" },
+          { color: "#F6BC26", id: "w" },
+          { color: "#7C858C", id: "s" }
+        ]
+      },
+      {
+        id: "sir",
+        mode: "metro",
+        attribution: {
+          label: "MTA",
+          license: STM_MTA_TERMS,
+          terms: "https://www.mta.info/developers"
+        },
+        lines: [{ badge: "SIR", color: "#08179C", id: "sir" }]
+      },
+      {
+        id: "path",
+        mode: "metro",
+        attribution: {
+          label: "PATH",
+          license: STM_PATH_FEED,
+          terms: "https://www.panynj.gov/path/en/index.html"
+        },
+        // PATH's services by the terminals they run between, which is how its
+        // own map and its trains name them, in the colours the feed gives
+        // each.
+        lines: [
+          { badge: "NWK–WTC", color: "#D93A30", id: "nwk-wtc" },
+          { badge: "HOB–WTC", color: "#65C100", id: "hob-wtc" },
+          { badge: "JSQ–33", color: "#FF9900", id: "jsq-33" },
+          { badge: "HOB–33", color: "#4D92FB", id: "hob-33" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "washington",
+    country: "us",
+
+    origin: [-77.03, 38.9],
+
+    // Stops short of Baltimore's box to the north, where the two metro areas
+    // meet along the Patuxent.
+    bounds: [
+      [-77.65, 38.6],
+      [-76.7, 39.18]
+    ],
+
+    data: "networks/washington.json",
+
+    marketplaceSlug: "dc",
+
+    systems: [
+      {
+        id: "wmata",
+        mode: "metro",
+        attribution: {
+          label: "Open Data DC",
+          license: STM_CC_BY_4,
+          terms: "https://opendata.dc.gov/datasets/DCGIS::metro-lines-regional/about"
+        },
+        // The letters WMATA prints on each line's disc and the colours it
+        // prints them in, both as its own site serves them.
+        lines: [
+          { color: "#C80F2D", id: "r" },
+          { color: "#ED8B00", id: "o" },
+          { color: "#919D9D", id: "s" },
+          { color: "#009CDE", id: "b" },
+          { color: "#FFD100", id: "y" },
+          { color: "#00B140", id: "g" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chicago",
+    country: "us",
+
+    origin: [-87.65, 41.88],
+
+    bounds: [
+      [-88.2, 41.55],
+      [-87.45, 42.2]
+    ],
+
+    data: "networks/chicago.json",
+
+    marketplaceSlug: "chicago",
+
+    systems: [
+      {
+        id: "cta",
+        mode: "metro",
+        attribution: {
+          label: "CTA",
+          license: STM_CTA_LICENSE,
+          terms: "https://www.transitchicago.com/developers/gtfs/"
+        },
+        // The colours the CTA's feed declares. Its lines have no letter or
+        // number, only the colour, so the bullet carries the colour's name.
+        lines: [
+          { color: "#C60C30", id: "red" },
+          { color: "#00A1DE", id: "blue" },
+          { color: "#62361B", id: "brown" },
+          { color: "#009B3A", id: "green" },
+          { color: "#F9461C", id: "orange" },
+          { color: "#E27EA6", id: "pink" },
+          { color: "#522398", id: "purple" },
+          { color: "#F9E300", id: "yellow" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "boston",
+    country: "us",
+
+    origin: [-71.06, 42.36],
+
+    bounds: [
+      [-71.45, 42.1],
+      [-70.8, 42.6]
+    ],
+
+    data: "networks/boston.json",
+
+    marketplaceSlug: "boston",
+
+    systems: [
+      {
+        id: "mbta",
+        mode: "metro",
+        attribution: {
+          label: "MassDOT",
+          license: STM_MASSDOT_LICENSE,
+          terms: "https://www.mbta.com/developers/gtfs"
+        },
+        // The colours the MBTA's feed declares. The Mattapan trolley is drawn
+        // in the Red Line's colour, which it continues.
+        lines: [
+          { color: "#DA291C", id: "red" },
+          { color: "#DA291C", id: "mattapan", mode: "light-rail" },
+          { color: "#ED8B00", id: "orange" },
+          { color: "#003DA5", id: "blue" },
+          { color: "#00843D", id: "green", mode: "light-rail" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "san-francisco",
+    country: "us",
+
+    origin: [-122.27, 37.8],
+
+    // The Bay Area, from the Peninsula to Antioch and down to San José.
+    bounds: [
+      [-122.65, 37.2],
+      [-121.6, 38.15]
+    ],
+
+    data: "networks/san-francisco.json",
+
+    marketplaceSlug: "sanfrancisco",
+
+    systems: [
+      {
+        id: "bart",
+        mode: "metro",
+        attribution: {
+          label: "BART",
+          license: STM_BART_LICENSE,
+          terms: "https://www.bart.gov/schedules/developers/gtfs"
+        },
+        // The colours BART's own feed declares.
+        lines: [
+          { color: "#FF0000", id: "red" },
+          { color: "#FF9933", id: "orange" },
+          { color: "#FFFF33", id: "yellow" },
+          { color: "#339933", id: "green" },
+          { color: "#0099CC", id: "blue" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "philadelphia",
+    country: "us",
+
+    origin: [-75.16, 39.95],
+
+    bounds: [
+      [-75.6, 39.8],
+      [-74.85, 40.3]
+    ],
+
+    data: "networks/philadelphia.json",
+
+    marketplaceSlug: "philly",
+
+    systems: [
+      {
+        id: "septa",
+        mode: "metro",
+        attribution: {
+          label: "SEPTA",
+          license: STM_SEPTA_LICENSE,
+          terms: "https://github.com/septadev/GTFS"
+        },
+        // SEPTA Metro's letters and colours, as its feed declares them.
+        lines: [
+          { color: "#0097D6", id: "l" },
+          { color: "#F26100", id: "b" },
+          { color: "#5F249F", id: "m" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "los-angeles",
+    country: "us",
+
+    origin: [-118.25, 34.05],
+
+    bounds: [
+      [-118.8, 33.6],
+      [-117.6, 34.35]
+    ],
+
+    data: "networks/los-angeles.json",
+
+    marketplaceSlug: "la",
+
+    systems: [
+      {
+        id: "metro",
+        mode: "light-rail",
+        attribution: {
+          label: "LA Metro",
+          license: STM_LA_METRO_TERMS,
+          terms: "https://gitlab.com/LACMTA/gtfs_rail"
+        },
+        // Metro's letters and colours, as its feed declares them. Four of the
+        // six are light rail; the B and the D are the subway.
+        lines: [
+          { color: "#0072BC", id: "a" },
+          { color: "#EB131B", id: "b", mode: "metro" },
+          { color: "#58A738", id: "c" },
+          { color: "#A05DA5", id: "d", mode: "metro" },
+          { color: "#FDB913", id: "e" },
+          { color: "#E56DB1", id: "k" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "atlanta",
+    country: "us",
+
+    origin: [-84.39, 33.75],
+
+    bounds: [
+      [-84.7, 33.45],
+      [-84.0, 34.1]
+    ],
+
+    data: "networks/atlanta.json",
+
+    marketplaceSlug: "atlanta",
+
+    systems: [
+      {
+        id: "marta",
+        mode: "metro",
+        attribution: {
+          label: "MARTA",
+          license: STM_MARTA_FEED,
+          terms: "https://itsmarta.com/app-developer-resources.aspx"
+        },
+        lines: [
+          { color: "#CE242B", id: "red" },
+          { color: "#D4A723", id: "gold" },
+          { color: "#0075B2", id: "blue" },
+          { color: "#009D4B", id: "green" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "miami",
+    country: "us",
+
+    origin: [-80.25, 25.78],
+
+    bounds: [
+      [-80.55, 25.5],
+      [-80.1, 26.0]
+    ],
+
+    data: "networks/miami.json",
+
+    marketplaceSlug: "miami",
+
+    systems: [
+      {
+        id: "metrorail",
+        mode: "metro",
+        attribution: {
+          label: "Miami-Dade County",
+          license: STM_MIAMI_DADE_FEED,
+          terms:
+            "https://www.miamidade.gov/global/transportation/open-data-feeds.page"
+        },
+        // The county's feed gives both lines one route and one colour, so it
+        // says nothing about which line is which. These are the green and the
+        // orange the lines are commonly drawn in, as Wikipedia's route
+        // diagrams draw them; the county publishes no colour for either.
+        lines: [
+          { color: "#9DD165", id: "green" },
+          { color: "#FE4D1A", id: "orange" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "baltimore",
+    country: "us",
+
+    origin: [-76.62, 39.29],
+
+    bounds: [
+      [-76.95, 39.2],
+      [-76.4, 39.5]
+    ],
+
+    data: "networks/baltimore.json",
+
+    marketplaceSlug: "baltimore",
+
+    systems: [
+      {
+        id: "mta",
+        mode: "metro",
+        attribution: {
+          label: "MDOT MTA",
+          license: STM_MDOT_MTA_FEED,
+          terms: "https://www.mta.maryland.gov/developer-resources"
+        },
+        // One line, the Metro SubwayLink, in the green MDOT MTA's feed
+        // declares for it.
+        lines: [{ color: "#008000", id: "metro" }]
+      }
+    ]
   }
 ];
 
@@ -497,7 +957,13 @@ function stmCityById(id) {
 // from shouting. Both forms draw that bullet — the settings page as a grid of
 // them per city, the panel on the map for the one city being drawn — so what
 // is on it is settled here, beside the id it is read off.
-function stmLineBadge({ id }) {
+//
+// An id is lower case and a bullet is not always, so a line whose network
+// prints more than its first letter in capitals — the SIR, PATH's NWK–WTC —
+// says what its bullet reads with a badge of its own.
+function stmLineBadge({ badge, id }) {
+  if (badge) return badge;
+
   const short = id.slice(id.lastIndexOf(":") + 1);
 
   return short.charAt(0).toUpperCase() + short.slice(1);

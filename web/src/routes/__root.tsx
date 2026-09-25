@@ -1,8 +1,16 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+} from '@tanstack/react-router'
+import type { QueryClient } from '@tanstack/react-query'
 
+import { useLocale } from '../i18n'
 import appCss from '../styles.css?url'
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient
+}>()({
   head: () => ({
     meta: [
       {
@@ -11,14 +19,6 @@ export const Route = createRootRoute({
       {
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'Transport en commun pour Marketplace et Centris',
-      },
-      {
-        name: 'description',
-        content:
-          'Une extension Chrome qui affiche le métro de Montréal, le REM et le réseau de la TTC sur les cartes de logements de Facebook Marketplace.',
       },
     ],
     links: [
@@ -57,8 +57,10 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const locale = useLocale()
+
   return (
-    <html lang="fr">
+    <html lang={locale}>
       <head>
         <HeadContent />
       </head>

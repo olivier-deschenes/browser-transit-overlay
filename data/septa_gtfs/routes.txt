@@ -1,0 +1,6 @@
+route_id,agency_id,route_short_name,route_long_name,route_type,route_url,route_color,route_text_color,route_sort_order,network_id
+L1,1,L1,Market-Frankford Line All Stops,1,https://www.septa.org/schedules/L1,0097D6,FFFFFF,10011,bus_metro
+B1,1,B1,Broad Street Line Local,1,https://www.septa.org/schedules/B1,F26100,FFFFFF,10021,bus_metro
+B2,1,B2,Broad Street Line Express,1,https://www.septa.org/schedules/B2,F26100,FFFFFF,10022,bus_metro
+B3,1,B3,Broad-Ridge Spur,1,https://www.septa.org/schedules/B3,F26100,FFFFFF,10023,bus_metro
+M1,1,M1,Norristown High Speed Line Local,1,https://www.septa.org/schedules/M1,5F249F,FFFFFF,10061,bus_metro

@@ -1,0 +1,4 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+13686,TL,,Canada Line,,1,https://translink.ca/schedules-and-maps/line/canada-line/direction/0/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_line&utm_term=canada-line,007c9f,FFFFFF
+30052,TL,,Millennium Line,,1,https://translink.ca/schedules-and-maps/line/millennium-line/direction/0/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_line&utm_term=millennium-line,ffcd00,333333
+30053,TL,,Expo Line,,1,https://translink.ca/schedules-and-maps/line/expo-line/direction/0/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_line&utm_term=expo-line,0033a0,FFFFFF

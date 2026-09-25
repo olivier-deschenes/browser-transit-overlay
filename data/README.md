@@ -69,6 +69,18 @@ Settings need no migration. A new operator or line is absent from stored setting
 
 The TTC publishes one feed for the whole system, and 84 MB of it is buses. What is kept is the five rapid-transit routes, and of those only one trip in each direction of each line: the one calling at the most stations, and among ties the one drawn with the most points. Every other trip on those lines was checked to run over track and stations these ten already cover, so the cut costs the drawing nothing. Rebuild the slice the same way from a newer feed rather than by hand.
 
+### Canada
+
+Five more networks beside Montréal's and Toronto's, all downloaded 24 September 2026 from the publishers' own URLs, listed in each directory's `terms.txt` with the terms that come with them. Each is cut [the American way](#united-states).
+
+- `data/translink_gtfs/`: Vancouver's SkyTrain — the Expo, Millennium and Canada lines — out of TransLink's feed for the whole region (feed version `26SEP_20260918`), without the West Coast Express or the SeaBus. TransLink's own terms.
+- `data/calgarytransit_gtfs/`: the CTrain's Red and Blue lines, out of the City of Calgary's Calgary Transit feed. Open Government Licence – City of Calgary.
+- `data/ets_gtfs/`: Edmonton's Capital, Metro and Valley lines, out of the City of Edmonton's ETS feed (`260918_1122`). Open Government Licence – Edmonton.
+- `data/octranspo_gtfs/`: Ottawa's O-Train Lines 1, 2 and 4, out of OC Transpo's feed (`S1000518`). Open Government Licence – City of Ottawa.
+- `data/grt_gtfs/`: Waterloo Region's ION, from the light rail feed Grand River Transit publishes apart from its buses. Region of Waterloo Open Data Licence.
+
+Calgary's and Waterloo's feeds give each direction's platform a name of its own and no parent station, so both cities name their stations themselves. Edmonton's lists the platforms at its LRT garages and the tail track past Health Sciences as stops where no one may board or alight; the GTFS reader leaves any such stop out of the stations.
+
 ### France
 
 Six métro networks, all reached through [the national access point](https://transport.data.gouv.fr/) and all downloaded 17 September 2026. Each directory's `terms.txt` links the dataset it came from and the licence it came out under.

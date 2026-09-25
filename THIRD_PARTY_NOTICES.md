@@ -27,6 +27,41 @@ Source repository: [browser-transit-overlay](https://github.com/olivier-deschene
 - Licence: [Open Government Licence – Toronto](https://www.toronto.ca/city-government/data-research-maps/open-data/open-data-licence/), which the portal applies to the data it publishes.
 - That licence asks for one attribution statement in particular, and `extension/networks/toronto.json` carries it word for word.
 
+## TransLink transit data
+
+`data/translink_gtfs/` contains the route, trip, shape, stop, and stop time files used from **TransLink**'s GTFS static dataset, for the SkyTrain's Expo, Millennium and Canada lines.
+
+- Source: [GTFS Static Data](https://www.translink.ca/about-us/doing-business-with-translink/app-developer-resources/gtfs/gtfs-data), also linked in `data/translink_gtfs/terms.txt` (feed version `26SEP_20260918`).
+- Terms: TransLink's terms of use on that page, which grant a limited, revocable, non-exclusive licence to use, reproduce and redistribute the data, and ask that it be presented with a legend of TransLink's wording. `extension/networks/vancouver.json` carries that legend word for word.
+
+## Calgary Transit transit data
+
+`data/calgarytransit_gtfs/` contains the route, trip, shape, stop, and stop time files used from the **City of Calgary**'s Calgary Transit Scheduling Data, for the CTrain's Red and Blue lines.
+
+- Source: [Calgary Transit Scheduling Data](https://data.calgary.ca/Transportation-Transit/Calgary-Transit-Scheduling-Data/npk7-z3bj) on Open Calgary, also linked in `data/calgarytransit_gtfs/terms.txt`.
+- Licence: [Open Government Licence – City of Calgary](https://data.calgary.ca/stories/s/Open-Calgary-Terms-of-Use/u45n-7awa). `extension/networks/calgary.json` carries its attribution statement word for word.
+
+## ETS transit data
+
+`data/ets_gtfs/` contains the route, trip, shape, stop, and stop time files used from the **City of Edmonton**'s Edmonton Transit Service GTFS dataset, for the Capital, Metro and Valley LRT lines.
+
+- Source: [GTFS Downloads](https://data.edmonton.ca/Transit/GTFS-Downloads/yiem-dcbw) on the City of Edmonton Open Data Portal, also linked in `data/ets_gtfs/terms.txt` (feed version `260918_1122`).
+- Licence: [Open Government Licence – Edmonton](https://data.edmonton.ca/stories/s/City-of-Edmonton-Open-Data-Terms-of-Use/msh8-if28/). `extension/networks/edmonton.json` carries its attribution statement word for word.
+
+## OC Transpo transit data
+
+`data/octranspo_gtfs/` contains the route, trip, shape, stop, and stop time files used from the **City of Ottawa**'s OC Transpo GTFS dataset, for O-Train Lines 1, 2 and 4.
+
+- Source: [OC Transpo Schedules](https://open.ottawa.ca/datasets/ottawa::oc-transpo-schedules) on Open Ottawa, also linked in `data/octranspo_gtfs/terms.txt` (feed version `S1000518`).
+- Licence: [Open Government Licence – City of Ottawa](https://open.ottawa.ca/pages/open-data-licence). `extension/networks/ottawa.json` carries its attribution statement word for word.
+
+## GRT transit data
+
+`data/grt_gtfs/` contains the route, trip, shape, stop, and stop time files used from the **Regional Municipality of Waterloo**'s Grand River Transit ION light rail GTFS feed.
+
+- Source: [GRT static feeds](https://webapps.regionofwaterloo.ca/api/grt-routes/), the light rail feed, as linked from [GRT open data](https://www.grt.ca/about-grt/open-data/) and in `data/grt_gtfs/terms.txt`.
+- Licence: [Region of Waterloo Open Data Licence](https://www.regionofwaterloo.ca/government-and-council/transparency-and-accountability/open-data/). It asks for no credit, but gives the wording to use for one, and `extension/networks/waterloo.json` carries it.
+
 ## Île-de-France Mobilités transit data
 
 `data/idfm_gtfs/` contains the route, trip, shape, stop, and stop time files used from the **Île-de-France Mobilités (IDFM)** GTFS dataset, which covers the Paris métro and the RER.
@@ -154,6 +189,11 @@ Attribution, one line per city, and the line each city's geometry file carries:
 
 - `montreal.json`: **Contains modified STM and Réseau express métropolitain data, licensed under CC BY 4.0.**
 - `toronto.json`: **Contains information licensed under the Open Government Licence – Toronto, modified.**
+- `vancouver.json`: **Route and arrival data used in this product or service is provided by permission of TransLink. TransLink assumes no responsibility for the accuracy or currency of the Data used in this product or service. Modified.**
+- `calgary.json`: **Contains information licensed under the Open Government Licence – City of Calgary, modified.**
+- `edmonton.json`: **Contains information licensed under the Open Government Licence – City of Edmonton, modified.**
+- `ottawa.json`: **Contains information licensed under the Open Government Licence – City of Ottawa, modified.**
+- `waterloo.json`: **Contains information provided by the Regional Municipality of Waterloo under licence, modified.**
 - `paris.json`: **Contains data from Île-de-France Mobilités, licensed under the Licence Mobilités, modified.**
 - `lyon.json`: **Contains data from SYTRAL Mobilités, licensed under the Licence Ouverte 2.0, modified.**
 - `marseille.json`: **Contains data from the Métropole d'Aix-Marseille-Provence, licensed under the Licence Ouverte 2.0, modified.**
@@ -175,10 +215,10 @@ Attribution, one line per city, and the line each city's geometry file carries:
 
 `toulouse.json` and `rennes.json` are derived from ODbL databases, so they are themselves offered under the ODbL 1.0: redistributing them, adapted or not, carries that licence and its share-alike condition with them. The other geometry files carry the terms of the data they came from, as listed above.
 
-These are bundled snapshots. The Montréal inputs' original download dates were not recorded; the Toronto feed was downloaded on 15 September 2026, the six French sources on 17 September 2026, and the ten American sources on 24 September 2026. They do not guarantee current service, routing, or station availability. No transit provider endorses this project.
+These are bundled snapshots. The Montréal inputs' original download dates were not recorded; the Toronto feed was downloaded on 15 September 2026, the five other Canadian feeds on 24 September 2026, the six French sources on 17 September 2026, and the ten American sources on 24 September 2026. They do not guarantee current service, routing, or station availability. No transit provider endorses this project.
 
 ## Dependencies and images
 
 JavaScript and Python dependencies retain their own licences, available in their distributions. The extension itself has no third-party runtime library dependencies.
 
-Screenshots illustrate the extension on third-party websites. The underlying map imagery, website interface, and third-party marks remain subject to their owners' rights and terms; the MIT licence does not grant rights to those elements. Facebook, Centris, Local Logic, STM, REM, TTC, Île-de-France Mobilités, RATP, TCL, SYTRAL, RTM, ilévia, Tisséo, STAR, MTA, PATH, WMATA, CTA, MBTA, BART, SEPTA, LA Metro, MARTA, Miami-Dade, and MDOT MTA names identify supported services or data sources and do not imply affiliation or endorsement.
+Screenshots illustrate the extension on third-party websites. The underlying map imagery, website interface, and third-party marks remain subject to their owners' rights and terms; the MIT licence does not grant rights to those elements. Facebook, Centris, Local Logic, STM, REM, TTC, TransLink, SkyTrain, Calgary Transit, CTrain, ETS, OC Transpo, O-Train, GRT, ION, Île-de-France Mobilités, RATP, TCL, SYTRAL, RTM, ilévia, Tisséo, STAR, MTA, PATH, WMATA, CTA, MBTA, BART, SEPTA, LA Metro, MARTA, Miami-Dade, and MDOT MTA names identify supported services or data sources and do not imply affiliation or endorsement.

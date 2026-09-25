@@ -49,6 +49,36 @@ const STM_OGL_TORONTO = {
   url: "https://www.toronto.ca/city-government/data-research-maps/open-data/open-data-licence/"
 };
 
+// Calgary, Edmonton and Ottawa put their transit feeds on their open data
+// portals under their own adaptations of the same Open Government Licence the
+// City of Toronto uses; the Region of Waterloo adapted the UK's. TransLink
+// publishes under no licence of that kind, only terms of its own that allow
+// redistribution with a legend of its wording.
+const STM_TRANSLINK_TERMS = {
+  label: "TransLink GTFS terms of use",
+  url: "https://www.translink.ca/about-us/doing-business-with-translink/app-developer-resources/gtfs/gtfs-data"
+};
+
+const STM_OGL_CALGARY = {
+  label: "Open Government Licence – City of Calgary",
+  url: "https://data.calgary.ca/stories/s/Open-Calgary-Terms-of-Use/u45n-7awa"
+};
+
+const STM_OGL_EDMONTON = {
+  label: "Open Government Licence – Edmonton",
+  url: "https://data.edmonton.ca/stories/s/City-of-Edmonton-Open-Data-Terms-of-Use/msh8-if28/"
+};
+
+const STM_OGL_OTTAWA = {
+  label: "Open Government Licence – City of Ottawa",
+  url: "https://open.ottawa.ca/pages/open-data-licence"
+};
+
+const STM_WATERLOO_LICENCE = {
+  label: "Region of Waterloo Open Data Licence",
+  url: "https://www.regionofwaterloo.ca/government-and-council/transparency-and-accountability/open-data/"
+};
+
 // France publishes transit through one national access point, and the three
 // sets of terms below are the ones the six networks here came out under. The
 // Licence Mobilités is the one the mobility law wrote for transit feeds
@@ -239,6 +269,174 @@ const STM_CITIES = [
           { color: "#EB8738", id: "5", mode: "light-rail" },
           { color: "#969594", id: "6", mode: "light-rail" }
         ]
+      }
+    ]
+  },
+  {
+    id: "vancouver",
+    country: "ca",
+
+    origin: [-123.05, 49.25],
+
+    // Metro Vancouver, from the North Shore to the border and out past
+    // Langley, though SkyTrain itself stops at King George and Lafarge Lake.
+    bounds: [
+      [-123.3, 49.0],
+      [-122.4, 49.45]
+    ],
+
+    data: "networks/vancouver.json",
+
+    marketplaceSlug: "vancouver",
+
+    systems: [
+      {
+        id: "translink",
+        mode: "metro",
+        attribution: {
+          label: "TransLink",
+          license: STM_TRANSLINK_TERMS,
+          terms:
+            "https://www.translink.ca/about-us/doing-business-with-translink/app-developer-resources/gtfs/gtfs-data"
+        },
+        // The colours TransLink's own feed declares, which are its map's:
+        // Pantone 286, 116 and the Canada Line's teal.
+        lines: [
+          { color: "#0033A0", id: "expo" },
+          { color: "#FFCD00", id: "millennium" },
+          { color: "#007C9F", id: "canada" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "calgary",
+    country: "ca",
+
+    origin: [-114.07, 51.05],
+
+    bounds: [
+      [-114.4, 50.8],
+      [-113.75, 51.25]
+    ],
+
+    data: "networks/calgary.json",
+
+    marketplaceSlug: "calgary",
+
+    systems: [
+      {
+        id: "ctrain",
+        mode: "light-rail",
+        attribution: {
+          label: "Calgary Transit",
+          license: STM_OGL_CALGARY,
+          terms:
+            "https://data.calgary.ca/Transportation-Transit/Calgary-Transit-Scheduling-Data/npk7-z3bj"
+        },
+        // Calgary Transit's feed declares no colours. These are the red and
+        // the blue the lines are commonly drawn in, as Wikipedia's route
+        // diagrams draw them.
+        lines: [
+          { color: "#D61B32", id: "red" },
+          { color: "#008AB1", id: "blue" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "edmonton",
+    country: "ca",
+
+    origin: [-113.49, 53.54],
+
+    bounds: [
+      [-113.8, 53.35],
+      [-113.25, 53.75]
+    ],
+
+    data: "networks/edmonton.json",
+
+    marketplaceSlug: "edmonton",
+
+    systems: [
+      {
+        id: "ets",
+        mode: "light-rail",
+        attribution: {
+          label: "ETS",
+          license: STM_OGL_EDMONTON,
+          terms: "https://data.edmonton.ca/Transit/GTFS-Downloads/yiem-dcbw"
+        },
+        // The colours the ETS feed declares.
+        lines: [
+          { color: "#0081BC", id: "capital" },
+          { color: "#FF0000", id: "metro" },
+          { color: "#008000", id: "valley" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "ottawa",
+    country: "ca",
+
+    origin: [-75.7, 45.4],
+
+    // Ottawa and Gatineau together, since a rental search here routinely
+    // crosses the river.
+    bounds: [
+      [-76.1, 45.1],
+      [-75.35, 45.6]
+    ],
+
+    data: "networks/ottawa.json",
+
+    marketplaceSlug: "ottawa",
+
+    systems: [
+      {
+        id: "octranspo",
+        mode: "light-rail",
+        attribution: {
+          label: "OC Transpo",
+          license: STM_OGL_OTTAWA,
+          terms: "https://open.ottawa.ca/datasets/ottawa::oc-transpo-schedules"
+        },
+        // The colours OC Transpo's feed declares.
+        lines: [
+          { color: "#D30F1D", id: "1" },
+          { color: "#508128", id: "2" },
+          { color: "#0980A5", id: "4" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "waterloo",
+    country: "ca",
+
+    origin: [-80.49, 43.46],
+
+    // Kitchener, Waterloo and Cambridge.
+    bounds: [
+      [-80.7, 43.3],
+      [-80.2, 43.6]
+    ],
+
+    data: "networks/waterloo.json",
+
+    systems: [
+      {
+        id: "grt",
+        mode: "light-rail",
+        attribution: {
+          label: "GRT",
+          license: STM_WATERLOO_LICENCE,
+          terms: "https://www.grt.ca/about-grt/open-data/"
+        },
+        // The blue GRT's ION feed declares.
+        lines: [{ color: "#006BB7", id: "ion" }]
       }
     ]
   },

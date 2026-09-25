@@ -5,6 +5,7 @@ import type { Plugin } from 'vite'
 import type {
   Catalog,
   CatalogCity,
+  CatalogStation,
   Extent,
   Network,
   NetworkFeature,
@@ -19,14 +20,17 @@ import type {
 // plugin runs the two scripts the way Chrome does, reads the geometry beside
 // them, and hands the site the result as ordinary modules:
 //
-//   import catalogs, { networks } from 'virtual:extension-catalog'
+//   import catalogs, { networks, stations } from 'virtual:extension-catalog'
 //   catalogs.en.countries
 //   await networks.paris()
+//   await stations()
 //
 // The catalogue is small and every page names what is in it, so it is one
 // module. The geometry is most of the weight, and the map only ever wants the
 // cities it is looking at, so each city's is a module of its own that the
-// browser fetches the first time the map needs it.
+// browser fetches the first time the map needs it. The names of every
+// city's stations, which the home page's search looks through, are one more
+// module, fetched the first time someone searches.
 //
 // Nothing of the extension ships to the browser but that data. A city added
 // to the registry therefore appears on the next build of the site, and a
@@ -39,6 +43,9 @@ const RESOLVED_ID = `\0${MODULE_ID}`
 // One module per city: virtual:extension-network/paris.
 const NETWORK_PREFIX = 'virtual:extension-network/'
 const RESOLVED_NETWORK_PREFIX = `\0${NETWORK_PREFIX}`
+
+const STATIONS_ID = 'virtual:extension-stations'
+const RESOLVED_STATIONS_ID = `\0${STATIONS_ID}`
 
 // In the order the manifest loads them. They are classic scripts sharing one
 // global scope, not modules, so they are run in a single context here too.
@@ -59,6 +66,7 @@ export function extensionCatalog({ extension, locales }: Options): Plugin {
 
     resolveId(id) {
       if (id === MODULE_ID) return RESOLVED_ID
+      if (id === STATIONS_ID) return RESOLVED_STATIONS_ID
       if (id.startsWith(NETWORK_PREFIX)) return `\0${id}`
     },
 
@@ -83,21 +91,36 @@ export function extensionCatalog({ extension, locales }: Options): Plugin {
           ]),
         )
 
-        // The server renders the names but never draws a map, so only the
-        // browser's copy of this module points at the geometry, and the
-        // server bundle carries none of it.
-        const loaders =
-          this.environment.config.consumer === 'client'
-            ? registry.STM_CITIES.map(
-                ({ id: city }) =>
-                  `${JSON.stringify(city)}: () => import(${JSON.stringify(NETWORK_PREFIX + city)})`,
-              )
-            : []
+        // The server renders the names but never draws a map or searches, so
+        // only the browser's copy of this module points at the geometry and
+        // the stations, and the server bundle carries none of them.
+        const browser = this.environment.config.consumer === 'client'
+        const loaders = browser
+          ? registry.STM_CITIES.map(
+              ({ id: city }) =>
+                `${JSON.stringify(city)}: () => import(${JSON.stringify(NETWORK_PREFIX + city)})`,
+            )
+          : []
 
         return [
           `export default ${JSON.stringify(catalogs)}`,
           `export const networks = {${loaders.join(', ')}}`,
+          `export const stations = ${browser ? `() => import(${JSON.stringify(STATIONS_ID)})` : 'undefined'}`,
         ].join('\n')
+      }
+
+      if (id === RESOLVED_STATIONS_ID) {
+        const registry = readRegistry(scripts)
+        const geometry = readGeometry(extension, registry)
+
+        for (const file of [
+          ...scripts,
+          ...[...geometry.values()].map(({ file: drawn }) => drawn),
+        ]) {
+          this.addWatchFile(file)
+        }
+
+        return `export default ${JSON.stringify(stationsOf(registry, geometry))}`
       }
 
       if (id.startsWith(RESOLVED_NETWORK_PREFIX)) {
@@ -349,4 +372,30 @@ function networkOf(city: RegistryCity, geometry: Geometry): Network {
   })
 
   return { type: 'FeatureCollection', features }
+}
+
+// Every city's stations, by city, as the search looks through them: named as
+// their operators publish them, which is the same in every language, and
+// with the full ids of the lines calling at them, as the catalogue names its
+// lines.
+function stationsOf(
+  registry: Registry,
+  geometry: ReturnType<typeof readGeometry>,
+): Record<string, CatalogStation[]> {
+  return Object.fromEntries(
+    registry.STM_CITIES.map((city) => {
+      const drawn = geometry.get(city.id)?.geometry
+
+      if (!drawn)
+        throw new Error(`The extension draws nothing for "${city.id}".`)
+
+      return [
+        city.id,
+        drawn.stations.map(({ name, lines }) => ({
+          name,
+          lines: lines.map((line) => `${city.id}:${line}`),
+        })),
+      ]
+    }),
+  )
 }

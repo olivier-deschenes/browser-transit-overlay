@@ -92,6 +92,14 @@ declare module 'virtual:extension-catalog' {
     features: NetworkFeature[]
   }
 
+  // A station as the search finds it.
+  export interface CatalogStation {
+    // As its operator publishes it, the same in every language.
+    name: string
+    // The full ids of the lines calling at it: montreal:stm:1.
+    lines: string[]
+  }
+
   const catalogs: Record<Locale, Catalog>
 
   // Each city's geometry, by city id, fetched the first time it is asked
@@ -100,6 +108,14 @@ declare module 'virtual:extension-catalog' {
   export const networks: Partial<
     Record<string, () => Promise<{ default: Network }>>
   >
+
+  // Every city's stations, by city id, fetched the first time someone
+  // searches. As with the geometry, only the browser's copy has them.
+  export const stations:
+    | (() => Promise<{
+        default: Partial<Record<string, CatalogStation[]>>
+      }>)
+    | undefined
 
   export default catalogs
 }

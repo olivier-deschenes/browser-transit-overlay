@@ -1,12 +1,13 @@
 # Website
 
-The website for the Transport en commun extension is a map of every line the extension draws. It uses TanStack Start, TanStack Router, TanStack Query, React, Tailwind CSS and shadcn/ui, draws with MapLibre GL JS through mapcn's map component, and prerenders every page for deployment to Cloudflare Workers.
+The website for the Transport en commun extension is a map of every line the extension draws. It uses TanStack Start, TanStack Router, TanStack Query, TanStack Pacer, React, Tailwind CSS and shadcn/ui, draws with MapLibre GL JS through mapcn's map component, and prerenders every page for deployment to Cloudflare Workers.
 
 ## Pages
 
 | Path                                  | What it shows                                                                                                                                      |
 | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/`                                   | Every city on the map, and the list of them by country, each with its lines as dots of their colours.                                              |
+| `/?q=berri`                           | The same list narrowed to the cities, lines and stations named like the search, each line and station under its city.                              |
 | `/montreal`, `/paris`, `/new-york`, … | One city's operators and lines, with the stations each calls at, and the city's lines and stations on the map. One page per city in the catalogue. |
 | `/montreal#stm:2`                     | The same page with one line picked out: the map fades the others and the list marks it.                                                            |
 | `/assistance`, `/confidentialite`     | Support and the privacy policy.                                                                                                                    |
@@ -14,6 +15,8 @@ The website for the Transport en commun extension is a map of every line the ext
 Every page also exists in English under `/en`. The map is shared by the home page and the city pages, so going from one to another moves the map rather than loading a new one.
 
 A picked line lives in the fragment rather than the query string: it is part of a city's page rather than a page of its own, and the router only compares fragments once the page runs in the browser, so a prerendered page and its first render in the browser agree.
+
+A search lives in the query string, so that coming back to the list from a city finds it as it was left. The search box only updates it once the reader pauses in their typing, debounced with TanStack Pacer. Like a picked line, the search is only read once the page runs in the browser: the prerendered page lists every city.
 
 ## Local development
 
@@ -46,6 +49,7 @@ The extension's name, and the list of every city, network and line it draws, are
 
 - its default export is the catalogue, in each of the site's languages, in the names the extension itself uses, with each city's and line's extent and station counts;
 - its `networks` export loads one city's lines and stations as GeoJSON. Each city is a chunk of its own, fetched with TanStack Query the first time the map comes near the city or a link to it is pointed at, and kept for the rest of the visit. The server's copy of the module has no geometry, since the server never draws a map.
+- its `stations` export loads the name of every city's stations, with the lines calling at each, for the search on the home page. It is one chunk, fetched the first time the search box is focused, and the server's copy of the module has none of it either.
 
 A city added to the extension's registry therefore appears on the next build, with a page of its own. A city, network or line the extension does not name in one of the site's languages, or does not draw, fails the build rather than publishing an incomplete site. In `npm run dev`, editing the registry, the translations or a city's geometry reloads the page.
 

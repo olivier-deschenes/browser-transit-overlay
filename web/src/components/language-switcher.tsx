@@ -12,8 +12,8 @@ import { cn } from '@/lib/utils'
 
 // The same page in each other language, named in that language. Following one
 // is the reader choosing it, and is remembered the way the extension's
-// language setting is. It keeps the line picked out, if there is one, once
-// the page knows about it: a prerendered page never has one.
+// language setting is. It keeps the line picked out or the search, if there
+// is one, once the page knows about it: a prerendered page never has one.
 export function LanguageSwitcher({ className }: { className?: string }) {
   const locale = useLocale()
   const hydrated = useHydrated()
@@ -28,6 +28,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
           key={other}
           to="."
           params={(previous) => ({ ...previous, locale: localeParam(other) })}
+          search={hydrated || undefined}
           hash={hydrated || undefined}
           hrefLang={other}
           lang={other}

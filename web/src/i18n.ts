@@ -91,7 +91,12 @@ export function number(locale: Locale, value: number) {
 }
 
 // French counts zero and one as singular, English only one.
-function plural(locale: Locale, count: number, one: string, other: string) {
+export function plural(
+  locale: Locale,
+  count: number,
+  one: string,
+  other: string,
+) {
   return new Intl.PluralRules(locale).select(count) === 'one' ? one : other
 }
 

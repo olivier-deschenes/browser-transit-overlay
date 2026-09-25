@@ -1,0 +1,11 @@
+route_id,service_id,trip_id,trip_headsign,trip_short_name,direction_id,block_id,shape_id,wheelchair_accessible,bikes_allowed
+13686,1,15501412,Canada Line To Waterfront,,0,2203035,322331,0,1
+13686,1,15501413,Canada Line To Waterfront,,0,2203034,322332,0,1
+13686,1,15501732,Canada Line To YVR-Airport,,1,2203036,322336,0,1
+13686,1,15501733,Canada Line To Richmond-Brighouse,,1,2203035,322335,0,1
+30052,1,15521560,Millennium Line To Lafarge Lake-Douglas,,0,2204809,322339,0,1
+30052,1,15521850,Millennium Line To VCC-Clark,,1,2204818,322343,0,1
+30053,1101,15522351,Expo Line To Production Way-University,,0,2205083,322354,0,1
+30053,1,15522366,Expo Line To King George,,0,2205127,322353,0,1
+30053,1101,15522858,Expo Line To Waterfront,,1,2205124,322371,0,1
+30053,1,15522878,Expo Line To New Westminster,,1,2205133,322380,0,1

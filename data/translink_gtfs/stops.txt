@@ -1,0 +1,168 @@
+stop_id,stop_code,stop_name,stop_desc,stop_lat,stop_lon,zone_id,stop_url,location_type,parent_station,wheelchair_boarding
+10374,60825,VCC-Clark Station @ Platform 2,,49.265799,-123.079054,ZN 1,,0,99916,1
+10375,60824,VCC-Clark Station @ Platform 1,,49.265873,-123.079049,ZN 1,,0,99916,1
+11272,61363,Vancouver City Centre Station @ Platform 2,,49.282462,-123.118283,ZN 1,,0,99915,1
+11273,61364,Vancouver City Centre Station @ Platform 1,,49.282352,-123.118143,ZN 1,,0,99915,1
+11274,61365,Yaletown-Roundhouse Station @ Platform 2,,49.274467,-123.122124,ZN 1,,0,99914,1
+11275,61366,Yaletown-Roundhouse Station @ Platform 1,,49.274508,-123.122015,ZN 1,,0,99914,1
+11276,61367,Olympic Village Station @ Platform 2,,49.266616,-123.115218,ZN 1,,0,99913,1
+11277,61368,Olympic Village Station @ Platform 1,,49.266557,-123.115527,ZN 1,,0,99913,1
+11278,61369,Broadway-City Hall Station @ Platform 2,,49.262684,-123.114856,ZN 1,,0,99912,1
+11279,61370,Broadway-City Hall Station @ Platform 1,,49.262725,-123.114753,ZN 1,,0,99912,1
+11280,61371,King Edward Station @ Platform 2,,49.249186,-123.115716,ZN 1,,0,99911,1
+11281,61372,King Edward Station @ Platform 1,,49.249172,-123.115228,ZN 1,,0,99911,1
+11282,61373,Oakridge-41st Avenue Station @ Platform 2,,49.233747,-123.116422,ZN 1,,0,99910,1
+11283,61374,Oakridge-41st Avenue Station @ Platform 1,,49.233731,-123.116176,ZN 1,,0,99910,1
+11284,61375,Langara-49th Avenue Station @ Platform 2,,49.225743,-123.116752,ZN 1,,0,99909,1
+11285,61376,Langara-49th Avenue Station @ Platform 1,,49.225709,-123.116289,ZN 1,,0,99909,1
+11286,61377,Marine Drive Station @ Platform 2,,49.209661,-123.117078,ZN 1,,0,99908,1
+11287,61378,Marine Drive Station @ Platform 1,,49.209663,-123.116921,ZN 1,,0,99908,1
+11288,61379,Bridgeport Station @ Platform 2,,49.195558,-123.126076,ZN 2,,0,99907,1
+11289,61380,Bridgeport Station @ Platform 1,,49.195514,-123.126006,ZN 2,,0,99907,1
+11290,61381,Aberdeen Station @ Platform 2,,49.184,-123.136398,ZN 2,,0,99906,1
+11291,61382,Aberdeen Station @ Platform 1,,49.183991,-123.13622,ZN 2,,0,99906,1
+11292,61383,Lansdowne Station @ Platform 2,,49.174762,-123.136507,ZN 2,,0,99905,1
+11293,61384,Lansdowne Station @ Platform 1,,49.174766,-123.136322,ZN 2,,0,99905,1
+11294,61385,Richmond-Brighouse Station @ Canada Line,,49.168092,-123.136247,ZN 2,,0,99904,1
+11295,61386,Richmond-Brighouse Station @ Platform 1,,49.168092,-123.136174,ZN 2,,0,99904,1
+11296,61387,Templeton Station @ Platform 2,,49.196715,-123.146335,ZN 2,,0,99903,1
+11297,61388,Templeton Station @ Platform 1,,49.196655,-123.146307,CL_AD,,0,99903,1
+11298,61389,Sea Island Centre Station @ Platform 2,,49.193053,-123.157851,ZN 2,,0,99902,1
+11299,61390,Sea Island Centre Station @ Platform 1,,49.19293,-123.157884,CL_AD,,0,99902,1
+11300,61391,YVR-Airport Station @ Canada Line,,49.194189,-123.178251,ZN 2,,0,99901,1
+11301,61392,YVR-Airport Station @ Platform 1,,49.194177,-123.178108,CL_AD,,0,99901,1
+11302,61393,Waterfront Station @ Platform 4,,49.285139,-123.114206,ZN 1,,0,12034,1
+11303,61394,Waterfront Station @ Platform 5,,49.285093,-123.114139,ZN 1,,0,12034,1
+12034,61925,Waterfront Station,,49.285687,-123.111773,ZN 1,https://translink.ca/schedules-and-maps/station/waterfront/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=waterfront,1,,1
+12227,60084,Lougheed Town Centre Station @ Platform 3,,49.248611,-122.896818,ZN 2,,0,99926,1
+12228,60085,Burquitlam Station @ Platform 1,,49.261421,-122.889853,ZN 3,,0,99927,1
+12229,60086,Burquitlam Station @ Platform 2,,49.261375,-122.889784,ZN 3,,0,99927,1
+12230,60087,Moody Centre Station @ Platform 1,,49.27798,-122.845609,ZN 3,,0,99928,1
+12231,60088,Moody Centre Station @ Platform 2,,49.277941,-122.845608,ZN 3,,0,99928,1
+12232,60089,Inlet Centre Station @ Platform 1,,49.277294,-122.828164,ZN 3,,0,99929,1
+12233,60090,Inlet Centre Station @ Platform 2,,49.277118,-122.828183,ZN 3,,0,99929,1
+12234,60091,Coquitlam Central Station @ Platform 1,,49.274919,-122.800551,ZN 3,,0,99930,1
+12235,60092,Coquitlam Central Station @ Platform 2,,49.274738,-122.800643,ZN 3,,0,99930,1
+12236,60093,Lincoln Station @ Platform 1,,49.280417,-122.794097,ZN 3,,0,99931,1
+12237,60094,Lincoln Station @ Platform 2,,49.28041,-122.793805,ZN 3,,0,99931,1
+12238,60095,Lafarge Lake-Douglas Station @ Platform 1,,49.285743,-122.791623,ZN 3,,0,99932,1
+12239,60096,Lafarge Lake-Douglas Station @ Platform 2,,49.285693,-122.791435,ZN 3,,0,99932,1
+12946,60674,Capstan Station @ Platform 1,,49.189131,-123.131869,ZN 2,,0,99959,1
+12947,60675,Capstan Station @ Platform 2,,49.189163,-123.131956,ZN 2,,0,99959,1
+8039,57964,Waterfront Station @ Platform 2,,49.285907,-123.111578,ZN 1,,0,12034,1
+8040,60826,Burrard Station @ Platform 2,,49.285634,-123.119515,ZN 1,,0,99933,1
+8041,57966,Granville Station @ Platform 2,,49.283136,-123.115744,ZN 1,,0,99934,1
+8042,57967,Stadium-Chinatown Station @ Platform 2,,49.279178,-123.109213,ZN 1,,0,99935,1
+8043,57968,Main Street-Science World Station @ Platform 2,,49.273099,-123.100399,ZN 1,,0,99936,1
+8044,57969,Commercial-Broadway Station @ Platform 4,,49.262317,-123.069179,ZN 1,,0,99917,1
+8045,57970,Nanaimo Station @ Platform 2,,49.248283,-123.055904,ZN 1,,0,99937,1
+8046,57971,29th Avenue Station @ Platform 2,,49.244236,-123.046136,ZN 1,,0,99938,1
+8047,57972,Joyce-Collingwood Station @ Platform 2,,49.238353,-123.031827,ZN 1,,0,99939,1
+8048,57973,Patterson Station @ Platform 2,,49.229712,-123.012678,ZN 2,,0,99940,1
+8049,57974,Metrotown Station @ Platform 2,,49.225781,-123.00394,ZN 2,,0,99941,1
+8050,57975,Royal Oak Station @ Platform 2,,49.220013,-122.988475,ZN 2,,0,99942,1
+8051,57976,Edmonds Station @ Platform 2,,49.211909,-122.959156,ZN 2,,0,99943,1
+8052,57977,22nd Street Station @ Platform 2,,49.200021,-122.94894,ZN 2,,0,99944,1
+8053,57978,New Westminster Station @ Platform 2,,49.201406,-122.912573,ZN 2,,0,99945,1
+8054,57979,Columbia Station @ Platform 2,,49.204778,-122.906118,ZN 2,,0,99946,1
+8055,57980,Scott Road Station @ Platform 2,,49.204383,-122.874171,ZN 3,,0,99949,1
+8056,57981,Gateway Station @ Platform 2,,49.198946,-122.850673,ZN 3,,0,99950,1
+8057,57982,Surrey Central Station @ Platform 2,,49.189549,-122.847914,ZN 3,,0,99951,1
+8058,57983,King George Station @ Platform 2,,49.182755,-122.844744,ZN 3,,0,99952,1
+8059,57984,King George Station @ Platform 1,,49.182812,-122.844691,ZN 3,,0,99952,1
+8060,57985,Surrey Central Station @ Platform 1,,49.189561,-122.847796,ZN 3,,0,99951,1
+8061,57986,Gateway Station @ Platform 1,,49.198955,-122.850542,ZN 3,,0,99950,1
+8062,57987,Scott Road Station @ Platform 1,,49.204448,-122.874185,ZN 3,,0,99949,1
+8063,57988,Columbia Station @ Platform 1,,49.204859,-122.906187,ZN 2,,0,99946,1
+8064,57989,New Westminster Station @ Platform 1,,49.201459,-122.912629,ZN 2,,0,99945,1
+8065,57990,22nd Street Station @ Platform 1,,49.200083,-122.948971,ZN 2,,0,99944,1
+8066,57991,Edmonds Station @ Platform 1,,49.211945,-122.95904,ZN 2,,0,99943,1
+8067,57992,Royal Oak Station @ Platform 1,,49.22011,-122.98844,ZN 2,,0,99942,1
+8068,57993,Metrotown Station @ Platform 1,,49.225852,-123.003876,ZN 2,,0,99941,1
+8069,57994,Patterson Station @ Platform 1,,49.229798,-123.012613,ZN 2,,0,99940,1
+8070,57995,Joyce-Collingwood Station @ Platform 1,,49.23843,-123.031759,ZN 1,,0,99939,1
+8071,57996,29th Avenue Station @ Platform 1,,49.24431,-123.04608,ZN 1,,0,99938,1
+8072,57997,Nanaimo Station @ Platform 1,,49.248334,-123.055868,ZN 1,,0,99937,1
+8073,57998,Commercial-Broadway Station @ Platform 3,,49.262311,-123.069077,ZN 1,,0,99917,1
+8074,57999,Main Street-Science World Station @ Platform 1,,49.273172,-123.10035,ZN 1,,0,99936,1
+8075,58000,Stadium-Chinatown Station @ Platform 1,,49.279271,-123.109109,ZN 1,,0,99935,1
+8076,58001,Granville Station @ Platform 1,,49.283193,-123.115674,ZN 1,,0,99934,1
+8077,58002,Burrard Station @ Platform 1,,49.28558,-123.119598,ZN 1,,0,99933,1
+8078,58003,Waterfront Station @ Platform 1,,49.285962,-123.111516,ZN 1,,0,12034,1
+8577,60802,Braid Station @ Platform 1,,49.233236,-122.882831,ZN 2,,0,99948,1
+8578,60803,Braid Station @ Platform 2,,49.233236,-122.882718,ZN 2,,0,99948,1
+8579,60800,Sapperton Station @ Platform 1,,49.2247,-122.889424,ZN 2,,0,99947,1
+8580,60801,Sapperton Station @ Platform 2,,49.224621,-122.889311,ZN 2,,0,99947,1
+8746,60804,Lougheed Town Centre Station @ Platform 2,,49.248549,-122.896879,ZN 2,,0,99926,1
+8747,60806,Production Way-University Station @ Platform 1,,49.253465,-122.918191,ZN 2,,0,99925,1
+8748,60810,Sperling-Burnaby Lake Station @ Platform 1,,49.259213,-122.963982,ZN 2,,0,99923,1
+8749,60812,Holdom Station @ Platform 1,,49.264753,-122.982149,ZN 2,,0,99922,1
+8750,60814,Brentwood Town Centre Station @ Platform 1,,49.266431,-123.001813,ZN 2,,0,99921,1
+8751,60816,Gilmore Station @ Platform 1,,49.265002,-123.013571,ZN 2,,0,99920,1
+8752,60818,Rupert Station @ Platform 1,,49.260815,-123.032869,ZN 1,,0,99919,1
+8753,60820,Renfrew Station @ Platform 1,,49.258942,-123.045374,ZN 1,,0,99918,1
+8754,60822,Commercial-Broadway Station @ Platform 1,,49.26298,-123.068426,ZN 1,,0,99917,1
+8755,60805,Lougheed Town Centre Station @ Platform 1,,49.248484,-122.896952,ZN 2,,0,99926,1
+8756,60807,Production Way-University Station @ Platform 2,,49.253364,-122.918218,ZN 2,,0,99925,1
+8757,60811,Sperling-Burnaby Lake Station @ Platform 2,,49.259154,-122.963991,ZN 2,,0,99923,1
+8758,60813,Holdom Station @ Platform 2,,49.264705,-122.982158,ZN 2,,0,99922,1
+8759,60815,Brentwood Town Centre Station @ Platform 2,,49.266352,-123.001813,ZN 2,,0,99921,1
+8760,60817,Gilmore Station @ Platform 2,,49.264931,-123.013498,ZN 2,,0,99920,1
+8761,60819,Rupert Station @ Platform 2,,49.260733,-123.032821,ZN 1,,0,99919,1
+8762,60821,Renfrew Station @ Platform 2,,49.258877,-123.045348,ZN 1,,0,99918,1
+8763,60823,Commercial-Broadway Station @ Platform 2,,49.262912,-123.068491,ZN 1,,0,99917,1
+9510,60808,Lake City Way Station @ Platform 1,,49.254654,-122.939183,ZN 2,,0,99924,1
+9511,60809,Lake City Way Station @ Platform 2,,49.254609,-122.939183,ZN 2,,0,99924,1
+99901,,YVR-Airport Station,,49.194174,-123.178269,CL_AD,https://translink.ca/schedules-and-maps/station/yvr-airport/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=yvr-airport,1,,1
+99902,,Sea Island Centre Station,,49.192986,-123.157887,CL_AD,https://translink.ca/schedules-and-maps/station/sea-island-centre/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=sea-island-centre,1,,1
+99903,,Templeton Station,,49.196688,-123.146337,CL_AD,https://translink.ca/schedules-and-maps/station/templeton/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=templeton,1,,1
+99904,,Richmond-Brighouse Station,,49.167943,-123.136372,ZN 2,https://translink.ca/schedules-and-maps/station/richmond-brighouse/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=richmond-brighouse,1,,1
+99905,,Lansdowne Station,,49.174665,-123.136475,ZN 2,https://translink.ca/schedules-and-maps/station/lansdowne/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=lansdowne,1,,1
+99906,,Aberdeen Station,,49.184000,-123.136325,ZN 2,https://translink.ca/schedules-and-maps/station/aberdeen/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=aberdeen,1,,1
+99907,,Bridgeport Station,,49.195538,-123.126062,ZN 2,https://translink.ca/schedules-and-maps/station/bridgeport/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=bridgeport,1,,1
+99908,,Marine Drive Station,,49.209666,-123.117015,ZN 1,https://translink.ca/schedules-and-maps/station/marine-drive/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=marine-drive,1,,1
+99909,,Langara-49th Avenue Station,,49.225730,-123.116523,ZN 1,https://translink.ca/schedules-and-maps/station/langara-49th-avenue/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=langara-49th-avenue,1,,1
+99910,,Oakridge-41st Avenue Station,,49.233739,-123.116295,ZN 1,https://translink.ca/schedules-and-maps/station/oakridge-41st-avenue/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=oakridge-41st-avenue,1,,1
+99911,,King Edward Station,,49.249175,-123.115450,ZN 1,https://translink.ca/schedules-and-maps/station/king-edward/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=king-edward,1,,1
+99912,,Broadway-City Hall Station,,49.262717,-123.114822,ZN 1,https://translink.ca/schedules-and-maps/station/broadway-city-hall/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=broadway-city-hall,1,,1
+99913,,Olympic Village Station,,49.266596,-123.115348,ZN 1,https://translink.ca/schedules-and-maps/station/olympic-village/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=olympic-village,1,,1
+99914,,Yaletown-Roundhouse Station,,49.274492,-123.122079,ZN 1,https://translink.ca/schedules-and-maps/station/yaletown-roundhouse/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=yaletown-roundhouse,1,,1
+99915,,Vancouver City Centre Station,,49.282415,-123.118227,ZN 1,https://translink.ca/schedules-and-maps/station/vancouver-city-centre/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=vancouver-city-centre,1,,1
+99916,,VCC-Clark Station,,49.265845,-123.079069,ZN 1,https://translink.ca/schedules-and-maps/station/vcc-clark/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=vcc-clark,1,,1
+99917,,Commercial-Broadway Station,,49.262670,-123.068765,ZN 1,https://translink.ca/schedules-and-maps/station/commercial-broadway/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=commercial-broadway,1,,1
+99918,,Renfrew Station,,49.258913,-123.045379,ZN 1,https://translink.ca/schedules-and-maps/station/renfrew/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=renfrew,1,,1
+99919,,Rupert Station,,49.260784,-123.032867,ZN 1,https://translink.ca/schedules-and-maps/station/rupert/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=rupert,1,,1
+99920,,Gilmore Station,,49.264974,-123.013554,ZN 2,https://translink.ca/schedules-and-maps/station/gilmore/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=gilmore,1,,1
+99921,,Brentwood Town Centre Station,,49.266396,-123.001829,ZN 2,https://translink.ca/schedules-and-maps/station/brentwood-town-centre/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=brentwood-town-centre,1,,1
+99922,,Holdom Station,,49.264734,-122.982169,ZN 2,https://translink.ca/schedules-and-maps/station/holdom/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=holdom,1,,1
+99923,,Sperling-Burnaby Lake Station,,49.259195,-122.963998,ZN 2,https://translink.ca/schedules-and-maps/station/sperling-burnaby-lake/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=sperling-burnaby-lake,1,,1
+99924,,Lake City Way Station,,49.254635,-122.939192,ZN 2,https://translink.ca/schedules-and-maps/station/lake-city-way/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=lake-city-way,1,,1
+99925,,Production Way-University Station,,49.253416,-122.918223,ZN 2,https://translink.ca/schedules-and-maps/station/production-way-university/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=production-way-university,1,,1
+99926,,Lougheed Town Centre Station,,49.248512,-122.896805,ZN 2,https://translink.ca/schedules-and-maps/station/lougheed-town-centre/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=lougheed-town-centre,1,,1
+99927,,Burquitlam Station,,49.261403,-122.889834,ZN 3,https://translink.ca/schedules-and-maps/station/burquitlam/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=burquitlam,1,,1
+99928,,Moody Centre Station,,49.278012,-122.846034,ZN 3,https://translink.ca/schedules-and-maps/station/moody-centre/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=moody-centre,1,,1
+99929,,Inlet Centre Station,,49.277210,-122.828187,ZN 3,https://translink.ca/schedules-and-maps/station/inlet-centre/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=inlet-centre,1,,1
+99930,,Coquitlam Central Station,,49.274340,-122.800421,ZN 3,https://translink.ca/schedules-and-maps/station/coquitlam-central/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=coquitlam-central,1,,1
+99931,,Lincoln Station,,49.280423,-122.793917,ZN 3,https://translink.ca/schedules-and-maps/station/lincoln/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=lincoln,1,,1
+99932,,Lafarge Lake-Douglas Station,,49.285718,-122.791541,ZN 3,https://translink.ca/schedules-and-maps/station/lafarge-lake-douglas/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=lafarge-lake-douglas,1,,1
+99933,,Burrard Station,,49.285614,-123.119557,ZN 1,https://translink.ca/schedules-and-maps/station/burrard/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=burrard,1,,1
+99934,,Granville Station,,49.283173,-123.115721,ZN 1,https://translink.ca/schedules-and-maps/station/granville/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=granville,1,,1
+99935,,Stadium-Chinatown Station,,49.279223,-123.109181,ZN 1,https://translink.ca/schedules-and-maps/station/stadium-chinatown/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=stadium-chinatown,1,,1
+99936,,Main Street-Science World Station,,49.273137,-123.100392,ZN 1,https://translink.ca/schedules-and-maps/station/main-street-science-world/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=main-street-science-world,1,,1
+99937,,Nanaimo Station,,49.248321,-123.055908,ZN 1,https://translink.ca/schedules-and-maps/station/nanaimo/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=nanaimo,1,,1
+99938,,29th Avenue Station,,49.244283,-123.046113,ZN 1,https://translink.ca/schedules-and-maps/station/29th-avenue/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=29th-avenue,1,,1
+99939,,Joyce-Collingwood Station,,49.238398,-123.031811,ZN 1,https://translink.ca/schedules-and-maps/station/joyce-collingwood/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=joyce-collingwood,1,,1
+99940,,Patterson Station,,49.229626,-123.012670,ZN 2,https://translink.ca/schedules-and-maps/station/patterson/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=patterson,1,,1
+99941,,Metrotown Station,,49.225825,-123.003920,ZN 2,https://translink.ca/schedules-and-maps/station/metrotown/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=metrotown,1,,1
+99942,,Royal Oak Station,,49.220068,-122.988480,ZN 2,https://translink.ca/schedules-and-maps/station/royal-oak/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=royal-oak,1,,1
+99943,,Edmonds Station,,49.211936,-122.959104,ZN 2,https://translink.ca/schedules-and-maps/station/edmonds/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=edmonds,1,,1
+99944,,22nd Street Station,,49.200059,-122.948980,ZN 2,https://translink.ca/schedules-and-maps/station/22nd-street/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=22nd-street,1,,1
+99945,,New Westminster Station,,49.201437,-122.912614,ZN 2,https://translink.ca/schedules-and-maps/station/new-westminster/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=new-westminster,1,,1
+99946,,Columbia Station,,49.204830,-122.906175,ZN 2,https://translink.ca/schedules-and-maps/station/columbia/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=columbia,1,,1
+99947,,Sapperton Station,,49.224662,-122.889393,ZN 2,https://translink.ca/schedules-and-maps/station/sapperton/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=sapperton,1,,1
+99948,,Braid Station,,49.233244,-122.882800,ZN 2,https://translink.ca/schedules-and-maps/station/braid/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=braid,1,,1
+99949,,Scott Road Station,,49.204420,-122.874197,ZN 3,https://translink.ca/schedules-and-maps/station/scott-road/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=scott-road,1,,1
+99950,,Gateway Station,,49.198955,-122.850610,ZN 3,https://translink.ca/schedules-and-maps/station/gateway/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=gateway,1,,1
+99951,,Surrey Central Station,,49.189562,-122.847868,ZN 3,https://translink.ca/schedules-and-maps/station/surrey-central/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=surrey-central,1,,1
+99952,,King George Station,,49.182790,-122.844737,ZN 3,https://translink.ca/schedules-and-maps/station/king-george/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=king-george,1,,1
+99959,,Capstan Station,,49.189147,-123.131862,ZN 2,https://translink.ca/schedules-and-maps/station/capstan/schedule?utm_source=referral&utm_medium=google+maps&utm_campaign=gtfs&utm_content=schedules_station&utm_term=capstan,1,,1

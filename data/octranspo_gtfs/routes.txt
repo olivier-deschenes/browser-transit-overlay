@@ -1,0 +1,4 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,route_sort_order,continuous_pickup,continuous_drop_off,network_id
+1-373,1,1,Blair <> Tunney's Pasture,,0,,D30F1D,FFFFFF,1,1,1,
+2-354,1,2,Bayview <> Limebank,,0,,508128,FFFFFF,,1,1,
+4-354,1,4,South Keys <> Airport ~ Aéroport,,0,,0980A5,FFFFFF,,1,1,

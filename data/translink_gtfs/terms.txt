@@ -1,0 +1,2 @@
+https://gtfs-static.translink.ca/gtfs/google_transit.zip
+https://www.translink.ca/about-us/doing-business-with-translink/app-developer-resources/gtfs/gtfs-data

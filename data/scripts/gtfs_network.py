@@ -51,11 +51,20 @@ def read_trips(source, route_lines):
 
 
 def read_calls(source, trips):
-    """The stops each drawn trip calls at, in the order it calls at them."""
+    """The stops each drawn trip calls at, in the order it calls at them.
+
+    A stop where nobody may get on and nobody may get off is somewhere the
+    train passes rather than a station: Edmonton's feed lists the platforms
+    at its LRT garages and the tail track past Health Sciences that way.
+    """
     calls = defaultdict(list)
 
     for call in read_csv(source, "stop_times.txt"):
-        if call["trip_id"] in trips:
+        passes = (call.get("pickup_type") or "").strip() == "1" and (
+            call.get("drop_off_type") or ""
+        ).strip() == "1"
+
+        if call["trip_id"] in trips and not passes:
             calls[call["trip_id"]].append(
                 (int(call["stop_sequence"]), call["stop_id"])
             )

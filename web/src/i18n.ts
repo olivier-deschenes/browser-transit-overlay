@@ -82,6 +82,24 @@ export function chooseLocale(locale: Locale) {
 
 export const CONTACT_EMAIL = 'olivier@odeschenes.com'
 
+export const SOURCE_URL =
+  'https://github.com/olivier-deschenes/browser-transit-overlay'
+
+// A count as the language writes it: 2 123 in French, 2,123 in English.
+export function number(locale: Locale, value: number) {
+  return new Intl.NumberFormat(locale).format(value)
+}
+
+// French counts zero and one as singular, English only one.
+export function plural(
+  locale: Locale,
+  count: number,
+  one: string,
+  other: string,
+) {
+  return new Intl.PluralRules(locale).select(count) === 'one' ? one : other
+}
+
 export function mailto(subject?: string, body?: string) {
   const fields = [
     subject && `subject=${encodeURIComponent(subject)}`,
@@ -97,19 +115,37 @@ export function mailto(subject?: string, body?: string) {
 const fr = {
   shortName: 'Transport en commun',
   chromeExtension: 'Extension Chrome',
-  back: '← Retour',
   privacy: 'Politique de confidentialité',
   support: 'Assistance',
   language: 'Langue',
+  source: 'Code source',
+  allCities: 'Toutes les villes',
+  cities: 'Villes',
+  map: 'Carte du réseau',
+  skip: 'Aller au contenu',
+  loading: 'Chargement du réseau…',
+  lines: (count: number) =>
+    `${number('fr', count)} ${plural('fr', count, 'ligne', 'lignes')}`,
+  stations: (count: number) =>
+    `${number('fr', count)} ${plural('fr', count, 'station', 'stations')}`,
 }
 
 const en: typeof fr = {
   shortName: 'Public Transit',
   chromeExtension: 'Chrome extension',
-  back: '← Back',
   privacy: 'Privacy policy',
   support: 'Support',
   language: 'Language',
+  source: 'Source code',
+  allCities: 'All cities',
+  cities: 'Cities',
+  map: 'Transit map',
+  skip: 'Skip to content',
+  loading: 'Loading the network…',
+  lines: (count: number) =>
+    `${number('en', count)} ${plural('en', count, 'line', 'lines')}`,
+  stations: (count: number) =>
+    `${number('en', count)} ${plural('en', count, 'station', 'stations')}`,
 }
 
 export const MESSAGES: Record<Locale, typeof fr> = { fr, en }

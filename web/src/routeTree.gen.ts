@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
-import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
-import { Route as Char123LocaleChar125ConfidentialiteRouteImport } from './routes/{-$locale}/confidentialite'
+import { Route as Char123LocaleChar125MapRouteRouteImport } from './routes/{-$locale}/_map/route'
 import { Route as Char123LocaleChar125AssistanceRouteImport } from './routes/{-$locale}/assistance'
+import { Route as Char123LocaleChar125ConfidentialiteRouteImport } from './routes/{-$locale}/confidentialite'
+import { Route as Char123LocaleChar125MapIndexRouteImport } from './routes/{-$locale}/_map/index'
+import { Route as Char123LocaleChar125MapCityRouteImport } from './routes/{-$locale}/_map/$city'
 
 const Char123LocaleChar125RouteRoute =
   Char123LocaleChar125RouteRouteImport.update({
@@ -20,16 +22,9 @@ const Char123LocaleChar125RouteRoute =
     path: '/{-$locale}',
     getParentRoute: () => rootRouteImport,
   } as any)
-const Char123LocaleChar125IndexRoute =
-  Char123LocaleChar125IndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => Char123LocaleChar125RouteRoute,
-  } as any)
-const Char123LocaleChar125ConfidentialiteRoute =
-  Char123LocaleChar125ConfidentialiteRouteImport.update({
-    id: '/confidentialite',
-    path: '/confidentialite',
+const Char123LocaleChar125MapRouteRoute =
+  Char123LocaleChar125MapRouteRouteImport.update({
+    id: '/_map',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
 const Char123LocaleChar125AssistanceRoute =
@@ -38,24 +33,46 @@ const Char123LocaleChar125AssistanceRoute =
     path: '/assistance',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const Char123LocaleChar125ConfidentialiteRoute =
+  Char123LocaleChar125ConfidentialiteRouteImport.update({
+    id: '/confidentialite',
+    path: '/confidentialite',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
+const Char123LocaleChar125MapIndexRoute =
+  Char123LocaleChar125MapIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => Char123LocaleChar125MapRouteRoute,
+  } as any)
+const Char123LocaleChar125MapCityRoute =
+  Char123LocaleChar125MapCityRouteImport.update({
+    id: '/$city',
+    path: '/$city',
+    getParentRoute: () => Char123LocaleChar125MapRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
   '/{-$locale}/assistance': typeof Char123LocaleChar125AssistanceRoute
   '/{-$locale}/confidentialite': typeof Char123LocaleChar125ConfidentialiteRoute
-  '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
+  '/{-$locale}/$city': typeof Char123LocaleChar125MapCityRoute
+  '/{-$locale}/': typeof Char123LocaleChar125MapIndexRoute
 }
 export interface FileRoutesByTo {
+  '/{-$locale}': typeof Char123LocaleChar125MapIndexRoute
   '/{-$locale}/assistance': typeof Char123LocaleChar125AssistanceRoute
   '/{-$locale}/confidentialite': typeof Char123LocaleChar125ConfidentialiteRoute
-  '/{-$locale}': typeof Char123LocaleChar125IndexRoute
+  '/{-$locale}/$city': typeof Char123LocaleChar125MapCityRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/{-$locale}/_map': typeof Char123LocaleChar125MapRouteRouteWithChildren
   '/{-$locale}/assistance': typeof Char123LocaleChar125AssistanceRoute
   '/{-$locale}/confidentialite': typeof Char123LocaleChar125ConfidentialiteRoute
-  '/{-$locale}/': typeof Char123LocaleChar125IndexRoute
+  '/{-$locale}/_map/$city': typeof Char123LocaleChar125MapCityRoute
+  '/{-$locale}/_map/': typeof Char123LocaleChar125MapIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -63,15 +80,22 @@ export interface FileRouteTypes {
     | '/{-$locale}'
     | '/{-$locale}/assistance'
     | '/{-$locale}/confidentialite'
+    | '/{-$locale}/$city'
     | '/{-$locale}/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/{-$locale}/assistance' | '/{-$locale}/confidentialite' | '/{-$locale}'
-  id:
-    | '__root__'
+  to:
     | '/{-$locale}'
     | '/{-$locale}/assistance'
     | '/{-$locale}/confidentialite'
-    | '/{-$locale}/'
+    | '/{-$locale}/$city'
+  id:
+    | '__root__'
+    | '/{-$locale}'
+    | '/{-$locale}/_map'
+    | '/{-$locale}/assistance'
+    | '/{-$locale}/confidentialite'
+    | '/{-$locale}/_map/$city'
+    | '/{-$locale}/_map/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -87,18 +111,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125RouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/{-$locale}/': {
-      id: '/{-$locale}/'
-      path: '/'
-      fullPath: '/{-$locale}/'
-      preLoaderRoute: typeof Char123LocaleChar125IndexRouteImport
-      parentRoute: typeof Char123LocaleChar125RouteRoute
-    }
-    '/{-$locale}/confidentialite': {
-      id: '/{-$locale}/confidentialite'
-      path: '/confidentialite'
-      fullPath: '/{-$locale}/confidentialite'
-      preLoaderRoute: typeof Char123LocaleChar125ConfidentialiteRouteImport
+    '/{-$locale}/_map': {
+      id: '/{-$locale}/_map'
+      path: ''
+      fullPath: '/{-$locale}'
+      preLoaderRoute: typeof Char123LocaleChar125MapRouteRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/assistance': {
@@ -108,21 +125,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AssistanceRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
+    '/{-$locale}/confidentialite': {
+      id: '/{-$locale}/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/{-$locale}/confidentialite'
+      preLoaderRoute: typeof Char123LocaleChar125ConfidentialiteRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/{-$locale}/_map/': {
+      id: '/{-$locale}/_map/'
+      path: '/'
+      fullPath: '/{-$locale}/'
+      preLoaderRoute: typeof Char123LocaleChar125MapIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125MapRouteRoute
+    }
+    '/{-$locale}/_map/$city': {
+      id: '/{-$locale}/_map/$city'
+      path: '/$city'
+      fullPath: '/{-$locale}/$city'
+      preLoaderRoute: typeof Char123LocaleChar125MapCityRouteImport
+      parentRoute: typeof Char123LocaleChar125MapRouteRoute
+    }
   }
 }
 
+interface Char123LocaleChar125MapRouteRouteChildren {
+  Char123LocaleChar125MapCityRoute: typeof Char123LocaleChar125MapCityRoute
+  Char123LocaleChar125MapIndexRoute: typeof Char123LocaleChar125MapIndexRoute
+}
+
+const Char123LocaleChar125MapRouteRouteChildren: Char123LocaleChar125MapRouteRouteChildren =
+  {
+    Char123LocaleChar125MapCityRoute: Char123LocaleChar125MapCityRoute,
+    Char123LocaleChar125MapIndexRoute: Char123LocaleChar125MapIndexRoute,
+  }
+
+const Char123LocaleChar125MapRouteRouteWithChildren =
+  Char123LocaleChar125MapRouteRoute._addFileChildren(
+    Char123LocaleChar125MapRouteRouteChildren,
+  )
+
 interface Char123LocaleChar125RouteRouteChildren {
+  Char123LocaleChar125MapRouteRoute: typeof Char123LocaleChar125MapRouteRouteWithChildren
   Char123LocaleChar125AssistanceRoute: typeof Char123LocaleChar125AssistanceRoute
   Char123LocaleChar125ConfidentialiteRoute: typeof Char123LocaleChar125ConfidentialiteRoute
-  Char123LocaleChar125IndexRoute: typeof Char123LocaleChar125IndexRoute
 }
 
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
   {
+    Char123LocaleChar125MapRouteRoute:
+      Char123LocaleChar125MapRouteRouteWithChildren,
     Char123LocaleChar125AssistanceRoute: Char123LocaleChar125AssistanceRoute,
     Char123LocaleChar125ConfidentialiteRoute:
       Char123LocaleChar125ConfidentialiteRoute,
-    Char123LocaleChar125IndexRoute: Char123LocaleChar125IndexRoute,
   }
 
 const Char123LocaleChar125RouteRouteWithChildren =

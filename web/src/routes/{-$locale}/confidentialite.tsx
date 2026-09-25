@@ -1,6 +1,8 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
-import { MESSAGES, localeOf, localeParam, useLocale } from '../../i18n'
-import type { Locale } from '../../locales'
+import { createFileRoute } from '@tanstack/react-router'
+
+import { TextPage } from '@/components/text-page'
+import { MESSAGES, localeOf, useLocale } from '@/i18n'
+import type { Locale } from '@/locales'
 
 export const Route = createFileRoute('/{-$locale}/confidentialite')({
   component: Privacy,
@@ -8,7 +10,7 @@ export const Route = createFileRoute('/{-$locale}/confidentialite')({
     const messages = MESSAGES[localeOf(params.locale)]
 
     return {
-      meta: [{ title: `${messages.privacy} — ${messages.shortName}` }],
+      meta: [{ title: `${messages.privacy} · ${messages.shortName}` }],
     }
   },
 })
@@ -39,20 +41,14 @@ function Privacy() {
   }).format(new Date(UPDATED))
 
   return (
-    <main>
-      <p>
-        <Link to="/{-$locale}" params={{ locale: localeParam(locale) }}>
-          {messages.back}
-        </Link>
-      </p>
-      <h1>{messages.privacy}</h1>
+    <TextPage title={messages.privacy}>
       <Policy />
 
       <hr />
-      <small>
+      <p className="text-muted-foreground text-sm">
         {LAST_UPDATED[locale]} {updated}
-      </small>
-    </main>
+      </p>
+    </TextPage>
   )
 }
 
@@ -67,7 +63,7 @@ function PolicyFr() {
       </p>
 
       <h2>Données enregistrées localement</h2>
-      <ul className="mb-5 list-disc space-y-2 pl-6">
+      <ul>
         <li>L’état activé ou désactivé de l’extension.</li>
         <li>
           Vos préférences : sites activés, lignes de transport, stations,
@@ -151,7 +147,7 @@ function PolicyEn() {
       </p>
 
       <h2>Data saved locally</h2>
-      <ul className="mb-5 list-disc space-y-2 pl-6">
+      <ul>
         <li>Whether the extension is turned on or off.</li>
         <li>
           Your preferences: the sites, transit lines, stations, labels, maps and

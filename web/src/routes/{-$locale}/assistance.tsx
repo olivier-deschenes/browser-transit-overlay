@@ -1,12 +1,8 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
-import {
-  CONTACT_EMAIL,
-  MESSAGES,
-  localeOf,
-  localeParam,
-  mailto,
-  useLocale,
-} from '../../i18n'
+import { createFileRoute } from '@tanstack/react-router'
+
+import { TextPage } from '@/components/text-page'
+import { Button } from '@/components/ui/button'
+import { CONTACT_EMAIL, MESSAGES, localeOf, mailto, useLocale } from '@/i18n'
 
 export const Route = createFileRoute('/{-$locale}/assistance')({
   component: Support,
@@ -15,7 +11,7 @@ export const Route = createFileRoute('/{-$locale}/assistance')({
     const messages = MESSAGES[locale]
 
     return {
-      meta: [{ title: `${messages.support} — ${messages.shortName}` }],
+      meta: [{ title: `${messages.support} · ${messages.shortName}` }],
     }
   },
 })
@@ -44,20 +40,14 @@ function Support() {
   const messages = MESSAGES[locale]
 
   return (
-    <main>
-      <p>
-        <Link to="/{-$locale}" params={{ locale: localeParam(locale) }}>
-          {messages.back}
-        </Link>
-      </p>
-      <h1>{messages.support}</h1>
+    <TextPage title={messages.support}>
       <p>{copy.notShowing}</p>
 
       <h2>{copy.reportTitle}</h2>
       <p>{copy.reportText}</p>
-      <a className="big-link" href={mailto()}>
-        {CONTACT_EMAIL}
-      </a>
-    </main>
+      <Button asChild variant="outline" className="not-prose">
+        <a href={mailto()}>{CONTACT_EMAIL}</a>
+      </Button>
+    </TextPage>
   )
 }

@@ -1,0 +1,2 @@
+https://open.ottawa.ca/datasets/ottawa::oc-transpo-schedules
+https://open.ottawa.ca/pages/open-data-licence

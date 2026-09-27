@@ -33,10 +33,19 @@ async function paintAction() {
 // panel. Storage is what the content scripts watch; the badge only mirrors it,
 // and it is repainted from the listener below rather than from here, because
 // the settings page can flip the same switch without going through a click.
-chrome.action.onClicked.addListener(async () => {
-  const enabled = !(await readEnabled());
+// Keep each read and write together: a second click can arrive before the
+// first write completes and would otherwise toggle the same old value twice.
+let toggleQueue = Promise.resolve();
+chrome.action.onClicked.addListener(() => {
+  const toggle = toggleQueue.then(async () => {
+    const enabled = !(await readEnabled());
 
-  await chrome.storage.local.set({ [STM_ENABLED_KEY]: enabled });
+    await chrome.storage.local.set({ [STM_ENABLED_KEY]: enabled });
+  });
+
+  // A failed storage operation must not prevent the next click from trying.
+  toggleQueue = toggle.catch(() => {});
+  return toggle;
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {

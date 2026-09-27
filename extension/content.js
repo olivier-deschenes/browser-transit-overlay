@@ -2190,10 +2190,24 @@
       setStyle(overlay, "display", projection.level ? "" : "none");
     }
 
+    if (activeTransitions.size) {
+      const now = performance.now();
+
+      for (const [target, started] of activeTransitions) {
+        // Expire even when the tiles have disappeared. Otherwise a missing
+        // projection skips this cleanup and pins the render loop forever.
+        if (now - started > TRANSITION_TIMEOUT || !map.contains(target)) {
+          activeTransitions.delete(target);
+        }
+      }
+    }
+
     if (!projection?.level) {
       // Keep the loop alive so the overlay catches up as soon as there is
       // something to project from again.
-      if (activeTransitions.size) renderRequest = requestAnimationFrame(render);
+      if (activeTransitions.size || performance.now() < renderUntil) {
+        renderRequest = requestAnimationFrame(render);
+      }
       return;
     }
 
@@ -2395,18 +2409,6 @@
         marker.setAttribute("cy", y.toFixed(1));
         label.setAttribute("x", (x + 10).toFixed(1));
         label.setAttribute("y", (y + 4).toFixed(1));
-      }
-    }
-
-    if (activeTransitions.size) {
-      const now = performance.now();
-
-      for (const [target, started] of activeTransitions) {
-        // A transition whose end event never arrives would otherwise pin the
-        // render loop at full frame rate for the life of the page.
-        if (now - started > TRANSITION_TIMEOUT || !map.contains(target)) {
-          activeTransitions.delete(target);
-        }
       }
     }
 

@@ -227,7 +227,10 @@
 
       if (found) {
         bind(found);
-        return;
+        // React can leave a removed map in an earlier container's hooks.
+        // report() releases it immediately; keep looking for the live map
+        // instead of letting that stale first match block its replacement.
+        if (map) return;
       }
     }
   }

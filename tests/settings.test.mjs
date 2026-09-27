@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
 
-const context = vm.createContext({});
+const context = vm.createContext({ URLSearchParams });
 // The defaults are derived from the registry and the language list at load, so
 // both have to be there first — the same order the manifest, the options page
 // and the worker use.
@@ -30,6 +30,20 @@ test('place coordinates take precedence over the Google Maps viewport', () => {
 test('encoded query coordinates and zero coordinates are accepted', () => {
   assert.deepEqual(plain(settings.stmCoordinatesFromLocation('https://www.google.com/maps?query=45.5%2C-73.6')), [-73.6, 45.5]);
   assert.deepEqual(plain(settings.stmCoordinatesFromLocation('0, 0')), [0, 0]);
+});
+
+test('query coordinates accept form-encoded spaces and require a complete coordinate pair', () => {
+  for (const key of ['q', 'query', 'll', 'center']) {
+    assert.deepEqual(plain(settings.stmCoordinatesFromLocation(`https://www.google.com/maps?${key}=45.5%2C+-73.6&zoom=12`)), [-73.6, 45.5]);
+    assert.equal(settings.stmCoordinatesFromLocation(`https://www.google.com/maps?${key}=45.5,-73.6invalid`), undefined);
+    assert.equal(settings.stmCoordinatesFromLocation(`https://www.google.com/maps?${key}=45.5,-73.6e8`), undefined);
+  }
+});
+
+test('coordinates close to zero remain editable after formatting', () => {
+  for (const coordinates of [[1e-7, -1e-8], [-73.5, 1e-7], [0, 0]]) {
+    assert.deepEqual(plain(settings.stmCoordinatesFromLocation(settings.stmFormatCoordinates(coordinates))), coordinates);
+  }
 });
 
 test('invalid, missing, and out-of-range coordinates are rejected', () => {

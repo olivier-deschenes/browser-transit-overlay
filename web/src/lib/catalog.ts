@@ -109,7 +109,17 @@ export function lineHash(lineId: string) {
 export function lineFromHash(cityId: string | undefined, hash: string) {
   if (!cityId || !hash) return undefined
 
-  const id = `${cityId}:${decodeURIComponent(hash)}`
+  let localId: string
+
+  try {
+    localId = decodeURIComponent(hash)
+  } catch {
+    // A fragment can be typed or pasted freely. Malformed escapes are an
+    // unknown line, just like any other fragment the catalogue cannot name.
+    return undefined
+  }
+
+  const id = `${cityId}:${localId}`
 
   return INDEXES.fr.lines.has(id) ? id : undefined
 }

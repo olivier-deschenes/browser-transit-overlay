@@ -59,10 +59,13 @@ export function browserLocale(languages: readonly string[]): Locale {
 }
 
 const STORAGE_KEY = 'language'
+let currentChoice: Locale | undefined
 
-// Storage can be missing or refuse access, in a private window say, and then
-// the reader simply has made no choice that outlasts the page.
+// Keep the choice for this page even when storage refuses access, so the
+// locale layout does not immediately redirect back to the browser's language.
 export function chosenLocale(): Locale | undefined {
+  if (currentChoice) return currentChoice
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
 
@@ -73,6 +76,8 @@ export function chosenLocale(): Locale | undefined {
 }
 
 export function chooseLocale(locale: Locale) {
+  currentChoice = locale
+
   try {
     localStorage.setItem(STORAGE_KEY, locale)
   } catch {

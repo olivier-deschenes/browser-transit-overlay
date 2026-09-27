@@ -78,3 +78,102 @@ test('bundled geometry keeps the notice the licence asks for', () => {
     assert.match(notice, /modifi/i, name);
   }
 });
+
+// Exercise the render loop with a map whose tiles have disappeared during a
+// zoom. Only the normal startup is replaced, so the production render and
+// projection paths run with a controllable clock and animation-frame queue.
+function renderWithoutTiles({ transition = true, contained = true, until = 0 } = {}) {
+  const frames = [];
+  const rect = { left: 0, top: 0, width: 800, height: 600 };
+  const context = vm.createContext({
+    STM_DEFAULT_CITY_ID: 'montreal',
+    location: { pathname: '/' },
+    performance: { now: () => 0 },
+    requestAnimationFrame: (callback) => frames.push(callback),
+    stmCityById: () => ({ id: 'montreal' }),
+    stmMergeSettings: () => ({}),
+    stmSiteForPage: () => ({ tileSelector: 'img' }),
+    testMap: {
+      isConnected: true,
+      contains: () => contained,
+      getBoundingClientRect: () => rect,
+      querySelectorAll: () => []
+    },
+    testTransition: transition,
+    testUntil: until
+  });
+  const source = read('content.js');
+  assert.match(source, /  init\(\);\s*\}\)\(\);\s*$/);
+  vm.runInContext(source.replace(/  init\(\);(?=\s*\}\)\(\);\s*$)/, `
+    map = testMap;
+    overlay = { isConnected: true };
+    overlayFrame = testMap;
+    if (testTransition) activeTransitions.set({}, 0);
+    renderUntil = testUntil;
+    globalThis.renderTestFrame = render;
+  `), context);
+
+  return {
+    frames,
+    renderAt(now) {
+      context.performance.now = () => now;
+      context.renderTestFrame();
+    }
+  };
+}
+
+test('a zoom with no tiles stops rendering when its transition expires', () => {
+  const loop = renderWithoutTiles();
+  loop.renderAt(100);
+  assert.equal(loop.frames.length, 1);
+  loop.frames.length = 0;
+  loop.renderAt(2001);
+  assert.equal(loop.frames.length, 0);
+});
+
+test('a removed transition cannot keep a tileless map rendering', () => {
+  const loop = renderWithoutTiles({ contained: false });
+  loop.renderAt(100);
+  assert.equal(loop.frames.length, 0);
+});
+
+test('a tileless map keeps its bounded settling window', () => {
+  const loop = renderWithoutTiles({ transition: false, until: 450 });
+  loop.renderAt(100);
+  assert.equal(loop.frames.length, 1);
+  loop.frames.length = 0;
+  loop.renderAt(450);
+  assert.equal(loop.frames.length, 0);
+});
+
+test('the camera bridge finds a replacement after a removed map', () => {
+  const attributes = new Map([['data-stm-anchor', '0 0']]);
+  const documentElement = {
+    getAttribute: (name) => attributes.get(name),
+    setAttribute: (name, value) => attributes.set(name, value),
+    removeAttribute: (name) => attributes.delete(name)
+  };
+  function containerFor(connected) {
+    const map = {
+      project: () => ({ x: 12, y: 34 }),
+      getZoom: () => 10,
+      getBearing: () => 0,
+      getPitch: () => 0,
+      getCanvas: () => ({ isConnected: connected }),
+      on() {},
+      off() {}
+    };
+    return { '__reactFiber$test': { memoizedState: { memoizedState: map } } };
+  }
+  const context = vm.createContext({
+    document: {
+      documentElement,
+      querySelectorAll: () => [containerFor(false), containerFor(true)]
+    },
+    MutationObserver: class {
+      observe() {}
+    }
+  });
+  vm.runInContext(read('bridge.js'), context);
+  assert.equal(attributes.get('data-stm-camera'), '12.00 34.00 11.0000000000 1');
+});

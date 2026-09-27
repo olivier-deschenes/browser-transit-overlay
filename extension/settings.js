@@ -121,7 +121,7 @@ function stmIsLineEnabled(settings, lineId) {
 const STM_DEFAULT_POINT_COLOR = "#e53935";
 
 const STM_SHORT_MAPS_LINK = /(?:maps\.app\.goo\.gl|goo\.gl\/maps)/i;
-const STM_RAW_COORDINATES = /^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/;
+const STM_RAW_COORDINATES = /^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*,\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)$/i;
 
 // Google Maps writes the pin twice: !3d/!4d is the place itself, while
 // @lat,lng is only wherever the viewport happened to sit when the link was
@@ -139,10 +139,17 @@ function stmCoordinatesFromLocation(value) {
     // A stray percent sign is no reason to give up on the rest of the link.
   }
 
+  // Query strings encode spaces as either %20 or +. Parse their complete
+  // values so an invalid coordinate suffix cannot become a valid prefix.
+  const query = new URLSearchParams(trimmed.match(/\?([^#]*)/)?.[1]);
+  const queryMatch = ["q", "query", "ll", "center"]
+    .map((key) => query.get(key)?.trim().match(STM_RAW_COORDINATES))
+    .find(Boolean);
+
   const match =
     url.match(/!3d(-?[\d.]+)!4d(-?[\d.]+)/) ??
     url.match(/@(-?[\d.]+),(-?[\d.]+)/) ??
-    url.match(/[?&](?:q|query|ll|center)=(-?[\d.]+),\s*(-?[\d.]+)/) ??
+    queryMatch ??
     url.match(STM_RAW_COORDINATES);
 
   if (!match) return undefined;

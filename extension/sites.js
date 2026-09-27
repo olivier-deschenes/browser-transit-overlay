@@ -178,9 +178,9 @@ const STM_MERCATOR_LATITUDE = 85.0511;
 
 // The centre and zoom the address says the map is at, and whether the map is
 // level enough to be drawn on. An altitude is a zoom that depends on the map's
-// height: the camera sees twice its altitude from the top of the map to the
-// bottom, which is what was measured against the zoom a drag pans the map by,
-// at two heights of window.
+// height: the camera sees as far as its altitude from the top of the map to
+// the bottom. That is what Google wrote for a zoom 14 map, at two heights of
+// window, when it swapped the zoom in a loaded address for an altitude.
 function stmParseGoogleMapsCamera(pathname, height) {
   const match = pathname.match(STM_GOOGLE_MAPS_CAMERA);
 
@@ -207,7 +207,7 @@ function stmParseGoogleMapsCamera(pathname, height) {
     const parallel =
       STM_GOOGLE_EARTH_CIRCUMFERENCE * Math.cos((latitude * Math.PI) / 180);
 
-    zoom = Math.log2((2 * height * parallel) / (STM_TILE_SIZE * measures.m));
+    zoom = Math.log2((height * parallel) / (STM_TILE_SIZE * measures.m));
   }
 
   return {

@@ -33,7 +33,7 @@ test('every Google Maps page is a map, and none of them a listing', () => {
 
 // The camera Google writes into its address once the map comes to rest, which
 // is the only projection that map ever states. The altitudes are the ones it
-// wrote itself for the zoom a drag was measured to pan at.
+// wrote itself for a zoom 14 map, in a window 768 and 1012 pixels high.
 test('the Google Maps camera is read from the address', () => {
   const { parseCamera } = page('www.google.com');
   const camera = (path, height = 768) => JSON.parse(JSON.stringify(parseCamera(path, height) ?? null));
@@ -43,10 +43,10 @@ test('the Google Maps camera is read from the address', () => {
 
   // Satellite imagery states an altitude, which comes to a zoom only against
   // the map's height.
-  const satellite = parseCamera('/maps/@45.5,-73.4853794,5137m/data=!3m1!1e3', 768);
-  assert.ok(Math.abs(satellite.zoom - 15) < 0.001, String(satellite.zoom));
+  const satellite = parseCamera('/maps/@45.5017,-73.5673,5137m/data=!3m1!1e3', 768);
+  assert.ok(Math.abs(satellite.zoom - 14) < 0.001, String(satellite.zoom));
   assert.equal(satellite.level, true);
-  assert.ok(Math.abs(parseCamera('/maps/@45.5,-73.56,6689m/data=!3m1!1e3', 500).zoom - 14) < 0.001);
+  assert.ok(Math.abs(parseCamera('/maps/@45.5017,-73.5673,6770m/data=!3m1!1e3', 1012).zoom - 14) < 0.001);
   assert.equal(parseCamera('/maps/@45.5,-73.56,6689m', 0).level, false);
 
   // Turned, tilted, or placed in three dimensions: there is a centre, but not

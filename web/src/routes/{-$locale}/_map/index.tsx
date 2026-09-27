@@ -72,7 +72,7 @@ const STATIONS_SHOWN = 5
 
 const fr = {
   intro:
-    'Extension Chrome qui affiche les lignes et les stations du transport en commun rapide sur les cartes de logements de Facebook Marketplace et de Centris.',
+    'Extension Chrome qui affiche les lignes et les stations du transport en commun rapide sur les cartes de logements de Facebook Marketplace et de Centris, et sur Google Maps.',
   totals: ({ cities, lines, stations }: Totals) =>
     `${number('fr', lines)} lignes et ${number('fr', stations)} stations dans ${number('fr', cities)} villes.`,
   searchLabel: 'Rechercher une ville, une ligne ou une station',
@@ -102,7 +102,7 @@ const fr = {
 
 const en: typeof fr = {
   intro:
-    'Chrome extension that shows rapid transit lines and stations on Facebook Marketplace and Centris housing maps.',
+    'Chrome extension that shows rapid transit lines and stations on Facebook Marketplace and Centris housing maps, and on Google Maps.',
   totals: ({ cities, lines, stations }: Totals) =>
     `${number('en', lines)} lines and ${number('en', stations)} stations in ${number('en', cities)} cities.`,
   searchLabel: 'Search for a city, a line or a station',

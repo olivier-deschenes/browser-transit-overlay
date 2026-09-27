@@ -68,8 +68,8 @@ function description(locale: Locale, city: string, systems: string[]) {
   )
 
   return {
-    fr: `Les lignes de transport en commun rapide à ${city}, sur les cartes de logements de Facebook Marketplace et de Centris : ${list}.`,
-    en: `Rapid transit lines in ${city} on Facebook Marketplace and Centris housing maps: ${list}.`,
+    fr: `Les lignes de transport en commun rapide à ${city}, sur les cartes de logements de Facebook Marketplace et de Centris, et sur Google Maps : ${list}.`,
+    en: `Rapid transit lines in ${city} on Facebook Marketplace and Centris housing maps, and on Google Maps: ${list}.`,
   }[locale]
 }
 

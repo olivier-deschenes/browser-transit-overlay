@@ -18,7 +18,7 @@ export const Route = createFileRoute('/{-$locale}/assistance')({
 
 const fr = {
   notShowing:
-    'Si les lignes de transport ne s’affichent pas, actualisez la page Facebook Marketplace ou Centris et vérifiez que l’extension est activée dans Chrome.',
+    'Si les lignes de transport ne s’affichent pas, actualisez la page Facebook Marketplace, Centris ou Google Maps et vérifiez que l’extension est activée dans Chrome.',
   reportTitle: 'Signaler un problème',
   reportText:
     'Décrivez le problème et indiquez le site concerné ainsi que votre version de Chrome.',
@@ -26,7 +26,7 @@ const fr = {
 
 const en: typeof fr = {
   notShowing:
-    'If the transit lines do not appear, reload the Facebook Marketplace or Centris page and check that the extension is turned on in Chrome.',
+    'If the transit lines do not appear, reload the Facebook Marketplace, Centris or Google Maps page and check that the extension is turned on in Chrome.',
   reportTitle: 'Report a problem',
   reportText:
     'Describe the problem and tell us which site it happened on and your version of Chrome.',

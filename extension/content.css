@@ -54,6 +54,24 @@
   top: 62px;
 }
 
+/*
+ * Google Maps covers its own map with controls: the search box and the side
+ * panel down the left, the account button top right, and the zoom buttons over
+ * a strip of layers bottom right, above its credit line. The side panel can
+ * hide anything along the left, so the credit goes to the right, beside the
+ * zoom buttons and above the strip, and the column starts under the account
+ * button.
+ */
+#stm-metro-attribution[data-stm-site="googlemaps"] {
+  bottom: 56px;
+  left: auto;
+  right: 56px;
+}
+
+#stm-map-tools[data-stm-site="googlemaps"] {
+  top: 64px;
+}
+
 #stm-map-tools {
   align-items: flex-end;
   display: flex;
@@ -771,12 +789,16 @@
  * a Centris listing with MapLibre, so each one is waited for by the element its
  * own library builds first. Both Google's .gm-style and MapLibre's
  * .maplibregl-map are there when the map initialises, well before anything is
- * painted into them.
+ * painted into them. Google Maps itself names nothing it builds, and is waited
+ * for by the canvases it paints into, inside the box it gives the map's role.
  */
 html[data-stm-enabled][data-stm-site="facebook"] .leaflet-container,
 html[data-stm-enabled][data-stm-site="facebook"] .leaflet-overlay-pane,
 html[data-stm-enabled][data-stm-site="centris"] .gm-style,
-html[data-stm-enabled][data-stm-site="locallogic"] .maplibregl-map {
+html[data-stm-enabled][data-stm-site="locallogic"] .maplibregl-map,
+html[data-stm-enabled][data-stm-site="googlemaps"]
+  [role="application"]
+  > canvas {
   animation-duration: 1ms;
   animation-name: stm-map-detect;
 }

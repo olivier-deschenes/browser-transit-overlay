@@ -32,7 +32,10 @@
     {
       "matches": [
         "https://www.facebook.com/marketplace/*",
-        "https://www.centris.ca/*"
+        "https://www.centris.ca/*",
+        "https://www.google.com/maps*",
+        "https://www.google.ca/maps*",
+        "https://www.google.fr/maps*"
       ],
       "css": [
         "content.css"
@@ -85,7 +88,10 @@
       "matches": [
         "https://www.facebook.com/*",
         "https://www.centris.ca/*",
-        "https://sdk.locallogic.co/*"
+        "https://sdk.locallogic.co/*",
+        "https://www.google.com/*",
+        "https://www.google.ca/*",
+        "https://www.google.fr/*"
       ]
     }
   ]

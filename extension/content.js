@@ -35,6 +35,45 @@
   // noise. Anything under a hundredth of a pixel is that noise, not a move.
   const ORIGIN_EPSILON = 0.01;
   const TRANSITION_TIMEOUT = 2000;
+  // How long the network stays off a map that publishes its camera only in its
+  // address (site.view) after something was done to it that might have moved
+  // it. The address is rewritten as soon as the map comes to rest, and that is
+  // what normally brings the network back; this is for a press, a turn of the
+  // wheel or a key that turned out to move nothing, and so rewrites nothing.
+  const VIEW_SETTLE_TIMEOUT = 1500;
+  // A drag let go of faster than this, in pixels a millisecond, and no longer
+  // than this after the pointer last moved, is a flick, and the map glides on
+  // after it by itself.
+  const VIEW_FLING_SPEED = 0.3;
+  const VIEW_FLING_GAP = 50;
+  // The keys a focused Google map pans and zooms by.
+  const VIEW_KEYS = new Set([
+    "+",
+    "-",
+    "=",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    "ArrowUp",
+    "PageDown",
+    "PageUp"
+  ]);
+  // What a press on one of our controls must not also be to the map under it.
+  // Leaflet starts a drag on a press, zooms on a double one and pans on the
+  // arrow keys; Google Maps does all of that and more, and opens a card for
+  // whatever was clicked. None of them can tell our controls from their map
+  // unless the events stop at the controls.
+  const SHIELDED_EVENTS = [
+    "click",
+    "contextmenu",
+    "dblclick",
+    "keydown",
+    "keyup",
+    "mousedown",
+    "pointerdown",
+    "touchstart",
+    "wheel"
+  ];
   const NETWORK_ZOOM = 16;
   // The coordinate bridge.js is asked to project, which deliberately belongs
   // to no city. A projection is a scale and a translate, so one projected
@@ -111,6 +150,22 @@
   // animations report themselves.
   let renderUntil = 0;
   let activeTransitions = new Map();
+  // A map that says where it is only once it has stopped (site.view) says
+  // nothing while it moves, so the overlay keeps track itself of the one move
+  // it can: a drag, which carries the map with the pointer. Where the drag
+  // took hold, how far the pointer has since gone, and how far earlier drags
+  // carried the map that the address has not caught up with yet.
+  let viewDrag;
+  let viewDragX = 0;
+  let viewDragY = 0;
+  let viewCarriedX = 0;
+  let viewCarriedY = 0;
+  // Whether the map has been sent moving some other way, whose course Google
+  // keeps to itself. The network is off it until the address says where it
+  // ended up, or until the timeout decides it never went anywhere.
+  let viewMoving = false;
+  let viewSettle;
+  let viewPath;
   let anchorTile;
   // The box every coordinate the renderer writes is measured from, which is
   // not always the element the overlay hangs off: MapLibre's canvas container
@@ -812,21 +867,9 @@
         .catch(() => {});
     });
 
-    // A press on the button is not a press on the map. These are the events
-    // Leaflet keeps its own controls out of the map with: a double press would
+    // A press on the button is not a press on the map: a double press would
     // zoom it, and a press that wanders off the button would drag it.
-    for (const eventName of [
-      "click",
-      "dblclick",
-      "mousedown",
-      "pointerdown",
-      "touchstart",
-      "wheel"
-    ]) {
-      listingsToggle.addEventListener(eventName, (event) => {
-        event.stopPropagation();
-      });
-    }
+    shieldFromMap(listingsToggle);
 
     listingsLayout.column.setAttribute(MAP_COLUMN_ATTRIBUTE, "");
     map.append(listingsToggle);
@@ -880,12 +923,7 @@
     if (settings.networkStatus) buildNetworkStatus();
 
     map.append(mapTools);
-
-    for (const eventName of ["click", "pointerdown", "wheel"]) {
-      mapTools.addEventListener(eventName, (event) => {
-        event.stopPropagation();
-      });
-    }
+    shieldFromMap(mapTools);
 
     // A rebuilt column has said nothing yet, so the state it carries is
     // repainted into it whether or not it has changed.
@@ -1287,6 +1325,18 @@
 
     attribution.append(...parts);
     map.append(attribution);
+    shieldFromMap(attribution);
+  }
+
+  // Everything of ours that hangs inside the map is something to press, type
+  // into or scroll, and the map around it would otherwise take each of those
+  // for its own.
+  function shieldFromMap(element) {
+    for (const eventName of SHIELDED_EVENTS) {
+      element.addEventListener(eventName, (event) => {
+        event.stopPropagation();
+      });
+    }
   }
 
   // The credit belongs to whoever published what is on screen, so it is made
@@ -1513,6 +1563,53 @@
       originY: rect.top - frameRect.top + y + (origin[1] - anchor[1]) * scale,
       scale,
       zoom
+    };
+  }
+
+  // The same again, from the camera the address states: the centre of the
+  // map, and its zoom. The centre is in the middle of the map's box whatever
+  // Google lays over it, and every other point is a known distance from it in
+  // network units. A drag the address has not caught up with moves the map
+  // under the pointer, so it moves the whole projection by as much.
+  //
+  // What the address cannot say is where a map is while it moves some other
+  // way, and a map with no camera in its address at all has said nothing yet.
+  // Both are answered as a map that cannot be drawn on, which takes the
+  // network off it rather than leaving it wherever it last was.
+  function viewProjection(frameRect, mapRect) {
+    if (mapRect.width <= 0 || mapRect.height <= 0) return undefined;
+
+    const view = site.view(mapRect.height);
+
+    if (!view?.level || viewMoving) return { level: false };
+
+    const scale = 2 ** (view.zoom - NETWORK_ZOOM);
+    const centre = worldPoint(view.center, NETWORK_ZOOM);
+    const origin = getNetworkOrigin();
+    const offsetX = viewCarriedX + viewDragX;
+    const offsetY = viewCarriedY + viewDragY;
+
+    return {
+      center: coordinatesAt(
+        centre[0] * scale - offsetX,
+        centre[1] * scale - offsetY,
+        view.zoom
+      ),
+      level: true,
+      originX:
+        mapRect.left -
+        frameRect.left +
+        mapRect.width / 2 +
+        offsetX +
+        (origin[0] - centre[0]) * scale,
+      originY:
+        mapRect.top -
+        frameRect.top +
+        mapRect.height / 2 +
+        offsetY +
+        (origin[1] - centre[1]) * scale,
+      scale,
+      zoom: view.zoom
     };
   }
 
@@ -2074,12 +2171,16 @@
     const mapRect = map.getBoundingClientRect();
     const projection = site.camera
       ? cameraProjection(paneRect)
-      : tileProjection(paneRect, mapRect);
+      : site.view
+        ? viewProjection(paneRect, mapRect)
+        : tileProjection(paneRect, mapRect);
 
     // A map that has been turned or tilted has no projection this overlay can
     // follow, so the network comes off it rather than being drawn at an angle
     // the map is not at. It comes back by itself: the bridge keeps reporting,
-    // and the first level reading puts the network back.
+    // and the first level reading puts the network back. A map that only
+    // states its camera at rest is answered the same way while it is on the
+    // move, and comes back when its address is rewritten.
     //
     // No projection at all is a different thing and not answered here. A zoom
     // animation can outlive the tiles it started from, and the drawing already
@@ -2333,6 +2434,167 @@
     scheduleRender();
   }
 
+  // The address has said where the map is, which is all a drag it had not yet
+  // caught up with or a move it was keeping to itself was waiting for. A drag
+  // still under way goes on being followed from here.
+  function settleView() {
+    clearTimeout(viewSettle);
+    viewSettle = undefined;
+    viewMoving = false;
+    viewCarriedX = 0;
+    viewCarriedY = 0;
+    scheduleRender();
+  }
+
+  function awaitView() {
+    clearTimeout(viewSettle);
+    viewSettle = setTimeout(settleView, VIEW_SETTLE_TIMEOUT);
+  }
+
+  // Something has sent the map moving along a course only Google knows.
+  function moveView() {
+    viewMoving = true;
+    awaitView();
+    scheduleRender();
+  }
+
+  function endViewDrag() {
+    viewCarriedX += viewDragX;
+    viewCarriedY += viewDragY;
+    viewDragX = 0;
+    viewDragY = 0;
+    viewDrag = undefined;
+    // The map stays where the pointer let go of it, and the address says so
+    // once it notices. A press that never moved the map rewrites nothing,
+    // which is what the timeout is for.
+    awaitView();
+  }
+
+  function resetView() {
+    clearTimeout(viewSettle);
+    viewSettle = undefined;
+    viewDrag = undefined;
+    viewDragX = 0;
+    viewDragY = 0;
+    viewCarriedX = 0;
+    viewCarriedY = 0;
+    viewMoving = false;
+  }
+
+  // Everything that can move a map whose camera is only ever in its address.
+  // The pointer is followed on the window rather than the map, because a drag
+  // that wanders over the side panel is still dragging the map.
+  function watchView(options) {
+    viewPath = location.pathname;
+
+    const onSurface = (event) =>
+      Boolean(event.target.matches?.(site.viewSurface));
+    const onPress = (event) => {
+      if (!onSurface(event)) return;
+
+      // The same pointer pressing again means the last drag ended somewhere
+      // that never said so, outside the window.
+      if (event.pointerId === viewDrag?.id) endViewDrag();
+
+      // A second finger turns a drag into a pinch, and a modifier turns it
+      // into a tilt or a turn. Neither goes where the pointer does.
+      if (
+        viewDrag ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        moveView();
+        return;
+      }
+
+      if (event.button !== 0) return;
+
+      viewDrag = { id: event.pointerId };
+    };
+    const onDrag = (event) => {
+      if (event.pointerId !== viewDrag?.id) return;
+
+      if (!(event.buttons & 1)) {
+        endViewDrag();
+        return;
+      }
+
+      // Google takes up the map at the first move rather than at the press,
+      // so a drag is measured from there too.
+      if (viewDrag.x === undefined) {
+        viewDrag.x = viewDrag.lastX = event.clientX;
+        viewDrag.y = viewDrag.lastY = event.clientY;
+        viewDrag.time = event.timeStamp;
+        viewDrag.speed = 0;
+        return;
+      }
+
+      const elapsed = event.timeStamp - viewDrag.time;
+
+      if (elapsed > 0) {
+        viewDrag.speed =
+          Math.hypot(
+            event.clientX - viewDrag.lastX,
+            event.clientY - viewDrag.lastY
+          ) / elapsed;
+      }
+
+      viewDrag.lastX = event.clientX;
+      viewDrag.lastY = event.clientY;
+      viewDrag.time = event.timeStamp;
+      viewDragX = event.clientX - viewDrag.x;
+      viewDragY = event.clientY - viewDrag.y;
+      scheduleRender();
+    };
+    const onRelease = (event) => {
+      if (event.pointerId !== viewDrag?.id) return;
+
+      // Let go of while still moving, the map glides on for a moment by
+      // itself, and where it stops is Google's to say.
+      const flung =
+        viewDrag.speed > VIEW_FLING_SPEED &&
+        event.timeStamp - viewDrag.time < VIEW_FLING_GAP;
+
+      endViewDrag();
+
+      if (flung) moveView();
+    };
+    const onAnimate = (event) => {
+      if (onSurface(event)) moveView();
+    };
+    const onKey = (event) => {
+      if (VIEW_KEYS.has(event.key) && !ownNode(event.target)) moveView();
+    };
+    const onControl = (event) => {
+      if (site.viewMovers && event.target.closest?.(site.viewMovers)) {
+        moveView();
+      }
+    };
+    const onAddress = () => {
+      if (location.pathname === viewPath) return;
+
+      viewPath = location.pathname;
+      settleView();
+    };
+
+    map.addEventListener("pointerdown", onPress, options);
+    map.addEventListener("wheel", onAnimate, options);
+    map.addEventListener("dblclick", onAnimate, options);
+    map.addEventListener("keydown", onKey, options);
+    addEventListener("pointermove", onDrag, options);
+    addEventListener("pointerup", onRelease, options);
+    addEventListener("pointercancel", onRelease, options);
+    addEventListener("click", onControl, options);
+    addEventListener("popstate", onAddress, options);
+    globalThis.navigation?.addEventListener(
+      "currententrychange",
+      onAddress,
+      options
+    );
+  }
+
   // Our own writes land inside the map, and a settling window fed by them
   // would never close.
   function ownNode(node) {
@@ -2363,6 +2625,7 @@
     cameraObserver?.disconnect();
     eventController?.abort();
     activeTransitions.clear();
+    resetView();
     cancelAnimationFrame(renderRequest);
     overlay?.remove();
     attribution?.remove();
@@ -2486,6 +2749,8 @@
     if (site.tileSelector) {
       map.addEventListener("load", renderTileLoad, eventOptions);
     }
+
+    if (site.view) watchView(eventOptions);
 
     // The projection arriving is the only thing that moves a camera map under
     // the overlay, and it covers the moves no pointer event would have

@@ -113,7 +113,7 @@ export function mailto(subject?: string, body?: string) {
 // one block per language, the others typed after the French one, so that a
 // string missing from a language fails the typecheck.
 const fr = {
-  shortName: 'Transport en commun',
+  shortName: 'Calque transport en commun',
   chromeExtension: 'Extension Chrome',
   privacy: 'Politique de confidentialité',
   support: 'Assistance',
@@ -131,7 +131,7 @@ const fr = {
 }
 
 const en: typeof fr = {
-  shortName: 'Public Transit',
+  shortName: 'Transit Overlay',
   chromeExtension: 'Chrome extension',
   privacy: 'Privacy policy',
   support: 'Support',

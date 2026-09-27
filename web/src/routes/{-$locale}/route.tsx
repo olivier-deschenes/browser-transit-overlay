@@ -48,8 +48,8 @@ function description(locale: Locale) {
   )
 
   return {
-    fr: `Une extension Chrome qui affiche le transport en commun rapide de ${names} sur les cartes de logements de Facebook Marketplace et de Centris.`,
-    en: `A Chrome extension that shows rapid transit in ${names} on Facebook Marketplace and Centris housing maps.`,
+    fr: `Une extension Chrome qui affiche le transport en commun rapide de ${names} sur les cartes de logements de Facebook Marketplace et de Centris, et sur Google Maps.`,
+    en: `A Chrome extension that shows rapid transit in ${names} on Facebook Marketplace and Centris housing maps, and on Google Maps.`,
   }[locale]
 }
 

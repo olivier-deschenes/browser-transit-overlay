@@ -27,7 +27,8 @@ const STM_OPEN_OPTIONS_MESSAGE = "stm-open-options";
 // every language, and the line under it is in i18n.js, keyed by the site's id.
 const STM_SITES = [
   { id: "facebook", name: "Facebook Marketplace" },
-  { id: "centris", name: "Centris.ca" }
+  { id: "centris", name: "Centris.ca" },
+  { id: "googlemaps", name: "Google Maps" }
 ];
 
 // One city at a time, and which one. The map only ever draws the city its

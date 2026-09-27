@@ -85,6 +85,10 @@ export const CONTACT_EMAIL = 'olivier@odeschenes.com'
 export const SOURCE_URL =
   'https://github.com/olivier-deschenes/browser-transit-overlay'
 
+// The extension's listing, where it is installed from.
+export const STORE_URL =
+  'https://chromewebstore.google.com/detail/public-transit-for-market/fjenjabminhkcanhjegbhnncjjcilpii'
+
 // A count as the language writes it: 2 123 in French, 2,123 in English.
 export function number(locale: Locale, value: number) {
   return new Intl.NumberFormat(locale).format(value)
@@ -115,6 +119,7 @@ export function mailto(subject?: string, body?: string) {
 const fr = {
   shortName: 'Transport en commun',
   chromeExtension: 'Extension Chrome',
+  install: 'Ajouter à Chrome',
   privacy: 'Politique de confidentialité',
   support: 'Assistance',
   language: 'Langue',
@@ -133,6 +138,7 @@ const fr = {
 const en: typeof fr = {
   shortName: 'Public Transit',
   chromeExtension: 'Chrome extension',
+  install: 'Add to Chrome',
   privacy: 'Privacy policy',
   support: 'Support',
   language: 'Language',

@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, createFileRoute, useHydrated } from '@tanstack/react-router'
+import { ArrowUpRight } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
 
 import pluginIcon from '../../../../../extension/icons/icon-128.png'
@@ -23,6 +24,7 @@ import {
 import {
   CONTACT_EMAIL,
   MESSAGES,
+  STORE_URL,
   localeOf,
   localeParam,
   mailto,
@@ -168,6 +170,12 @@ function Overview() {
           {copy.intro}
         </p>
         <p className="text-sm">{copy.totals(totals)}</p>
+        <Button asChild size="lg" className="self-start">
+          <a href={STORE_URL}>
+            {messages.install}
+            <ArrowUpRight data-icon="inline-end" />
+          </a>
+        </Button>
       </header>
 
       <div className="flex flex-col gap-6">

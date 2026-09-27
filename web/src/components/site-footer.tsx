@@ -1,7 +1,13 @@
 import { Link } from '@tanstack/react-router'
 
 import { LanguageSwitcher } from './language-switcher'
-import { MESSAGES, SOURCE_URL, localeParam, useLocale } from '../i18n'
+import {
+  MESSAGES,
+  SOURCE_URL,
+  STORE_URL,
+  localeParam,
+  useLocale,
+} from '../i18n'
 import { cn } from '@/lib/utils'
 
 // The links every page ends on.
@@ -18,6 +24,9 @@ export function SiteFooter({ className }: { className?: string }) {
         className,
       )}
     >
+      <a href={STORE_URL} className={link}>
+        {messages.chromeExtension}
+      </a>
       <Link to="/{-$locale}/assistance" params={params} className={link}>
         {messages.support}
       </Link>

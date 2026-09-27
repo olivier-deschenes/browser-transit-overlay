@@ -12,7 +12,13 @@
 // that cannot work that way: it belongs to Local Logic, comes in a frame of its
 // own, and is drawn by MapLibre into a single WebGL canvas that says nothing
 // about where the world is. Its projection is asked for instead — see the
-// camera adapter at the bottom of this file and bridge.js.
+// camera adapter and bridge.js.
+//
+// Google Maps itself, as opposed to the maps other sites build on its API, can
+// be neither read nor asked: it paints into a canvas from inside a worker, and
+// keeps its camera on the far side of a message channel whose format is its
+// own. What it does publish is that camera, in its address, every time the map
+// comes to rest — see the view adapter at the bottom of this file.
 
 // The nominal Web Mercator tile, which is both what the world is measured in
 // and what the two sites happen to serve. A tile that arrives at some other
@@ -145,6 +151,73 @@ const STM_CENTRIS_ITEM_ROUTE = /^\/(?:fr|en)\/[^/]+\/\d{5,}\/?$/;
 // can only match its frame by the frame's own URL. What makes one of them a
 // Centris map is who embedded it.
 const STM_CENTRIS_ORIGINS = ["https://www.centris.ca", "https://centris.ca"];
+
+// Google Maps answers on the country domains as well as its own, and stays on
+// whichever one it was opened from. These are the ones for the countries the
+// registry has cities in; the manifest lists the same three.
+const STM_GOOGLE_MAPS_HOSTS = [
+  "www.google.com",
+  "www.google.ca",
+  "www.google.fr"
+];
+const STM_GOOGLE_MAPS_ROUTE = /^\/maps(?:\/|$)/;
+
+// The camera as Google writes it after the @: the centre, latitude first, then
+// a run of numbers each tagged with what it measures. The flat map is "14.75z",
+// a zoom in the same 256 pixel tiles as everything else here. Satellite imagery
+// is "4197m", the altitude of a camera looking straight down. A map that has
+// been turned or tilted adds "90h" and "45t", or trades the altitude for the
+// "a" and "y" of a camera placed in three dimensions.
+const STM_GOOGLE_MAPS_CAMERA = /\/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?),([^/]+)/;
+const STM_GOOGLE_MAPS_MEASURE = /^(-?\d+(?:\.\d+)?)([a-z])$/;
+// The Earth Google measures those altitudes against: a sphere of the mean
+// radius, rather than the equator Web Mercator is scaled to.
+const STM_GOOGLE_EARTH_CIRCUMFERENCE = 2 * Math.PI * 6371010;
+// Web Mercator's own edge. A latitude past it has no place on the grid.
+const STM_MERCATOR_LATITUDE = 85.0511;
+
+// The centre and zoom the address says the map is at, and whether the map is
+// level enough to be drawn on. An altitude is a zoom that depends on the map's
+// height: the camera sees as far as its altitude from the top of the map to
+// the bottom. That is what Google wrote for a zoom 14 map, at two heights of
+// window, when it swapped the zoom in a loaded address for an altitude.
+function stmParseGoogleMapsCamera(pathname, height) {
+  const match = pathname.match(STM_GOOGLE_MAPS_CAMERA);
+
+  if (!match) return undefined;
+
+  const latitude = Number(match[1]);
+  const longitude = Number(match[2]);
+
+  if (Math.abs(latitude) > STM_MERCATOR_LATITUDE || Math.abs(longitude) > 180) {
+    return undefined;
+  }
+
+  const measures = {};
+
+  for (const token of match[3].split(",")) {
+    const measure = token.match(STM_GOOGLE_MAPS_MEASURE);
+
+    if (measure) measures[measure[2]] = Number(measure[1]);
+  }
+
+  let zoom = measures.z;
+
+  if (zoom === undefined && measures.m > 0 && height > 0) {
+    const parallel =
+      STM_GOOGLE_EARTH_CIRCUMFERENCE * Math.cos((latitude * Math.PI) / 180);
+
+    zoom = Math.log2((height * parallel) / (STM_TILE_SIZE * measures.m));
+  }
+
+  return {
+    center: [longitude, latitude],
+    // A camera placed in three dimensions has no zoom to go on, and one that
+    // has been turned or tilted has a zoom the overlay cannot follow.
+    level: Number.isFinite(zoom) && !measures.h && !measures.t,
+    zoom
+  };
+}
 
 const STM_SITE_ADAPTERS = [
   {
@@ -342,6 +415,51 @@ const STM_SITE_ADAPTERS = [
     // nothing to say it has finished. The window covers the frame or two
     // between the map settling and the last projection reaching this side.
     settleMs: 250
+  },
+  {
+    id: "googlemaps",
+
+    claims: () => STM_GOOGLE_MAPS_HOSTS.includes(location.hostname),
+
+    // Every page of Google Maps is the map, with whatever the side panel is
+    // showing laid over its left edge. None of them is a listing.
+    isCategoryPage: () => STM_GOOGLE_MAPS_ROUTE.test(location.pathname),
+    isItemPage: () => false,
+
+    // The class names are generated, and change from one release to the next.
+    // The role is the map's accessible one, and the canvases are what it is
+    // painted into, both there before the first frame is.
+    mapSelector: '[role="application"] > canvas',
+
+    findMap: () =>
+      stmLargestMap('[role="application"]', (element) =>
+        element.querySelector(":scope > canvas")
+      ),
+
+    // The canvases come first in the map, then a few empty boxes Google keeps
+    // for the cards that open over it. The overlay goes between the two, over
+    // the map and under anything Google opens on top of it. Pins and labels
+    // are painted into the canvas, so there is no getting under those.
+    overlayHost: (map) => map,
+    overlayAnchor: (pane) => pane.querySelector(":scope > :not(canvas)"),
+
+    // What sets this adapter apart: the projection is the camera in the
+    // address, which Google writes once the map has come to rest and not
+    // while it moves. content.js follows a drag with the pointer and keeps the
+    // network off the map through anything else until the address catches up.
+    // The height is what turns an altitude into a zoom.
+    view: (height) => stmParseGoogleMapsCamera(location.pathname, height),
+
+    // What a press has to land on to move the map. The cards Google opens
+    // inside the map's box take their own presses, wheels and double clicks.
+    viewSurface: '[role="application"] > canvas',
+
+    // The buttons outside the map that send it somewhere: the zoom buttons
+    // and the one that flies to where the user is. The names are Google's
+    // handlers rather than its generated classes, so they last longer, but
+    // nothing depends on them: a button missed here only means the network
+    // stays where it was until the address says where the map went.
+    viewMovers: '[jsaction*="zoom.onZoom"], [jsaction*="mylocation."]'
   }
 ];
 

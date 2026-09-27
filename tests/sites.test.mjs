@@ -8,15 +8,60 @@ function page(hostname, pathname = '/', ancestorOrigins = []) {
   const location = { hostname, pathname, ancestorOrigins, href: `https://${hostname}${pathname}`, assign(value) { location.assigned = value; } };
   const context = vm.createContext({ URL, getComputedStyle: ({ position = 'static' }) => ({ position }), location });
   vm.runInContext(source, context);
-  return { location, ...vm.runInContext('({ site: stmSiteForPage(), parseLeaflet: stmParseLeafletTile, parseGoogle: stmParseGoogleTile })', context) };
+  return { location, ...vm.runInContext('({ site: stmSiteForPage(), parseLeaflet: stmParseLeafletTile, parseGoogle: stmParseGoogleTile, parseCamera: stmParseGoogleMapsCamera })', context) };
 }
 
 test('site matching respects hostname boundaries', () => {
   assert.equal(page('www.facebook.com').site.id, 'facebook');
   assert.equal(page('www.centris.ca').site.id, 'centris');
-  for (const host of ['notfacebook.com', 'facebook.com.example.org', 'centris.ca.example.org']) {
+  for (const host of ['www.google.com', 'www.google.ca', 'www.google.fr']) {
+    assert.equal(page(host, '/maps/@45.5,-73.56,14z').site.id, 'googlemaps');
+  }
+  for (const host of ['notfacebook.com', 'facebook.com.example.org', 'centris.ca.example.org', 'mail.google.com', 'www.google.com.example.org', 'notgoogle.com']) {
     assert.equal(page(host).site, undefined);
   }
+});
+
+test('every Google Maps page is a map, and none of them a listing', () => {
+  for (const path of ['/maps', '/maps/@45.5,-73.56,14z', '/maps/place/Berri-UQAM/@45.5153,-73.5611,17z/data=!3m1!4b1', '/maps/search/metro/@45.5,-73.56,13z']) {
+    const { site } = page('www.google.com', path);
+    assert.equal(site.isCategoryPage(), true, path);
+    assert.equal(site.isItemPage(), false, path);
+  }
+  assert.equal(page('www.google.com', '/mapsearch').site.isCategoryPage(), false);
+});
+
+// The camera Google writes into its address once the map comes to rest, which
+// is the only projection that map ever states. The altitudes are the ones it
+// wrote itself for a zoom 14 map, in a window 768 and 1012 pixels high.
+test('the Google Maps camera is read from the address', () => {
+  const { parseCamera } = page('www.google.com');
+  const camera = (path, height = 768) => JSON.parse(JSON.stringify(parseCamera(path, height) ?? null));
+
+  assert.deepEqual(camera('/maps/@45.5019,-73.5674,14z'), { center: [-73.5674, 45.5019], level: true, zoom: 14 });
+  assert.deepEqual(camera('/maps/place/Berri/@45.5153,-73.5611,16.75z/data=!3m1!4b1!4m4'), { center: [-73.5611, 45.5153], level: true, zoom: 16.75 });
+
+  // Satellite imagery states an altitude, which comes to a zoom only against
+  // the map's height.
+  const satellite = parseCamera('/maps/@45.5017,-73.5673,5137m/data=!3m1!1e3', 768);
+  assert.ok(Math.abs(satellite.zoom - 14) < 0.001, String(satellite.zoom));
+  assert.equal(satellite.level, true);
+  assert.ok(Math.abs(parseCamera('/maps/@45.5017,-73.5673,6770m/data=!3m1!1e3', 1012).zoom - 14) < 0.001);
+  assert.equal(parseCamera('/maps/@45.5,-73.56,6689m', 0).level, false);
+
+  // Turned, tilted, or placed in three dimensions: there is a centre, but not
+  // one the overlay can be laid flat onto.
+  assert.equal(camera('/maps/@45.5,-73.56,15z,45t').level, false);
+  assert.equal(camera('/maps/@45.5,-73.56,15z,90h').level, false);
+  assert.equal(camera('/maps/@45.5,-73.56,15z,0h,0t').level, true);
+  assert.equal(camera('/maps/@45.5,-73.56,586a,35y,90h,45t/data=!3m1!1e3').level, false);
+  assert.equal(camera('/maps/@45.5,-73.56,3a,75y,90t/data=!3m6!1e1').level, false);
+
+  // No camera yet, or one that is off the grid.
+  assert.equal(camera('/maps/search/45.5153,-73.5611'), null);
+  assert.equal(camera('/maps'), null);
+  assert.equal(camera('/maps/@89.9,-73.56,14z'), null);
+  assert.equal(camera('/maps/@45.5,-190,14z'), null);
 });
 
 test('Local Logic is activated only when embedded by Centris', () => {

@@ -23,7 +23,7 @@ test('manifest keeps permissions scoped to supported sites', () => {
   assert.deepEqual(manifest.permissions, ['storage']);
   assert.equal(manifest.host_permissions, undefined);
   assert.equal(manifest.externally_connectable, undefined);
-  const allowed = new Set(['https://www.facebook.com/marketplace/*', 'https://www.centris.ca/*', 'https://sdk.locallogic.co/sdks-app/*']);
+  const allowed = new Set(['https://www.facebook.com/marketplace/*', 'https://www.centris.ca/*', 'https://sdk.locallogic.co/sdks-app/*', 'https://www.google.com/maps*', 'https://www.google.ca/maps*', 'https://www.google.fr/maps*']);
   for (const script of manifest.content_scripts) {
     for (const match of script.matches) assert.ok(allowed.has(match), match);
     if (script.world === 'MAIN') {

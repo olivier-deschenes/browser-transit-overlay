@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "Public Transit for Marketplace and Centris",
+    "message": "Transit Overlay",
     "description": "The extension's name in Chrome and the Chrome Web Store. Keep it identical to extension.name in extension/i18n.js."
   },
   "extDescription": {
-    "message": "Shows the métro and rapid transit of Montréal, Toronto, Paris, New York and 19 more cities on Marketplace and Centris housing maps.",
+    "message": "The métro and rapid transit of Montréal, Toronto, Paris, New York and 19 more cities, on Marketplace, Centris and Google Maps.",
     "description": "The extension's description in Chrome and the Chrome Web Store. At most 132 characters."
   }
 }

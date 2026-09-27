@@ -17,7 +17,7 @@ export const Route = createFileRoute('/{-$locale}/confidentialite')({
 
 // One date for both languages, so a revision cannot leave one of them behind
 // saying it is current.
-const UPDATED = '2026-09-10'
+const UPDATED = '2026-09-26'
 
 const LAST_UPDATED: Record<Locale, string> = {
   fr: 'Dernière mise à jour :',
@@ -56,8 +56,8 @@ function PolicyFr() {
   return (
     <>
       <p>
-        L’extension Transport en commun pour Marketplace et Centris affiche le
-        réseau de transport sur les cartes de logements et permet d’y ajouter
+        L’extension Calque transport en commun affiche le réseau de transport
+        sur les cartes de logements et sur Google Maps, et permet d’y ajouter
         vos points de repère. Elle enregistre vos réglages et vos points
         localement dans votre navigateur.
       </p>
@@ -97,9 +97,11 @@ function PolicyFr() {
       <p>
         L’extension lit les éléments des cartes de Facebook Marketplace et de
         Centris, y compris la carte Local Logic intégrée aux fiches Centris,
-        pour positionner le réseau de transport et vos points. Ce traitement se
-        fait dans votre navigateur. Elle n’enregistre pas votre historique de
-        navigation, vos messages ou les annonces consultées.
+        pour positionner le réseau de transport et vos points. Sur Google Maps,
+        elle lit la position de la carte dans l’adresse de la page. Ce
+        traitement se fait dans votre navigateur. Elle n’enregistre pas votre
+        historique de navigation, vos recherches, vos messages ou les annonces
+        consultées.
       </p>
       <p>
         Vos points sont ajoutés aux cartes dans la page consultée. Les scripts
@@ -140,10 +142,9 @@ function PolicyEn() {
   return (
     <>
       <p>
-        The Public Transit for Marketplace and Centris extension shows the
-        transit network on housing maps and lets you add your own landmarks to
-        them. It saves your settings and your landmarks locally, in your
-        browser.
+        The Transit Overlay extension shows the transit network on housing maps
+        and on Google Maps, and lets you add your own landmarks to them. It
+        saves your settings and your landmarks locally, in your browser.
       </p>
 
       <h2>Data saved locally</h2>
@@ -179,9 +180,10 @@ function PolicyEn() {
       <p>
         The extension reads the map elements of Facebook Marketplace and
         Centris, including the Local Logic map built into Centris listings, to
-        position the transit network and your landmarks. This happens in your
-        browser. It does not save your browsing history, your messages or the
-        listings you view.
+        position the transit network and your landmarks. On Google Maps, it
+        reads the map’s position from the page’s address. This happens in your
+        browser. It does not save your browsing history, your searches, your
+        messages or the listings you view.
       </p>
       <p>
         Your landmarks are added to the maps on the page you are viewing, so

@@ -1,6 +1,6 @@
-# Transport en commun pour Marketplace et Centris
+# Transit Overlay
 
-A Chrome extension that overlays rapid transit lines and stations on housing maps in Facebook Marketplace and Centris: Montréal's métro and the REM, Toronto's TTC subway and light rail, Vancouver's SkyTrain, the light rail of Calgary, Edmonton, Ottawa and Waterloo Region, the six French métros — Paris, with the RER alongside it, plus Lyon, Marseille, Lille, Toulouse and Rennes — and the subways of ten American cities: New York, with the Staten Island Railway and PATH, Washington, Chicago, Boston, the San Francisco Bay Area's BART, Philadelphia, Los Angeles, Atlanta, Miami and Baltimore. The interface is in English and French: it follows the browser's language unless another is chosen in the settings.
+A Chrome extension that overlays rapid transit lines and stations on housing maps in Facebook Marketplace and Centris, and on Google Maps itself: Montréal's métro and the REM, Toronto's TTC subway and light rail, Vancouver's SkyTrain, the light rail of Calgary, Edmonton, Ottawa and Waterloo Region, the six French métros — Paris, with the RER alongside it, plus Lyon, Marseille, Lille, Toulouse and Rennes — and the subways of ten American cities: New York, with the Staten Island Railway and PATH, Washington, Chicago, Boston, the San Francisco Bay Area's BART, Philadelphia, Los Angeles, Atlanta, Miami and Baltimore. The interface is in English and French: it follows the browser's language unless another is chosen in the settings.
 
 ![Montréal transit lines overlaid on a Marketplace map](docs/images/marketplace-map.png)
 
@@ -16,15 +16,16 @@ A Chrome extension that overlays rapid transit lines and stations on housing map
 - A second panel under it for the lines of the city being drawn, as the bullets their own networks print them on, with a switch per operator and one pair of buttons for all of them at once. Only one of the two panels is open at a time.
 - Networks swapped as the map moves between cities, without a reload: the panel says which one is loading, keeps each city once it has been fetched, and offers to try again if one does not arrive.
 - On a Marketplace search, a button on the map's right edge that hides the listings beside it so the map takes the whole width, and brings them back. The next search opens the way the last one was left.
+- On Google Maps, in the map and satellite views, the network follows the map while it is dragged. Google only says where its map is once it has come to rest, so through a zoom or the glide after a flick the network steps off the map and comes back when the map stops, and after a flight to a search result it catches up when the map arrives. A tilted or turned map, 3D and Street View have no network drawn on them.
 
-This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, the STM, the REM, the TTC, the City of Toronto, or any of the other Canadian, French or American transit authorities, operators and governments whose data it uses. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
+This is an independent project, unaffiliated with Meta/Facebook, Centris, Local Logic, Google, the STM, the REM, the TTC, the City of Toronto, or any of the other Canadian, French or American transit authorities, operators and governments whose data it uses. The bundled network is a snapshot, not a live service or journey planner. Changes to those sites can affect map detection.
 
 ## Install from source
 
 1. Clone this repository or download and extract its source archive.
 2. Open `chrome://extensions` in Chrome and enable **Developer mode**.
 3. Choose **Load unpacked** and select the **`extension/` folder**, which contains `manifest.json`.
-4. Open a housing map on [Facebook Marketplace](https://www.facebook.com/marketplace/) or [Centris](https://www.centris.ca/). Reload an existing tab after installing or updating.
+4. Open a housing map on [Facebook Marketplace](https://www.facebook.com/marketplace/) or [Centris](https://www.centris.ca/), or open [Google Maps](https://www.google.com/maps). Reload an existing tab after installing or updating.
 
 No build, API key, or developer account is needed to load the extension. Click its toolbar icon to toggle the overlay; open its **Options** or the map's gear button to change settings.
 
@@ -32,7 +33,7 @@ No build, API key, or developer account is needed to load the extension. Click i
 
 The extension uses `chrome.storage.local` for settings, landmarks, whether the listings beside a Marketplace search were last left hidden, and the name of the last supported city a map showed the network for — one of the twenty-three names in the registry, never a position. It loads its transit data from the installed extension and has no analytics or developer backend. Google Maps links are parsed locally; shortened links must first be opened by the user to obtain a full link containing coordinates.
 
-The only declared API permission is `storage`. Content scripts run on Marketplace, Centris, and the Local Logic frame used by Centris listings. The Local Logic adapter checks that Centris embedded the frame. Its page-world bridge reads the map's camera so the overlay follows it.
+The only declared API permission is `storage`. Content scripts run on Marketplace, Centris, the Local Logic frame used by Centris listings, and Google Maps on `google.com`, `google.ca` and `google.fr`. The Local Logic adapter checks that Centris embedded the frame. Its page-world bridge reads the map's camera so the overlay follows it. On Google Maps, the camera is read from the page's address; nothing runs in the page world there.
 
 Landmarks are drawn into the host page, so scripts on that page can read their displayed names and locations. Resetting settings preserves landmarks; delete them individually or uninstall the extension to remove them. See the [privacy policy](https://metro.odeschenes.dev/confidentialite) and [security policy](SECURITY.md).
 
@@ -84,7 +85,8 @@ extension/networks.js               registry: ids, colours, bounds, attribution,
         │                           country, and kind of service
         ├─ settings.js / options.js  a switch for each city, operator, and line,
         │                            browsed by country, city, and service
-        └─ content.js + sites.js     draws lines on Marketplace, Centris, and Local Logic maps
+        └─ content.js + sites.js     draws lines on the maps of Marketplace, Centris,
+                                     Local Logic, and Google Maps
 
 extension/i18n.js                   every word shown, per language, including what
                                     each country, city, operator, line, and kind

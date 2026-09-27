@@ -31,11 +31,11 @@ const STM_LOCALES = {
     // read the page as it stands can still find theirs in the list.
     name: "English",
     messages: {
-      "extension.name": "Public Transit for Marketplace and Centris",
+      "extension.name": "Transit Overlay",
       "extension.settings": "Extension settings",
 
-      "toolbar.on": "Public transit — on (click to turn off)",
-      "toolbar.off": "Public transit — off (click to turn on)",
+      "toolbar.on": "Transit Overlay — on (click to turn off)",
+      "toolbar.off": "Transit Overlay — off (click to turn on)",
       "toolbar.badgeOff": "OFF",
 
       "map.loading": "Loading {city}…",
@@ -79,7 +79,7 @@ const STM_LOCALES = {
       "point.errorNotFound":
         "No coordinates found. Use a google.com/maps/place/… link or coordinates.",
 
-      "options.pageTitle": "Settings — Public Transit",
+      "options.pageTitle": "Settings — Transit Overlay",
       "options.enable": "Enable the extension",
       "options.enable.hint":
         "Turns the extension off everywhere without changing the settings below. The toolbar button does the same.",
@@ -145,6 +145,8 @@ const STM_LOCALES = {
 
       "site.facebook.detail": "Housing maps and listing map previews.",
       "site.centris.detail": "Search result maps and listing maps.",
+      "site.googlemaps.detail":
+        "The map itself, on google.com, google.ca and google.fr.",
 
       "country.ca.name": "Canada",
       "country.fr.name": "France",
@@ -474,11 +476,13 @@ const STM_LOCALES = {
   fr: {
     name: "Français",
     messages: {
-      "extension.name": "Transport en commun pour Marketplace et Centris",
+      "extension.name": "Calque transport en commun",
       "extension.settings": "Réglages de l’extension",
 
-      "toolbar.on": "Transport en commun — activé (cliquer pour désactiver)",
-      "toolbar.off": "Transport en commun — désactivé (cliquer pour activer)",
+      "toolbar.on":
+        "Calque transport en commun — activé (cliquer pour désactiver)",
+      "toolbar.off":
+        "Calque transport en commun — désactivé (cliquer pour activer)",
       "toolbar.badgeOff": "OFF",
 
       "map.loading": "Chargement de {city}…",
@@ -522,7 +526,7 @@ const STM_LOCALES = {
       "point.errorNotFound":
         "Aucune coordonnée trouvée. Utilisez un lien google.com/maps/place/… ou des coordonnées.",
 
-      "options.pageTitle": "Réglages — Transport en commun",
+      "options.pageTitle": "Réglages — Calque transport en commun",
       "options.enable": "Activer l’extension",
       "options.enable.hint":
         "Coupe l’extension partout, sans toucher aux réglages ci-dessous. Le bouton de la barre d’outils fait la même chose.",
@@ -589,6 +593,8 @@ const STM_LOCALES = {
       "site.facebook.detail":
         "Cartes des logements et aperçu de carte des annonces.",
       "site.centris.detail": "Cartes des résultats de recherche et des fiches.",
+      "site.googlemaps.detail":
+        "La carte elle-même, sur google.com, google.ca et google.fr.",
 
       "country.ca.name": "Canada",
       "country.fr.name": "France",
